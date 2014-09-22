@@ -10,7 +10,6 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,ne
     messages <- array(dim=c(2,n,length(args)))
 
     pb <- txtProgressBar(min = 0, max = n*length(args), style = 3)
-    cat("\n")
     for(i in 1:n){
         obs <- simulate(object,locationclass=locationclass,newpar=newpar)
         if(!is.null(folder)){
@@ -49,7 +48,6 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,ne
          
             }
             setTxtProgressBar(pb, (i-1)*length(args)+j)
-            cat("\n")
         }
     }
     close(pb)
