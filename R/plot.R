@@ -3,8 +3,10 @@
 
 #' @export
 
-plot.argostrack <- function(object){
-
+plot.argostrack <- function(object,bg_style="none"){
+    if(bs_style=="simple"){
+        
+    }
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
@@ -19,10 +21,30 @@ plot.argostrack <- function(object){
 
     
     layout(matrix(c(1,1,2,3),ncol=2))
-    plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
-         xlab = expression(paste("Longitude (",degree,")",sep="")),
-         ylab = expression(paste("Latitude (",degree,")",sep="")))
-    lines(esttrack[2,],esttrack[1,])
+    if(bg_style=="simple"){
+        plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
+             xlab = expression(paste("Longitude (",degree,")",sep="")),
+             ylab = expression(paste("Latitude (",degree,")",sep="")))
+        lines(esttrack[2,],esttrack[1,])
+    }else if(bg_style=="pbs"){
+        require(PBSmapping)
+        data('worldLLhigh',package="PBSmapping")
+        xrng <- 360 + c(min(obs[2,])-0.2, max(obs[2,])+0.2)
+        yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
+        plot(NA, xlim=xrng, ylim=yrng,asp=cos((mean(yrng) * pi) / 180),
+             xlab = expression(paste("Longitude (",degree,")",sep="")),
+             ylab = expression(paste("Latitude (",degree,")",sep="")))
+        # Need faster way to plot the polygons
+        invisible(sapply(unique(worldLLhigh$PID),function(x){
+            polygon(worldLLhigh$X[worldLLhigh$PID==x],worldLLhigh$Y[worldLLhigh$PID==x],col=grey(0.8),border=NA)
+        }))
+        box()
+        lines(360+obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
+        lines(360+esttrack[2,],esttrack[1,])
+
+    }else{
+        stop("Background style is not valid.")
+    }
 
     plot(dates,obs[2,],pch=16,col="grey",
          xlab = "Date",
