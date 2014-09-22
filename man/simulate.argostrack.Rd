@@ -3,10 +3,15 @@
 \alias{simulate.argostrack}
 \title{Simulate a new track from Argos data}
 \usage{
-\method{simulate}{argostrack}(object)
+\method{simulate}{argostrack}(object, locationclass = NULL,
+  fixstates = FALSE)
 }
 \arguments{
 \item{object}{An argostrack object}
+
+\item{locationclass}{Use other location classes than the object}
+
+\item{fixstates}{Use the states from object}
 }
 \description{
 Simulate a new track from Argos data
