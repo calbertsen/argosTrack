@@ -21,11 +21,19 @@ res<-array(dim=c(2,length(dt)))
 #' @param object Argostrack object
 #' @param locationclass The location classes of the track
 
-simStates <- function(object){
+simStates <- function(object,newpar=NULL){
     if(!class(object)=="argostrack"){
         stop("Object must be of class argostrack")
     }
-    parl <- object$tmb_object$env$parList(object$optimization$par)
+    if(is.null(newpar)){
+        parUse <- object$optimization$par
+    }else{
+        if(length(newpar)!=length(object$optimization$par)){
+            stop("Parameter vector must be the same length as the parameter vector from the TMB object.")
+        }
+        parUse <- newpar
+    }
+    parl <- object$tmb_object$env$parList(parUse)
     beta <- exp(parl$logbeta)
     logSdState <- parl$logSdState
     gamma <- parl$gamma

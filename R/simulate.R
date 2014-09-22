@@ -6,13 +6,13 @@
 
 #'@export
 
-simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE){
+simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE,newpar=NULL){
     sample <- residuals(object)
     qualOrig <- object$locationclass
     if(fixstates){
         sts <- object$positions
     }else{
-        sts <- simStates(object)
+        sts <- simStates(object,newpar)
     }
     numSam <- 1:dim(sample)[2]
     if(is.null(locationclass)){

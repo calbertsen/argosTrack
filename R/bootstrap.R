@@ -2,15 +2,17 @@
 #' @export
 bootstrap <- function(object,...) UseMethod("bootstrap")
 #' @export
-bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL){
+bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,newpar=NULL){
     
     simFits <- list()
     mse <- array(dim=c(2,n,length(args)))
     convergence <- array(dim=c(2,n,length(args)))
     messages <- array(dim=c(2,n,length(args)))
 
+    pb <- txtProgressBar(min = 0, max = n*length(args), style = 3)
+    cat("\n")
     for(i in 1:n){
-        obs <- simulate(object,locationclass=locationclass)
+        obs <- simulate(object,locationclass=locationclass,newpar=newpar)
         if(!is.null(folder)){
             pth <- strsplit(folder,"/")[[1]]
             save(obs,
@@ -37,18 +39,21 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL){
                 messages[,i,j] <- fit$optimization$message
                 simFits[[i]][[j]] <- fit
             },silent=TRUE)
+            if(!is.null(folder)){
+                pth <- strsplit(folder,"/")[[1]]
+                save(mse,simFits,convergence,
+                     file=paste(c(pth,
+                         paste0("bootstrap_result",".Rdata")),
+                         collapse="/")
+                     )
+         
+            }
+            setTxtProgressBar(pb, (i-1)*length(args)+j)
+            cat("\n")
         }
     }
+    close(pb)
 
-    if(!is.null(folder)){
-        pth <- strsplit(folder,"/")[[1]]
-        save(mse,simFits,
-             file=paste(c(pth,
-                 paste0("bootstrap_result",".Rdata")),
-                 collapse="/")
-             )
-
-    }
     dimnames(mse) <- list(c("latitude","longitude"),
                           NULL,
                           names(args)
@@ -58,5 +63,17 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL){
     res$mse <- mse
     res$convergence <- convergence
     res$messages <- messages
+
+    if(!is.null(folder)){
+        pth <- strsplit(folder,"/")[[1]]
+        save(res,simFits,
+             file=paste(c(pth,
+                 paste0("bootstrap_result",".Rdata")),
+                 collapse="/")
+             )
+         
+    }
+
+    
     return(res)
 }

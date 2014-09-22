@@ -33,7 +33,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
     dates_in <- dates
     if(is.numeric(dates)){
-        # Should make sure it is time differences
+        dates <- c(1,diff(dates))
 
     }else if(is.character(dates)){
         dates <- as.POSIXct(dates)
@@ -52,11 +52,20 @@ argosTrack <- function(lon,lat,dates,locationclass,
         stop("Dates must be a numeric, character or POSIXct vector")
     }
 
+    # No negative time differences
+    if(any(dates<0)){
+        stop("Dates must be ordered. Differences can not be negative")
+    }
+    locclassfactor <- factor(locationclass,
+                            levels=argosClasses[argosClasses%in%locationclass])
+    if(any(is.na(locclassfactor))){
+        stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
+    }
+
     dat <- list(lon = lon,
                  lat = lat,
                  dt = dates,
-                 qual = factor(locationclass,
-                     levels=argosClasses[argosClasses%in%locationclass]),
+                 qual = locclassfactor,
                  include = as.numeric(include)
                  )
                    

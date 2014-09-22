@@ -4,9 +4,9 @@ R package for fitting movement models to Argos data
 
 ## Installing the package
 
-The package requires [`TMB`](http://www.tmb-project.org), `mvtnorm` to be installed.
+The package requires [`TMB`](http://www.tmb-project.org) and `mvtnorm` to be installed.
 
-To install the package from Github use
+To install the package from GitHub use
 
 ```
 library(devtools)
@@ -20,5 +20,5 @@ install_github("argosTrack","calbertsen")
 - Add example
 - Add better documentation
 - Add a vignette
-- Handle numeric date input in argosTrack
+- Add background to map
 - Ensure bootstrap is called with a list of (lists of) arguments for fitting
