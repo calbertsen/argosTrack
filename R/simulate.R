@@ -8,6 +8,7 @@
 
 simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE){
     sample <- residuals(object)
+    qualOrig <- object$locationclass
     if(fixstates){
         sts <- object$positions
     }else{
@@ -21,7 +22,7 @@ simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE){
     }
     res <- array(dim=c(2,length(qual)))
     for(i in 1:dim(res)[2]){
-        samnum <- sample(numSam[qual==qual[i]],1)
+        samnum <- sample(numSam[qualOrig==qual[i]],1)
         err <- sample(c(-1,1),2,replace=TRUE,prob=c(0.5,0.5))*sample[,samnum]
         res[,i] <- sts$mu[,i]+err
     }
@@ -33,7 +34,7 @@ simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE){
                  "position" = sts$mu,
                  "observation" = res,
                  "dates" = object$dates,
-                 "locationclass" = object$locationclass
+                 "locationclass" = factor(qual)
                  )
 
     return(outp)
