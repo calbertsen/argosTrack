@@ -10,7 +10,7 @@ To install the package from Github use
 
 ```
 library(devtools)
-install_github("calbertsen","argosTrack")
+install_github("argosTrack","calbertsen")
 ```
 
 ## To do:
