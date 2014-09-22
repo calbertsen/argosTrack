@@ -10,7 +10,7 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL){
     messages <- array(dim=c(2,n,length(args)))
 
     for(i in 1:n){
-        obs <- simulate(object,locationclass)
+        obs <- simulate(object,locationclass=locationclass)
         if(!is.null(folder)){
             pth <- strsplit(folder,"/")[[1]]
             save(obs,
