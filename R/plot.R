@@ -24,7 +24,8 @@ plot.argostrack <- function(object,bg_style="none"){
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         lines(esttrack[2,],esttrack[1,])
-    }else if(bg_style=="pbs"){
+        
+    }else if(bg_style=="pbs"){ ## Test for faster method
         require(PBSmapping)
         data('worldLLhigh',package="PBSmapping")
         xrng <- 360 + c(min(obs[2,])-0.2, max(obs[2,])+0.2)
@@ -33,13 +34,16 @@ plot.argostrack <- function(object,bg_style="none"){
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         # Need faster way to plot the polygons
-        invisible(sapply(unique(worldLLhigh$PID),function(x){
-            polygon(worldLLhigh$X[worldLLhigh$PID==x],worldLLhigh$Y[worldLLhigh$PID==x],col=grey(0.8),border=NA)
+        polys <- split(worldLLhigh,factor(worldLLhigh$PID))
+        invisible(lapply(polys,function(x){
+            polygon(x$X,x$Y,col=grey(0.8),border=NA)
         }))
         box()
         lines(360+obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
         lines(360+esttrack[2,],esttrack[1,])
 
+
+        
     }else{
         stop("Background style is not valid.")
     }
