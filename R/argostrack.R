@@ -31,6 +31,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
+
+    if(is.factor(dates)){
+        dates <- as.character(dates)
+    }
+    
     dates_in <- dates
     if(is.numeric(dates)){
         dates <- c(1,diff(dates))
@@ -49,7 +54,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                                 )
                    )
     }else{
-        stop("Dates must be a numeric, character or POSIXct vector")
+        stop("Dates must be a factor, numeric, character or POSIXct vector")
     }
 
     # No negative time differences
