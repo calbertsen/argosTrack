@@ -4,9 +4,7 @@
 #' @export
 
 plot.argostrack <- function(object,bg_style="none"){
-    if(bs_style=="simple"){
-        
-    }
+
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
@@ -21,7 +19,7 @@ plot.argostrack <- function(object,bg_style="none"){
 
     
     layout(matrix(c(1,1,2,3),ncol=2))
-    if(bg_style=="simple"){
+    if(bg_style=="none"){
         plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
