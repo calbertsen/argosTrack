@@ -42,7 +42,7 @@ plot.argostrack <- function(object){
 }
 
 #' @export
-plot.argostrack_bootstrap <- function(object, names = NULL){
+plot.argostrack_bootstrap <- function(object,... ){ #names = NULL,...){
 
     msearray <- object$mse
     pdatlat <- data.frame(V1 = object$mse[1,,1])
@@ -61,15 +61,15 @@ plot.argostrack_bootstrap <- function(object, names = NULL){
             colnames(pdatlon) <- dnam[[3]]
         }
     }
-    if(!is.null(names)){
-        colnames(pdatlat) <- names
-        colnames(pdatlon) <- names
-    }
+    #if(!is.null(names)){
+    #    colnames(pdatlat) <- names
+    #    colnames(pdatlon) <- names
+    #}
 
     layout(matrix(c(1,2),nrow=1))
     
     boxplot(pdatlon,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")))
+            ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")),...)
     boxplot(pdatlat,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")))
+            ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")),...)
 }
