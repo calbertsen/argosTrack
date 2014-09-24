@@ -71,5 +71,5 @@ plot.argostrack_bootstrap <- function(object, names = NULL){
     boxplot(pdatlon,na.rm=TRUE,main=NULL,
             ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")))
     boxplot(pdatlat,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")))
+            ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")))
 }
