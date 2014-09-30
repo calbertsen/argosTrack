@@ -27,7 +27,7 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE){
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         lines(esttrack[2,],esttrack[1,])
         
-    }else if(bg_style=="pbs"){ ## Test for faster method
+    }else if(bg_style=="pbs"){ 
         require(PBSmapping)
         data('worldLLhigh',package="PBSmapping")
         xrng <- 360 + c(min(obs[2,])-0.2, max(obs[2,])+0.2)
