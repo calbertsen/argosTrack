@@ -21,7 +21,12 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE){
         layout(matrix(c(1,1,2,3),ncol=2))
 
     if(bg_style=="none"){
+        xrng <- 360 + c(min(obs[2,])-0.2, max(obs[2,])+0.2)
+        yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
+        
         plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
+             xlim=xrng,
+             ylim=yrng,
              asp=cos((mean(yrng) * pi) / 180),
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
