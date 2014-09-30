@@ -3,7 +3,7 @@
 
 #' @export
 
-plot.argostrack <- function(object){
+plot.argostrack <- function(object,bg_style="none",only_map = FALSE){
 
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
@@ -17,32 +17,59 @@ plot.argostrack <- function(object){
         dates <- as.POSIXct(dates)      
     }
 
-    
-    layout(matrix(c(1,1,2,3),ncol=2))
-    plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
-         xlab = expression(paste("Longitude (",degree,")",sep="")),
-         ylab = expression(paste("Latitude (",degree,")",sep="")))
-    lines(esttrack[2,],esttrack[1,])
+    if(!only_map)
+        layout(matrix(c(1,1,2,3),ncol=2))
 
-    plot(dates,obs[2,],pch=16,col="grey",
-         xlab = "Date",
-         ylab =  expression(paste("Longitude (",degree,")",sep="")))
-    lines(dates[dt>0],esttrack[2,])
-    lines(dates[dt>0],esttrack[2,]+2*sdtrack[2,],lty=3)
-    lines(dates[dt>0],esttrack[2,]-2*sdtrack[2,],lty=3)
+    if(bg_style=="none"){
+        plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
+             asp=cos((mean(yrng) * pi) / 180),
+             xlab = expression(paste("Longitude (",degree,")",sep="")),
+             ylab = expression(paste("Latitude (",degree,")",sep="")))
+        lines(esttrack[2,],esttrack[1,])
+        
+    }else if(bg_style=="pbs"){ 
+        require(PBSmapping)
+        data('worldLLhigh',package="PBSmapping")
+        xrng <- 360 + c(min(obs[2,])-0.2, max(obs[2,])+0.2)
+        yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
+        plot(NA, xlim=xrng, ylim=yrng,asp=cos((mean(yrng) * pi) / 180),
+             xlab = expression(paste("Longitude (",degree,")",sep="")),
+             ylab = expression(paste("Latitude (",degree,")",sep="")))
+        # Need faster way to plot the polygons
+        polys <- split(worldLLhigh,factor(worldLLhigh$PID))
+        invisible(lapply(polys,function(x){
+            polygon(x$X,x$Y,col=grey(0.8),border=NA)
+        }))
+        box()
+        lines(360+obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
+        lines(360+esttrack[2,],esttrack[1,])
 
-    plot(dates,obs[1,],pch=16,col="grey",
-         xlab = "Date",
-         ylab =  expression(paste("Latitude (",degree,")",sep="")))
-    lines(dates[dt>0],esttrack[1,])
-    lines(dates[dt>0],esttrack[1,]+2*sdtrack[1,],lty=3)
-    lines(dates[dt>0],esttrack[1,]-2*sdtrack[1,],lty=3)
- 
+
+        
+    }else{
+        stop("Background style is not valid.")
+    }
+
+    if(!only_map){
+        plot(dates,obs[2,],pch=16,col="grey",
+             xlab = "Date",
+             ylab =  expression(paste("Longitude (",degree,")",sep="")))
+        lines(dates[dt>0],esttrack[2,])
+        lines(dates[dt>0],esttrack[2,]+2*sdtrack[2,],lty=3)
+        lines(dates[dt>0],esttrack[2,]-2*sdtrack[2,],lty=3)
+        
+        plot(dates,obs[1,],pch=16,col="grey",
+             xlab = "Date",
+             ylab =  expression(paste("Latitude (",degree,")",sep="")))
+        lines(dates[dt>0],esttrack[1,])
+        lines(dates[dt>0],esttrack[1,]+2*sdtrack[1,],lty=3)
+        lines(dates[dt>0],esttrack[1,]-2*sdtrack[1,],lty=3)
+    }
 
 }
 
 #' @export
-plot.argostrack_bootstrap <- function(object,... ){ #names = NULL,...){
+plot.argostrack_bootstrap <- function(object, vertical = TRUE, ...){
 
     msearray <- object$mse
     pdatlat <- data.frame(V1 = object$mse[1,,1])
@@ -66,8 +93,11 @@ plot.argostrack_bootstrap <- function(object,... ){ #names = NULL,...){
     #    colnames(pdatlon) <- names
     #}
 
-    layout(matrix(c(1,2),nrow=1))
-    
+    if(vertical){
+        layout(matrix(c(1,2),ncol=1))
+    }else{
+        layout(matrix(c(1,2),nrow=1))
+    }
     boxplot(pdatlon,na.rm=TRUE,main=NULL,
             ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")),...)
     boxplot(pdatlat,na.rm=TRUE,main=NULL,
