@@ -16,7 +16,6 @@ install_github("argosTrack","calbertsen")
 ## To do:
 
 - Implement summary methods
-- Add data
 - Add example
 - Add better documentation
 - Add a vignette

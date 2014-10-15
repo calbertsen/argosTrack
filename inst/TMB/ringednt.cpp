@@ -14,6 +14,10 @@ class MVT_tt: public MVNORM_t<Type>
   Type df;
 
 public:
+  MVT_tt()
+    : MVNORM_t<Type>()
+  {
+  };
   MVT_tt(Type df_)
     : MVNORM_t<Type>()
   {
@@ -77,11 +81,24 @@ Type objective_function<Type>::operator() ()
   Type nll = 0.0;
 
   MVNORM_t<Type> nll_dist;//(df(0));
-  MVT_tt<Type> nll_dist_obs(df(1));
+  vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
   matrix<Type> cov(4,4);
   vector<Type> state(4);
   matrix<Type> covObs(2,2);
   vector<Type> obs(2);
+
+  //Set up covariance matrix for observations
+  for(int i = 0; i < nll_dist_obs.size(); ++i){
+    covObs.setZero();
+    covObs(0,0) = varObs(0,i);
+    covObs(1,1) = varObs(1,i);
+    covObs(1,0) = 0.0; 
+    covObs(0,1) = covObs(1,0);
+    
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,df(1));
+
+  }
+
 
   int c = 0;
   
@@ -153,7 +170,7 @@ Type objective_function<Type>::operator() ()
     obs(1) = lon(i)-mu(1,stateNum);
     
     //Set up covariance matrix
-    covObs.setZero();
+    /*covObs.setZero();
     covObs(0,0) = varObs(0,qual(i));
     covObs(1,1) = varObs(1,qual(i));
     covObs(1,0) = 0.0; 
@@ -161,9 +178,9 @@ Type objective_function<Type>::operator() ()
     
 
     nll_dist_obs.setSigma(covObs);
-
+    */
     //if(include(i)==1){
-	nll += nll_dist_obs(obs);
+    nll += nll_dist_obs(qual(i))(obs);
 	//}
   }
 

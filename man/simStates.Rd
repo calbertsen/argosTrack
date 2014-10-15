@@ -3,7 +3,7 @@
 \alias{simStates}
 \title{Simulate states given an argostrack object}
 \usage{
-simStates(object)
+simStates(object, newpar = NULL)
 }
 \arguments{
 \item{object}{Argostrack object}
