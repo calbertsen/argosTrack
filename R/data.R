@@ -28,3 +28,17 @@
 #' }
 #' @source Fisheries and Oceans Canada
 "subadult_ringed_seal"
+
+
+#' World shorelines in high resolution
+#'
+#' @format A list of 145101 matrices each defining the longitude and latitude of a shoreline polygon. The polygons define the boundary between land and ocean, except Antarctica, and the boundary between Antarctica grounding-line and ocean. 
+#' The longitudes are between -180 and 180 degrees East, while the latitudes are between -90 and 90 degrees North.
+#' @source A Global Self-consistent, Hierarchical, High-resolution Geography Database \url{http://www.soest.hawaii.edu/pwessel/gshhg/index.html}
+"worldShorelines"
+
+#' #' Area of world shoreline polygons in high resolution
+#'
+#' @format A vector of length 145101 with areas of the World shoreline data polygons in the same order.
+#' @source A Global Self-consistent, Hierarchical, High-resolution Geography Database \url{http://www.soest.hawaii.edu/pwessel/gshhg/index.html}
+"worldShorelinesArea"
