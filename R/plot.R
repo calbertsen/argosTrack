@@ -32,7 +32,7 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 10
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         lines(esttrack[2,],esttrack[1,])
         
-    }else if(bg_style=="map" || bg_style == "pbs"){ 
+    }else if(bg_style=="map"){ 
         data('worldShorelines',package="argosTrack")
         data('worldShorelinesArea',package="argosTrack")
         xrng <- c(min(obs[2,])-0.2, max(obs[2,])+0.2)
