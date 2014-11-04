@@ -27,7 +27,7 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 10
         plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
              xlim=xrng,
              ylim=yrng,
-             asp=cos((mean(yrng) * pi) / 180),
+             asp=1/cos((mean(yrng) * pi) / 180),
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         lines(esttrack[2,],esttrack[1,])
@@ -37,7 +37,7 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 10
         data('worldShorelinesArea',package="argosTrack")
         xrng <- c(min(obs[2,])-0.2, max(obs[2,])+0.2)
         yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
-        plot(NA, xlim=xrng, ylim=yrng,asp=cos((mean(yrng) * pi) / 180),
+        plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         # Need faster way to plot the polygons
