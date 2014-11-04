@@ -1,7 +1,7 @@
 
 #' @export
 
-summary.argostrack <- function(object){
+summary.argostrack <- function(object, ...){
 	npar <- length(object$optimization$par)
 	logLik <- object$optimization$objective
 	conv <- object$optimization$convergence == 0
@@ -20,7 +20,7 @@ summary.argostrack <- function(object){
 }
 #' @export
 
-summary.argostrack_bootstrap <- function(object){
+summary.argostrack_bootstrap <- function(object, ...){
 	convUse <- object$convergence
 	convUse[is.na(convUse)] <- 1
     res <- list(mseLatitude = apply(object$mse,3,function(x)summary(x[1,])),

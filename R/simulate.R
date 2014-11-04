@@ -1,4 +1,8 @@
 
+#' @export
+simulate <- function(object,...) UseMethod("simulate")
+
+
 #' Simulate a new track from Argos data
 #' @param object An argostrack object
 #' @param locationclass Use other location classes than the object
@@ -6,7 +10,7 @@
 
 #'@export
 
-simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE,newpar=NULL){
+simulate.argostrack <- function(object,locationclass=NULL,fixstates=FALSE,newpar=NULL, ...){
     sample <- residuals(object)
     qualOrig <- object$locationclass
     if(fixstates){

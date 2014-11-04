@@ -4,7 +4,7 @@
 \title{Simulate a new track from Argos data}
 \usage{
 \method{simulate}{argostrack}(object, locationclass = NULL,
-  fixstates = FALSE, newpar = NULL)
+  fixstates = FALSE, newpar = NULL, ...)
 }
 \arguments{
 \item{object}{An argostrack object}

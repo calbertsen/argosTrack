@@ -2,36 +2,36 @@
 
 #' @export
 
-print.argostrack <- function(object){
+print.argostrack <- function(x, ...){
     cat("Time to estimate:\n")
-    print(unname(object$estimation_time[3]))
+    print(unname(x$estimation_time[3]))
     cat("\nOptimization result:\n")
-    print(object$optimization)
+    print(x$optimization)
 }
 #' @export
 
-print.argostrack_bootstrap <- function(object){
-    print(object$mse)
+print.argostrack_bootstrap <- function(x, ...){
+    print(x$mse)
 }
 
 #' @export
 
-print.summary_argostrack_bootstrap <- function(object){
+print.summary_argostrack_bootstrap <- function(x, ...){
 	cat("MSE in latitude direction:\n\n")
-	print(object$mseLatitude)
+	print(x$mseLatitude)
 	cat("\nMSE in longitude direction:\n\n")
-	print(object$mseLongitude)
+	print(x$mseLongitude)
 	cat("Proportion converged:\n\n")
-	print(apply(object$converged,2,function(x)x/sum(x)))
+	print(apply(x$converged,2,function(x)x/sum(x)))
 }
 
 #' @export
-print.summary_argostrack <- function(object){
+print.summary_argostrack <- function(x, ...){
 	cat("Fitted track to Argos data\n\n")
-	cat(paste(ifelse(object$converged,"Converged","Not converged"),"with a negative log likelihood of",round(sr$nlogLik,3),"\n\n"))
-	cat(paste("Number of parameters:",object$numpar,"\n\n"))
-	cat(paste("Number of observations:",object$nobs,"\n\n"))
+	cat(paste(ifelse(x$converged,"Converged","Not converged"),"with a negative log likelihood of",round(x$nlogLik,3),"\n\n"))
+	cat(paste("Number of parameters:",x$numpar,"\n\n"))
+	cat(paste("Number of observations:",x$nobs,"\n\n"))
 	cat("Location classes:\n\n")
-	print(object$locationclasses)
+	print(x$locationclasses)
 
 }

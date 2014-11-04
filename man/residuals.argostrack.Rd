@@ -3,7 +3,7 @@
 \alias{residuals.argostrack}
 \title{Extract model residuals}
 \usage{
-\method{residuals}{argostrack}(object)
+\method{residuals}{argostrack}(object, ...)
 }
 \description{
 Extract model residuals

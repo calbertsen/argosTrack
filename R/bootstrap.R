@@ -2,7 +2,7 @@
 #' @export
 bootstrap <- function(object,...) UseMethod("bootstrap")
 #' @export
-bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,newpar=NULL){
+bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,newpar=NULL, ...){
     
     simFits <- list()
     mse <- array(dim=c(2,n,length(args)))

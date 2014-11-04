@@ -3,8 +3,8 @@
 
 #' @export
 
-plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 0.01){
-
+plot.argostrack <- function(x,bg_style="none",only_map = FALSE,minArea = 0.01, ...){
+    object <- x
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
@@ -71,8 +71,8 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 0.
 }
 
 #' @export
-plot.argostrack_bootstrap <- function(object, vertical = TRUE, ...){
-
+plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
+    object <- x
     msearray <- object$mse
     pdatlat <- data.frame(V1 = object$mse[1,,1])
     pdatlon <- data.frame(V1 = object$mse[2,,1])
