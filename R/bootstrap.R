@@ -56,6 +56,7 @@ bootstrap.argostrack <- function(object,args,n,folder=NULL,locationclass=NULL,ne
                           NULL,
                           names(args)
                           )
+    dimnames(convergence) <- dimnames(mse)
     res <- list()
     class(res) <- "argostrack_bootstrap"
     res$mse <- mse
