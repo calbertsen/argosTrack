@@ -42,7 +42,7 @@ plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 10
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         # Need faster way to plot the polygons
         invisible(lapply(worldShorelines[worldShorelinesArea>minArea],function(x){
-            polygon(x$X,x$Y,col=grey(0.8),border=NA)
+            polygon(x[,1],x[,2],col=grey(0.8),border=NA)
         }))
         box()
         lines(obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
