@@ -3,7 +3,7 @@
 
 #' @export
 
-plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 10){
+plot.argostrack <- function(object,bg_style="none",only_map = FALSE,minArea = 0.01){
 
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
