@@ -10,6 +10,7 @@
 #' @param include
 #' @param equalbetas
 #' @param fixgammas
+#' @param fixcorrection
 #' @param df
 #' @param errordistribution
 #' @param verbose Write maximum gradient components to the terminal?
@@ -25,6 +26,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        include = rep(TRUE,length(dates)),
                        equalbetas = TRUE,
                        fixgammas = TRUE,
+                       fixcorrection = FALSE,
                        df = 10,
                        errordistribution = "t",
                        verbose = TRUE){
@@ -67,6 +69,19 @@ argosTrack <- function(lon,lat,dates,locationclass,
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
 
+
+    logCorrect <- matrix(c(0.6507,0.8231,
+                           2.3432,2.0532,
+                           3.8514,2.9602,
+                           3.8280,3.0463,
+                           4.4417,3.6951,
+                           5.5714,5.5149),
+                         nrow=2,
+                         ncol=length(argosClasses)-1)
+    if(!fixcorrection)
+        logCorrect <- 0*logCorrect
+
+    
     dat <- list(lon = lon,
                  lat = lat,
                  dt = dates,
@@ -78,9 +93,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     parameters <- list(logbeta = c(0,0),
                        logSdState = c(0,0),
                        logSdObs = c(0,0),
-                       logCorrection = matrix(0,
-                           nrow=2,
-                           ncol=length(argosClasses)-1),
+                       logCorrection = logCorrect,
                        gamma = c(0,0),
                        mu = matrix(0,
                            nrow=2,
@@ -108,6 +121,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     if(fixgammas){
         map$gamma <- factor(NA*parameters$gamma)
+    }
+    if(fixcorrection){
+        map$logCorrection <-  factor(NA*parameters$logCorrection)
     }
 
     if(errordistribution == "t"){
