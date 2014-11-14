@@ -3,7 +3,7 @@
 
 #' @export
 
-plot.argostrack <- function(x,bg_style="none",only_map = FALSE,minArea = 0.01, ...){
+plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
     object <- x
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
@@ -20,9 +20,15 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,minArea = 0.01, .
     if(!only_map)
         layout(matrix(c(1,1,2,3),ncol=2))
 
-    if(bg_style=="none"){
+    if(zoom_to_obs){
         xrng <- c(min(obs[2,])-0.2, max(obs[2,])+0.2)
         yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
+    }else{
+        xrng <- c(min(esttrack[2,])-0.2, max(esttrack[2,])+0.2)
+        yrng <- c(min(esttrack[1,])-0.2, max(esttrack[1,])+0.2)
+    }
+    
+    if(bg_style=="none"){
         
         plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
              xlim=xrng,
@@ -35,8 +41,6 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,minArea = 0.01, .
     }else if(bg_style=="map"){ 
         data('worldShorelines',package="argosTrack")
         data('worldShorelinesArea',package="argosTrack")
-        xrng <- c(min(obs[2,])-0.2, max(obs[2,])+0.2)
-        yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
         plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
