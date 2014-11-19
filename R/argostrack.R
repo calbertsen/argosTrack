@@ -31,7 +31,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        df = 10,
                        errordistribution = "t",
                        verbose = TRUE,
-                       timeunit = "min"){
+                       timeunit = "mins"){
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
