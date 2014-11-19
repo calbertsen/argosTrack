@@ -14,6 +14,7 @@
 #' @param df
 #' @param errordistribution
 #' @param verbose Write maximum gradient components to the terminal?
+#' @param timeunit
 
 #' @export
 
@@ -29,7 +30,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        fixcorrection = FALSE,
                        df = 10,
                        errordistribution = "t",
-                       verbose = TRUE){
+                       verbose = TRUE,
+                       timeunit = "min"){
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
@@ -46,13 +48,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
         dates <- as.POSIXct(dates)
         dates <- c(1,as.numeric(difftime(dates[(1+1):length(dates)],
                                          dates[1:(length(dates)-1)],
-                                         units="min")
+                                         units=timeunit)
                                 )
                    )
     }else if(class(dates)[1]=="POSIXct"){
         dates <- c(1,as.numeric(difftime(dates[(1+1):length(dates)],
                                          dates[1:(length(dates)-1)],
-                                         units="min")
+                                         units=timeunit)
                                 )
                    )
     }else{
