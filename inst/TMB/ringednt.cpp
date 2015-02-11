@@ -37,7 +37,7 @@ public:
   Type operator()(vector<Type> x){
     Type p = x.size();
     //Lange et al. 1989 http://www.jstor.org/stable/2290063
-    return CppAD::CondExpGe(df,Type(100),
+    return CppAD::CondExpGe(df,Type(1000),
 			    -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + x.size()*Type(log(sqrt(2.0*M_PI))),
 			    -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*this->logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+this->Quadform(x)/df));
 
@@ -97,7 +97,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,Type(2.0)+exp(df(i)));
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i)));
 
   }
 
@@ -185,7 +185,7 @@ Type objective_function<Type>::operator() ()
     nll += nll_dist_obs(qual(i))(obs);
 	//}
   }
-  vector<Type> dfs = Type(2.0)+exp(df);
+  vector<Type> dfs = exp(df);
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
