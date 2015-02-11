@@ -63,7 +63,7 @@ Type objective_function<Type>::operator() ()
   PARAMETER_MATRIX(mu); // Dim 2 x lon.size()
   PARAMETER_MATRIX(vel); // Dim 2 x lon.size()
 
-  PARAMETER_VECTOR(df);  //Length 2 - process,error
+  PARAMETER_VECTOR(df);  //Length as number of quality classes
 
   vector<Type> beta = exp(logbeta);
   vector<Type> varState = exp(Type(2.0)*logSdState);
@@ -95,7 +95,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,df(1));
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,df(i));
 
   }
 

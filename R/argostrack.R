@@ -102,8 +102,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(dat$lon[dat$dt>0])),
                        vel = matrix(0,
                            nrow=2,
-                           ncol=length(dat$lon[dat$dt>0])),
-                       df = c(1,1)*df
+                           ncol=length(dat$lon[dat$dt>0]))
                        )
 
     if(any(!include)){
@@ -114,10 +113,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            nrow=2,
                            ncol=length(argosClassUse)-1)
     }
+    if(length(df) < nlevels(dat$qual))
+        df <- c(df,rep(df[length(df)],nlevels(dat$qual)-length(df)))
+    parameters$df <- df
 
-
-    map <- list(df=factor(NA*parameters$df))
-
+    #map <- list(df=factor(NA*parameters$df))
+    map <- list()
+    
     if(equalbetas){
         map$logbeta <- factor(c(1,1))
     }
