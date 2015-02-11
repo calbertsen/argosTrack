@@ -186,6 +186,7 @@ Type objective_function<Type>::operator() ()
 
   ADREPORT(correction);
   ADREPORT(sdObs);
+  ADREPORT(df);
   return nll;
   
 }

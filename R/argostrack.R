@@ -32,7 +32,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
-                       nlminb.control=list(x.tol=1.5e-6,rel.tol=1e-8)){
+                       nlminb.control=list(x.tol=1.5e-4,rel.tol=1e-4)){
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
@@ -133,8 +133,20 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(errordistribution == "t"){
         usedll <- "ringednt"
+        numPrClass <- as.numeric(table(dat$qual[include]))
+        dfFac <- numeric(length(df))
+        dfFac[1] <- 1
+        for(qq in 2:lenth(dfFac)){
+            dfFac[qq] <- qq
+            if(numPrClass[qq] < 20)
+                dfFac[qq] <- dfFac[qq-1]
+        }
+        if(dfFac[1] < 20)
+            dfFac[1] <- dfFac[2]
+                
     }else if(errordistribution == "n"){
         usedll <- "ringednn"
+        map$df <- factor(NA*parameters$df)
     }else{
         stop("Invalid error distribution. Must be either n or t")
     }
