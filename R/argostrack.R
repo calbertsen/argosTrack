@@ -11,7 +11,7 @@
 #' @param equalbetas
 #' @param fixgammas
 #' @param fixcorrection
-#' @param df
+#' @param dfMap
 #' @param errordistribution
 #' @param verbose Write maximum gradient components to the terminal?
 #' @param timeunit
@@ -28,7 +28,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        equalbetas = TRUE,
                        fixgammas = TRUE,
                        fixcorrection = FALSE,
-                       df = 10,
+                       dfMap = NULL,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
@@ -114,12 +114,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            nrow=2,
                            ncol=length(argosClassUse)-1)
     }
-    if(length(df) < nlevels(dat$qual))
-        df <- c(df,rep(df[length(df)],nlevels(dat$qual)-length(df)))
-    if(length(df)>nlevels(dat$qual))
-        df <- df[1:nlevels(dat$qual)]
     
-    parameters$df <- log(df-2)
+    parameters$df <- df = rep(log(8),nlevels(dat$qual))
 
     #map <- list(df=factor(NA*parameters$df))
     map <- list()
@@ -136,18 +132,21 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(errordistribution == "t"){
         usedll <- "ringednt"
-        numPrClass <- as.numeric(table(dat$qual[include]))
-        dfFac <- numeric(length(df))
-        dfFac[1] <- 1
-        for(qq in 2:length(dfFac)){
-            dfFac[qq] <- qq
-            if(numPrClass[qq] < 20)
-                dfFac[qq] <- dfFac[qq-1]
-        }
-        if(numPrClass[1] < 20)
-            dfFac[1] <- dfFac[2]
-        print(dfFac)
-        map$df <- factor(dfFac)
+        if(is.null(dfMap)){
+            numPrClass <- as.numeric(table(dat$qual[include]))
+            dfMap <- numeric(length(parameters$df))
+            dfMap[1] <- 1
+            for(qq in 2:length(dfMap)){
+                dfMap[qq] <- qq
+                if(numPrClass[qq] < 20)
+                    dfMap[qq] <- dfMap[qq-1]
+            }
+            if(numPrClass[1] < 20)
+                dfMap[1] <- dfMap[2]
+            #print(dfMap)
+            if(!is.factor(dfMap)
+               dfMap <- factor(dfMap)
+            map$df <- dfMap
                 
     }else if(errordistribution == "n"){
         usedll <- "ringednn"
