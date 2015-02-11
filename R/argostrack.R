@@ -31,7 +31,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        df = 10,
                        errordistribution = "t",
                        verbose = TRUE,
-                       timeunit = "mins"){
+                       timeunit = "mins",
+                       nlminb.control = list(eval.max=2000,iter.max=1500)){
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
@@ -140,7 +141,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
 
-    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr))
+    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     srep <- summary(TMB::sdreport(obj))
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
