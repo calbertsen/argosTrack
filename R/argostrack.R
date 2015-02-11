@@ -115,7 +115,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(argosClassUse)-1)
     }
     
-    parameters$df <- df = rep(log(8),nlevels(dat$qual))
+    parameters$df <- rep(log(8),nlevels(dat$qual))
 
     #map <- list(df=factor(NA*parameters$df))
     map <- list()
