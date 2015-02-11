@@ -144,9 +144,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
             if(numPrClass[1] < 20)
                 dfMap[1] <- dfMap[2]
             #print(dfMap)
-            if(!is.factor(dfMap)
-               dfMap <- factor(dfMap)
-            map$df <- dfMap
+        }
+        if(!is.factor(dfMap))
+            dfMap <- factor(dfMap)
+        map$df <- dfMap
                 
     }else if(errordistribution == "n"){
         usedll <- "ringednn"
