@@ -136,7 +136,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
         numPrClass <- as.numeric(table(dat$qual[include]))
         dfFac <- numeric(length(df))
         dfFac[1] <- 1
-        for(qq in 2:lenth(dfFac)){
+        for(qq in 2:length(dfFac)){
             dfFac[qq] <- qq
             if(numPrClass[qq] < 20)
                 dfFac[qq] <- dfFac[qq-1]
