@@ -116,6 +116,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     if(length(df) < nlevels(dat$qual))
         df <- c(df,rep(df[length(df)],nlevels(dat$qual)-length(df)))
+    if(length(df)>nlevels(dat$qual))
+        df <- df[1:nlevels(dat$qual)]
+    
     parameters$df <- log(df-2)
 
     #map <- list(df=factor(NA*parameters$df))
@@ -143,8 +146,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
         }
         if(dfFac[1] < 20)
             dfFac[1] <- dfFac[2]
-
-        map$df <- factor(dfFac)
+        print(dfFac)
+        #map$df <- factor(dfFac)
                 
     }else if(errordistribution == "n"){
         usedll <- "ringednn"
