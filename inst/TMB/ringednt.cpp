@@ -37,10 +37,11 @@ public:
   Type operator()(vector<Type> x){
     Type p = x.size();
     //Lange et al. 1989 http://www.jstor.org/stable/2290063
-    return CppAD::CondExpGe(df,Type(1000),
-			    -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + x.size()*Type(log(sqrt(2.0*M_PI))),
-			    -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*this->logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+this->Quadform(x)/df));
-
+    Type tdens = -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*this->logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+this->Quadform(x)/df);
+    Type ndens = -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + p*Type(log(sqrt(2.0*M_PI)));
+    return CppAD::CondExpGe(df,Type(100.0),
+			    Type(100.0)/df*tdens + (Type(1.0)-Type(100.0)/df)*ndens,
+			    tdens);
   }
 };
 
