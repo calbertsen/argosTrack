@@ -28,6 +28,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        equalbetas = TRUE,
                        fixgammas = TRUE,
                        fixcorrection = FALSE,
+                       dfVals = NULL,
                        dfMap = NULL,
                        errordistribution = "t",
                        verbose = TRUE,
@@ -114,8 +115,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            nrow=2,
                            ncol=length(argosClassUse)-1)
     }
-    
-    parameters$df <- rep(log(8),nlevels(dat$qual))
+
+    if(!is.null(dfVals)){
+        parameters$df <- log(dfVals)
+    }else{
+        parameters$df <- rep(log(8),nlevels(dat$qual))
+    }
 
     #map <- list(df=factor(NA*parameters$df))
     map <- list()
