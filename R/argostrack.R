@@ -90,7 +90,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                  lat = lat,
                  dt = dates,
                  qual = locclassfactor,
-                 include = as.numeric(include)
+                 include = as.numeric(include),
+                minDf = 2.1
                  )
                    
 

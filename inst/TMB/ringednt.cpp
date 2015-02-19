@@ -56,6 +56,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(dt);
   DATA_FACTOR(qual); //Integers
   DATA_VECTOR(include);
+  DATA_SCALAR(minDf);
   PARAMETER_VECTOR(logbeta); //Length 2 (first lat then lon)
   PARAMETER_VECTOR(logSdState);
   PARAMETER_VECTOR(logSdObs); //length 2
@@ -98,7 +99,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+Type(2.1));
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf);
 
   }
 
