@@ -167,29 +167,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
 
-    parm <- obj$par[names(obj$par)!="df"]
-    paro <- obj$par[names(obj$par)=="df"]
-    grm <- function(par,df){
-        pp <- obj$par
-        pp[names(pp)!="df"] <- par
-        pp[names(pp)=="df"] <- df
-        obj$gr(pp)[names(pp)!="df"]
-    }
-    fnm <- function(par,df){
-        pp <- obj$par
-        pp[names(pp)!="df"] <- par
-        pp[names(pp)=="df"] <- df
-        obj$fn(pp)
-    }
-    fno <- function(par){
-        pp <- obj$env$last.par.best[-obj$env$random]
-        nlminb(pp[names(pp)!="df"],fnm,grm,control=nlminb.control,df=par)$objective
-    }
-    #low <- rep(-Inf,length(obj$par))
-    #low[names(obj$par)=="df"] <- log(2.5)
-    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
-    #esttime <- system.time(opt <- nlminb(paro,fno,control=nlminb.control,lower=rep(2.05,length(paro))))
 
+    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     
     srep <- TMB::summary.sdreport(TMB::sdreport(obj))
     track <- srep[rownames(srep)=="mu",]
@@ -202,9 +181,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    #res$positions <- expandMu(esttrack,dat$dt)
-    #res$positions_sd <- expandMu(sdtrack,dat$dt)
-    #rownames(res$positions) <- c("latitude","longitude")
+    res$positions <- expandMu(esttrack,dat$dt)
+    res$positions_sd <- expandMu(sdtrack,dat$dt)
+    rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime
     res$tmb_object <- obj
