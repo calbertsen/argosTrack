@@ -30,6 +30,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        fixcorrection = FALSE,
                        dfVals = NULL,
                        dfMap = NULL,
+                       minDf = 2.1,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
@@ -87,11 +88,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     
     dat <- list(lon = lon,
-                 lat = lat,
-                 dt = dates,
-                 qual = locclassfactor,
-                 include = as.numeric(include),
-                minDf = 2.1
+                lat = lat,
+                dt = dates,
+                qual = locclassfactor,
+                include = as.numeric(include),
+                minDf = minDf
                  )
                    
 

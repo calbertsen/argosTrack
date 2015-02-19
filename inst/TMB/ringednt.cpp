@@ -187,7 +187,7 @@ Type objective_function<Type>::operator() ()
     nll += nll_dist_obs(qual(i))(obs);
 	//}
   }
-  vector<Type> dfs = exp(df);
+  vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
