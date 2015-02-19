@@ -30,7 +30,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        fixcorrection = FALSE,
                        dfVals = NULL,
                        dfMap = NULL,
-                       minDf = 2.1,
+                       minDf = 3.0,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
@@ -187,11 +187,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     #low <- rep(-Inf,length(obj$par))
     #low[names(obj$par)=="df"] <- log(2.5)
-    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control,lower=low))
+    esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     #esttime <- system.time(opt <- nlminb(paro,fno,control=nlminb.control,lower=rep(2.05,length(paro))))
 
     
-    srep <- summary(TMB::sdreport(obj))
+    srep <- TMB::summary.sdreport(TMB::sdreport(obj))
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
     esttrack <- matrix(track[,1],nrow=2)
