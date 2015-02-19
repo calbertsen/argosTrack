@@ -98,7 +98,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i)));
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+Type(2.1));
 
   }
 
