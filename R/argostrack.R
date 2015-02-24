@@ -11,7 +11,7 @@
 #' @param equalbetas
 #' @param fixgammas
 #' @param fixcorrection
-#' @param df
+#' @param dfMap
 #' @param errordistribution
 #' @param verbose Write maximum gradient components to the terminal?
 #' @param timeunit
@@ -28,7 +28,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        equalbetas = TRUE,
                        fixgammas = TRUE,
                        fixcorrection = FALSE,
-                       df = 10,
+                       dfVals = NULL,
+                       dfMap = NULL,
+                       minDf = 3.0,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
@@ -86,10 +88,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     
     dat <- list(lon = lon,
-                 lat = lat,
-                 dt = dates,
-                 qual = locclassfactor,
-                 include = as.numeric(include)
+                lat = lat,
+                dt = dates,
+                qual = locclassfactor,
+                include = as.numeric(include),
+                minDf = minDf
                  )
                    
 
@@ -103,8 +106,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(dat$lon[dat$dt>0])),
                        vel = matrix(0,
                            nrow=2,
-                           ncol=length(dat$lon[dat$dt>0])),
-                       df = c(1,1)*df
+                           ncol=length(dat$lon[dat$dt>0]))
                        )
 
     if(any(!include)){
@@ -116,9 +118,15 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(argosClassUse)-1)
     }
 
+    if(!is.null(dfVals)){
+        parameters$df <- log(dfVals)
+    }else{
+        parameters$df <- rep(log(8),nlevels(dat$qual))
+    }
 
-    map <- list(df=factor(NA*parameters$df))
-
+    #map <- list(df=factor(NA*parameters$df))
+    map <- list()
+    
     if(equalbetas){
         map$logbeta <- factor(c(1,1))
     }
@@ -131,8 +139,26 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(errordistribution == "t"){
         usedll <- "ringednt"
+        if(is.null(dfMap)){
+            numPrClass <- as.numeric(table(dat$qual[include]))
+            dfMap <- numeric(length(parameters$df))
+            dfMap[1] <- 1
+            for(qq in 2:length(dfMap)){
+                dfMap[qq] <- qq
+                if(numPrClass[qq] < 20)
+                    dfMap[qq] <- dfMap[qq-1]
+            }
+            if(numPrClass[1] < 20)
+                dfMap[1] <- dfMap[2]
+            #print(dfMap)
+        }
+        if(!is.factor(dfMap))
+            dfMap <- factor(dfMap)
+        map$df <- dfMap
+                
     }else if(errordistribution == "n"){
         usedll <- "ringednn"
+        map$df <- factor(NA*parameters$df)
     }else{
         stop("Invalid error distribution. Must be either n or t")
     }
@@ -142,7 +168,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     obj$env$tracemgc <- verbose
 
     esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
-    srep <- summary(TMB::sdreport(obj))
+    
+    srep <- TMB::summary.sdreport(TMB::sdreport(obj))
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
     esttrack <- matrix(track[,1],nrow=2)
@@ -154,7 +181,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
     res$positions <- expandMu(esttrack,dat$dt)
-    #res$positions_sd <- expandMu(sdtrack,dat$dt)
+    res$positions_sd <- expandMu(sdtrack,dat$dt)
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime
