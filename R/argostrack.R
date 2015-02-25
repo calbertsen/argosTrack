@@ -34,7 +34,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        errordistribution = "t",
                        verbose = TRUE,
                        timeunit = "mins",
-                       nlminb.control = list(eval.max=2000,iter.max=1500)){
+                       nlminb.control = list(eval.max=2000,
+                           iter.max=1500,
+                           rel.tol=1e-3,
+                           x.tol=1.5e-2)){
     
 
     argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
