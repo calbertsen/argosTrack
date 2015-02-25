@@ -10,17 +10,5 @@ To install the package from GitHub use
 
 ```
 library(devtools)
-install_github("argosTrack","calbertsen")
+install_github("calbertsen/argosTrack")
 ```
-
-## To do:
-
-- Implement summary methods
-- Add example
-- Add better documentation
-- Add a vignette
-- Add background to map
-- Ensure bootstrap is called with a list of (lists of) arguments for fitting
-- New line after progress bar in `bootstrap`
-- `bootstrap` should be able to continue at the right number (if saved - how should number of simulations be handled?).
-- Use `file.path` instead of `paste` in `bootstrap`

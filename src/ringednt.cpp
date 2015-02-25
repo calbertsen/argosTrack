@@ -12,21 +12,31 @@ template <class Type>
 class MVT_tt: public MVNORM_t<Type>
 {
   Type df;
+  bool useNorm;
 
 public:
   MVT_tt()
     : MVNORM_t<Type>()
   {
+    useNorm = false;
   };
   MVT_tt(Type df_)
     : MVNORM_t<Type>()
   {
     df = df_;
+    useNorm = false;
   }
   MVT_tt(matrix<Type> Sigma_, Type df_)
     : MVNORM_t<Type>(Sigma_)
   {
     df = df_;
+    useNorm = false;
+  }
+  MVT_tt(matrix<Type> Sigma_, Type df_, bool useNorm_)
+    : MVNORM_t<Type>(Sigma_)
+  {
+    df = df_;
+    useNorm = useNorm_;
   }
 
   void setdf(Type df_){
@@ -39,9 +49,8 @@ public:
     //Lange et al. 1989 http://www.jstor.org/stable/2290063
     Type tdens = -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*this->logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+this->Quadform(x)/df);
     Type ndens = -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + p*Type(log(sqrt(2.0*M_PI)));
-    return tdens ; /*CppAD::CondExpGe(df,Type(100.0),
-			    Type(100.0)/df*tdens + (Type(1.0)-Type(100.0)/df)*ndens,
-			    tdens);*/
+
+    if(useNorm) return ndens; else return tdens;
   }
 };
 
@@ -57,6 +66,7 @@ Type objective_function<Type>::operator() ()
   DATA_FACTOR(qual); //Integers
   DATA_VECTOR(include);
   DATA_SCALAR(minDf);
+  DATA_INTEGER(modelCode);
   PARAMETER_VECTOR(logbeta); //Length 2 (first lat then lon)
   PARAMETER_VECTOR(logSdState);
   PARAMETER_VECTOR(logSdObs); //length 2
@@ -86,6 +96,7 @@ Type objective_function<Type>::operator() ()
 
   MVNORM_t<Type> nll_dist;//(df(0));
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
+
   matrix<Type> cov(4,4);
   vector<Type> state(4);
   matrix<Type> covObs(2,2);
@@ -98,8 +109,8 @@ Type objective_function<Type>::operator() ()
     covObs(1,1) = varObs(1,i);
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
-    
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf);
+    //ModelCode: 0: t; 1: norm
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf,modelCode);
 
   }
 

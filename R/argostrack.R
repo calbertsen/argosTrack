@@ -138,7 +138,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
 
     if(errordistribution == "t"){
-        usedll <- "ringednt"
+        dat$modelCode <- 0
         if(is.null(dfMap)){
             numPrClass <- as.numeric(table(dat$qual[include]))
             dfMap <- numeric(length(parameters$df))
@@ -157,13 +157,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$df <- dfMap
                 
     }else if(errordistribution == "n"){
-        usedll <- "ringednn"
+        dat$modelCode <- 1
         map$df <- factor(NA*parameters$df)
     }else{
         stop("Invalid error distribution. Must be either n or t")
     }
 
-    obj <- TMB::MakeADFun(dat,parameters,map,random=c("mu","vel"),DLL=usedll)
+    obj <- TMB::MakeADFun(dat,parameters,map,random=c("mu","vel"),DLL="argosTrack")
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
 
@@ -175,7 +175,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     esttrack <- matrix(track[,1],nrow=2)
     res <- list()
     class(res) <- "argostrack"
-
+    
+    res$errordistribution <- errordistribution
     res$dates <- dates_in
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
