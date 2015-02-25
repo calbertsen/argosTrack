@@ -3,7 +3,7 @@
 
 #' @export
 
-plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
+plot.argostrack <- function(x,only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
     object <- x
     srep <- object$sdreport_summary
     track <- srep[rownames(srep)=="mu",]
@@ -39,18 +39,18 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,z
         lines(esttrack[2,],esttrack[1,])
         
     }else if(bg_style=="map"){ 
-        data('worldShorelines',package="argosTrack")
-        data('worldShorelinesArea',package="argosTrack")
-        plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
-             xlab = expression(paste("Longitude (",degree,")",sep="")),
-             ylab = expression(paste("Latitude (",degree,")",sep="")))
+        #data('worldShorelines',package="argosTrack")
+        #data('worldShorelinesArea',package="argosTrack")
+        #plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
+        #     xlab = expression(paste("Longitude (",degree,")",sep="")),
+        #     ylab = expression(paste("Latitude (",degree,")",sep="")))
         # Need faster way to plot the polygons
-        invisible(lapply(worldShorelines[worldShorelinesArea>min_area],function(x){
-            polygon(x[,1],x[,2],col=grey(0.8),border=NA)
-        }))
-        box()
-        lines(obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
-        lines(esttrack[2,],esttrack[1,])
+        #invisible(lapply(worldShorelines[worldShorelinesArea>min_area],function(x){
+         #   polygon(x[,1],x[,2],col=grey(0.8),border=NA)
+        #}))
+        #box()
+        #lines(obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
+        #lines(esttrack[2,],esttrack[1,])
 
     }else{
         stop("Background style is not valid.")
