@@ -3,5 +3,5 @@
 
 .onLoad <- function(libname,pkgname){
     cat("Loading compiled code...\n")
-    library.dynam("argosTrack", pkg, lib)
+    library.dynam("argosTrack", pkgname, libname)
 }
