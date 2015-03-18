@@ -79,6 +79,9 @@ Type objective_function<Type>::operator() ()
 
   PARAMETER_VECTOR(df);  //Length as number of quality classes
 
+  // Number of data points to include
+  PARAMETER(numdata);
+
   vector<Type> beta = exp(logbeta);
   vector<Type> varState = exp(Type(2.0)*logSdState);
   matrix<Type> varObs(logCorrection.rows(),logCorrection.cols()+1);
@@ -195,7 +198,8 @@ Type objective_function<Type>::operator() ()
     nll_dist_obs.setSigma(covObs);
     */
     //if(include(i)==1){
-    nll += nll_dist_obs(qual(i))(obs);
+    Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
+    nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
 	//}
   }
   vector<Type> dfs = exp(df)+minDf;

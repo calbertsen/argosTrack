@@ -165,7 +165,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }else{
         stop("Invalid error distribution. Must be either n or t")
     }
-
+    parameters$numdata <- length(dat$lon)
+    map$numdata <- factor(NA)
     obj <- TMB::MakeADFun(dat,parameters,map,random=c("mu","vel"),DLL="argosTrack")
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
