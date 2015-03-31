@@ -52,8 +52,9 @@ residuals.argostrack <- function(object,type="smooth", ...){
             if(round(length(loopvals)-1-i,-2)==length(loopvals)-1-i)
                 cat(paste("Calculating residual",length(loopvals)-1-i+1,"of",length(loopvals),"...\n"))
         }
-        
-        return(object$observations -expandMu(predMu,newdat$dt))
+
+        res <- (object$observations-expandMu(predMu,newdat$dt))/expandMu(sdevMu,newdat$dt)
+        return(res)
 
     }else{
         error("Unknown residual type. Must be 'smooth' or 'onestep'") 
