@@ -14,7 +14,7 @@ residuals.argostrack <- function(object,type="smooth", ...){
         colnames(res) <- object$locationclass
         return(res)
     }else if(type=="onestep"){
-        sr <- fitobj$sdreport_summary
+        sr <- object$sdreport_summary
         oldmu <- matrix(sr[rownames(sr)=="mu",1],nrow=2)
         oldvel <- matrix(sr[rownames(sr)=="vel",1],nrow=2)
         newdat <- object$tmb_object$env$data
