@@ -46,14 +46,14 @@ residuals.argostrack <- function(object,type="smooth", ...){
                 outp <- capture.output(obj$fn(pars))
                 H <- diag(length(par0))*1e100    ## Do not account for fixed effect uncertainty (!)
                 outp <- capture.output(sdr <- sdreport(obj, par.fixed=pars, hessian.fixed=H))
-                predMu[,i] <- matrix(summary(sdr,"random")[,1],nrow=2)[,i+1]
-                sdevMu[,i] <- matrix(summary(sdr,"random")[,2],nrow=2)[,i+1]
+                predMu[,i] <- sdr[rownames(sdr)=="test",1] #matrix(summary(sdr,"random")[,1],nrow=2)[,i+1]
+                sdevMu[,i] <- sdr[rownames(sdr)=="test",2] #matrix(summary(sdr,"random")[,2],nrow=2)[,i+1]
             },silent=TRUE)
             if(round(length(loopvals)-1-i,-2)==length(loopvals)-1-i)
                 cat(paste("Calculating residual",length(loopvals)-1-i+1,"of",length(loopvals),"...\n"))
         }
 
-        res <- (object$observations-expandMu(predMu,newdat$dt))/expandMu(sdevMu,newdat$dt)
+        res <- list(predMu,sdevMu) #(object$observations-expandMu(predMu,newdat$dt))/expandMu(sdevMu,newdat$dt)
         return(res)
 
     }else{
