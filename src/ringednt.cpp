@@ -126,6 +126,7 @@ Type objective_function<Type>::operator() ()
   int stateNum = 0; 
 
   vector<Type> test(2);
+  test.setZero();
   
   for(int i = 0; i < dt.size(); ++i){
 
@@ -202,11 +203,9 @@ Type objective_function<Type>::operator() ()
     //if(include(i)==1){
     Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
     nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
-    //numdata counts from 1
-    //i counts from 0
-    //Hence the onestep is i+2
-    test(0) += CppAD::CondExpEq(Type(i+2),numdata,obs(0),Type(0));
-    test(1) += CppAD::CondExpEq(Type(i+2),numdata,obs(1),Type(0));
+
+    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0),Type(0));
+    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1),Type(0));
 	//}
   }
   vector<Type> dfs = exp(df)+minDf;
