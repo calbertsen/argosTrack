@@ -124,6 +124,8 @@ Type objective_function<Type>::operator() ()
 
   //
   int stateNum = 0; 
+
+  Type test = 0.0;
   
   for(int i = 0; i < dt.size(); ++i){
 
@@ -200,12 +202,14 @@ Type objective_function<Type>::operator() ()
     //if(include(i)==1){
     Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
     nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
+    test += CppAD::CondExpEq(Type(i),numdata,obs,Type(0));
 	//}
   }
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
+  ADREPORT(test);
   return nll;
   
 }
