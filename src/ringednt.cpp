@@ -125,7 +125,7 @@ Type objective_function<Type>::operator() ()
   //
   int stateNum = 0; 
 
-  Type test = 0.0;
+  vector<Type> test(2);
   
   for(int i = 0; i < dt.size(); ++i){
 
