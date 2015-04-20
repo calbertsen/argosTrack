@@ -1,3 +1,25 @@
+# Sample random effects
+rmvnorm <- function(n,obj,par=obj$env$par,update=TRUE){
+    # From TMB
+    updateCholesky <- function(L,H,t=0){
+        .Call("destructive_CHM_update",L,H,as.double(t),PACKAGE="Matrix")
+    }
+
+    h <- obj$env$spHess(par,random=TRUE)
+    L <- obj$env$L.created.by.newton
+    if(update)
+        updateCholesky(L,h) ## P %*% h %*% Pt = L %*% Lt
+
+    u <- matrix(rnorm(ncol(L)*n),ncol(L),n)
+    u <- Matrix::solve(L,u,system="Lt") ## Solve Lt^-1 %*% u
+    u <- Matrix::solve(L,u,system="Pt") ## Multiply Pt %*% u
+    as.matrix(u)
+}
+
+
+
+
+
 
 #' Extract model residuals
 #'
@@ -7,12 +29,22 @@
 
 
 # Implementation for argostrack object
+# Note: simulated and onestep are not actual residuals
 
-residuals.argostrack <- function(object,type="smooth", ...){
+residuals.argostrack <- function(object,type="smooth",seed=1, ...){
     if(type=="smooth"){
         res <- object$observations - object$positions
         colnames(res) <- object$locationclass
         return(res)
+    }else if(type=="simulated"){
+         set.seed(seed)
+         dimPos <- dim(object$positions)
+         reNames <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
+         estX <- object$sdreport_summary[rownames(object$sdreport_summary)==reNames,1]
+
+         Xrn <- rmvnorm(1,object$tmb_object,object$tmb_object$env$last.par.best,FALSE)+estX
+         res <- matrix(Xrn[names(estX)=="mu"],nrow=2)
+         return(res)
     }else if(type=="onestep"){
         sr <- object$sdreport_summary
         oldmu <- matrix(sr[rownames(sr)=="mu",1],nrow=2)
