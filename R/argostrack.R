@@ -175,7 +175,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(movementmodel == "rw"){
         map$vel <- factor(parameters$vel*NA)
-        map$beta <- factor(parameters$beta*NA)
+        map$logbeta <- factor(parameters$logbeta*NA)
         map$gamma <- factor(parameters$gamma*NA)
     }
 
