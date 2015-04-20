@@ -201,9 +201,11 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)vel.col(stateNum),
 			 (vector<Type>)vel.col(stateNum-1),
 			 dt(i),beta,gamma,varState);
+	std::cout << "Model code 0 evaluated" << std::endl;
 	break;
       default:
 	error("Movement model not implemented");
+	break;
       }
       
     }else{ //Or nothing else happens
