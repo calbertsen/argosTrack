@@ -13,6 +13,7 @@
 #' @param fixcorrection
 #' @param dfMap
 #' @param errordistribution
+#' @param modelcode
 #' @param verbose Write maximum gradient components to the terminal?
 #' @param timeunit
 
@@ -32,6 +33,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        dfMap = NULL,
                        minDf = 3.0,
                        errordistribution = "t",
+                       modelcode = "ctcrw",
                        verbose = TRUE,
                        timeunit = "mins",
                        nlminb.control = list(eval.max=2000,
@@ -76,7 +78,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-
+    movModNames <- c("ctcrw")
+    modelCodeNum <- as.numeric(factor(modelcode,levels=movModNames))[1]-1
+    if(is.na(modelCodeNum)
+       stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
 
     logCorrect <- matrix(c(0.6507,0.8231,
                            2.3432,2.0532,
@@ -95,8 +100,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 dt = dates,
                 qual = locclassfactor,
                 include = as.numeric(include),
-                minDf = minDf
-                 )
+                minDf = minDf,
+                modelCode = modelCodeNum
+                )
                    
 
     parameters <- list(logbeta = c(0,0),

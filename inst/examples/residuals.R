@@ -1,7 +1,6 @@
 
 library(devtools)
-install_local("./")
-
+install_github("calbertsen/argosTrack",ref="onestepresid")
 
 library(argosTrack)
 
