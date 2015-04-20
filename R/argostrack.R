@@ -79,7 +79,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
     movModNames <- c("ctcrw")
-    modelCodeNum <- as.numeric(factor(modelcode,levels=movModNames))[1]-1
+    modelCodeNum <- as.integer(factor(modelcode,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
 
