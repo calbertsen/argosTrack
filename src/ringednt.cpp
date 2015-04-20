@@ -194,7 +194,7 @@ Type objective_function<Type>::operator() ()
     }else if(dt(i)>0){ //Only at first time step
       //First states
 
-      switch(movModCode){
+      switch(modelCode){
       case 0:
 	nll += nll_ctcrw((vector<Type>)mu.col(stateNum),
 			 (vector<Type>)mu.col(stateNum-1),
