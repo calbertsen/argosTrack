@@ -109,6 +109,7 @@ Type objective_function<Type>::operator() ()
   DATA_FACTOR(qual); //Integers
   DATA_VECTOR(include);
   DATA_SCALAR(minDf);
+  DATA_INTEGER(moveModelCode);
   DATA_INTEGER(modelCode);
   PARAMETER_VECTOR(logbeta); //Length 2 (first lat then lon)
   PARAMETER_VECTOR(logSdState);
@@ -194,7 +195,7 @@ Type objective_function<Type>::operator() ()
     }else if(dt(i)>0){ //Only at first time step
       //First states
 
-      switch(modelCode){
+      switch(moveModelCode){
       case 0:
 	nll += nll_ctcrw((vector<Type>)mu.col(stateNum),
 			 (vector<Type>)mu.col(stateNum-1),
