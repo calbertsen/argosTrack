@@ -202,10 +202,10 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)vel.col(stateNum-1),
 			 dt(i),beta,gamma,varState);
 	break;
-      case default:
+      default:
 	error("Movement model not implemented");
-    
-
+      }
+      
     }else{ //Or nothing else happens
     }
 
