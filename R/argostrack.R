@@ -112,7 +112,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(dat$lon[dat$dt>0]))
                        )
 
-    if(any(!include)){
+    if(any(!include) || any(!argosClasses%in%locationclass)){
         argosClassUse <- argosClasses[argosClasses%in%locationclass[include]]
         dat$qual[!include] <- argosClassUse[1]
         dat$qual <- factor(dat$qual,levels=argosClassUse)

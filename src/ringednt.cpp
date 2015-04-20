@@ -204,8 +204,8 @@ Type objective_function<Type>::operator() ()
     Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
     nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
 
-    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0),Type(0));
-    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1),Type(0));
+    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0)/sdObs(0,qual(i)),Type(0));
+    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1)/sdObs(1,qual(i)),Type(0));
 	//}
   }
   vector<Type> dfs = exp(df)+minDf;

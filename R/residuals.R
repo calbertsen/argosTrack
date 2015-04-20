@@ -36,7 +36,7 @@ residuals.argostrack <- function(object,type="smooth", ...){
             pp
         }
 
-        loopvals <- (2:length(newdat$lon))[newdat$dt>0]
+        loopvals <- (1:length(newdat$lon))#[newdat$dt>0]
         predMu <- array(dim=c(2,length(loopvals)))
         sdevMu <- array(dim=c(2,length(loopvals)))
         for(i in (length(loopvals)-1):1){
@@ -45,7 +45,7 @@ residuals.argostrack <- function(object,type="smooth", ...){
             try({
                 outp <- capture.output(obj$fn(pars))
                 H <- diag(length(par0))*1e100    ## Do not account for fixed effect uncertainty (!)
-                outp <- capture.output(sdr <- sdreport(obj, par.fixed=pars, hessian.fixed=H))
+                outp <- capture.output(sdr <- TMB::summary.sdreport(TMB::sdreport(obj, par.fixed=pars, hessian.fixed=H)))
                 predMu[,i] <- sdr[rownames(sdr)=="test",1] #matrix(summary(sdr,"random")[,1],nrow=2)[,i+1]
                 sdevMu[,i] <- sdr[rownames(sdr)=="test",2] #matrix(summary(sdr,"random")[,2],nrow=2)[,i+1]
             },silent=TRUE)
