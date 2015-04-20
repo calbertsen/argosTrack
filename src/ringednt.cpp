@@ -60,6 +60,7 @@ public:
 
 // Define movement model functions
 
+// Continuous-time correlated random walk
 template<class Type>
 Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
 
@@ -81,6 +82,19 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
   cov(3,3) = varState(1)*(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1));
   cov(2,3) = varState(1)*(1.0-2.0*exp(-beta(1)*dt)+exp(-2.0*beta(1)*dt))/(2.0*pow(beta(1),2.0));
   cov(3,2) = cov(2,3);
+	
+  return MVNORM<Type>(cov)(state);
+}
+
+// Random walk
+template<class Type>
+Type nll_rw(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> varState){
+
+  vector<Type> state(2);
+  matrix<Type> cov(2,2);
+
+  state = mut-mutm;
+  cov.diagonal() = varState*sqrt(dt);
 	
   return MVNORM<Type>(cov)(state);
 }
@@ -197,12 +211,16 @@ Type objective_function<Type>::operator() ()
 
       switch(moveModelCode){
       case 0:
+	nll += nll_rw((vector<Type>)mu.col(stateNum),
+			 (vector<Type>)mu.col(stateNum-1),
+			 dt(i),varState);
+	break;
+      case 1:
 	nll += nll_ctcrw((vector<Type>)mu.col(stateNum),
 			 (vector<Type>)mu.col(stateNum-1),
 			 (vector<Type>)vel.col(stateNum),
 			 (vector<Type>)vel.col(stateNum-1),
 			 dt(i),beta,gamma,varState);
-	std::cout << "Model code 0 evaluated" << std::endl;
 	break;
       default:
 	error("Movement model not implemented");

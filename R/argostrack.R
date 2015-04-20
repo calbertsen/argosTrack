@@ -33,7 +33,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        dfMap = NULL,
                        minDf = 3.0,
                        errordistribution = "t",
-                       modelcode = "ctcrw",
+                       movementmodel = "ctcrw",
                        verbose = TRUE,
                        timeunit = "mins",
                        nlminb.control = list(eval.max=2000,
@@ -78,11 +78,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-    movModNames <- c("ctcrw")
-    modelCodeNum <- as.integer(factor(modelcode,levels=movModNames))[1]-1
+    movModNames <- c("rw","ctcrw")
+    modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
-    cat(modelCodeNum)
+
     logCorrect <- matrix(c(0.6507,0.8231,
                            2.3432,2.0532,
                            3.8514,2.9602,
@@ -171,6 +171,16 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }else{
         stop("Invalid error distribution. Must be either n or t")
     }
+
+
+    if(movementmodel == "rw"){
+        map$vel <- factor(parameters$vel*NA)
+        map$beta <- factor(parameters$beta*NA)
+        map$gamma <- factor(parameters$gamma*NA)
+    }
+
+
+
     parameters$numdata <- length(dat$lon)
     map$numdata <- factor(NA)
     obj <- TMB::MakeADFun(dat,parameters,map,random=c("mu","vel"),DLL="argosTrack")
