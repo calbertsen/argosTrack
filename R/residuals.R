@@ -29,19 +29,23 @@ rmvnorm <- function(n,obj,par=obj$env$par,update=TRUE){
 
 
 # Implementation for argostrack object
-# Note: simulated and onestep are not actual residuals
+# Note: smoothpred, simulated and onestep are not actual residuals
+# and only give predictions at the states (may be fewer than observations)
 
 residuals.argostrack <- function(object,type="smooth",seed=1, ...){
     if(type=="smooth"){
         res <- object$observations - object$positions
         colnames(res) <- object$locationclass
         return(res)
+    }else if(type=="smoothpred"){
+         res <- object$positions[,object$tmb_object$env$data$dt > 0]
+         return(res)
     }else if(type=="simulated"){
          set.seed(seed)
          dimPos <- dim(object$positions)
          reNames <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
          estX <- object$sdreport_summary[rownames(object$sdreport_summary)==reNames,1]
-
+         
          Xrn <- rmvnorm(1,object$tmb_object,object$tmb_object$env$last.par.best,FALSE)+estX
          res <- matrix(Xrn[names(estX)=="mu"],nrow=2)
          return(res)
@@ -76,7 +80,8 @@ residuals.argostrack <- function(object,type="smooth",seed=1, ...){
             pars <- getPars(j)
             try({
                 outp <- capture.output(obj$fn(pars))
-                H <- diag(length(par0))*1e100    ## Do not account for fixed effect uncertainty (!)
+                ## Do not account for fixed effect uncertainty (!)
+                H <- diag(length(par0))*1e100    
                 outp <- capture.output(sdr <- TMB::summary.sdreport(TMB::sdreport(obj, par.fixed=pars, hessian.fixed=H)))
                 predMu[,i] <- sdr[rownames(sdr)=="test",1] #matrix(summary(sdr,"random")[,1],nrow=2)[,i+1]
                 sdevMu[,i] <- sdr[rownames(sdr)=="test",2] #matrix(summary(sdr,"random")[,2],nrow=2)[,i+1]
