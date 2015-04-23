@@ -55,8 +55,10 @@ residuals.argostrack <- function(object,type="smooth",seed=1, ...){
         oldvel <- matrix(sr[rownames(sr)=="vel",1],nrow=2)
         newdat <- object$tmb_object$env$data
         newpar <- object$tmb_object$env$parList(object$optimization$par)
-        newpar$mu <- oldmu
-        newpar$vel <- oldvel
+        if(all(dim(oldmu)==dim(newpar$mu)))
+            newpar$mu <- oldmu
+        if(all(dim(oldvel)==dim(newpar$vel)))
+            newpar$vel <- oldvel
         rand <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
         newmap <- object$tmb_object$env$map
         newmap$numdata <- NULL
