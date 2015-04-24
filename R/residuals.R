@@ -44,7 +44,7 @@ residuals.argostrack <- function(object,type="smooth",seed=1, ...){
          set.seed(seed)
          dimPos <- dim(object$positions)
          reNames <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
-         estX <- object$sdreport_summary[rownames(object$sdreport_summary)==reNames,1]
+         estX <- object$sdreport_summary[rownames(object$sdreport_summary)%in%reNames,1]
          
          Xrn <- rmvnorm(1,object$tmb_object,object$tmb_object$env$last.par.best,FALSE)+estX
          res <- matrix(Xrn[names(estX)=="mu"],nrow=2)
