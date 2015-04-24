@@ -96,6 +96,6 @@ residuals.argostrack <- function(object,type="smooth",seed=1, ...){
         return(res)
 
     }else{
-        error("Unknown residual type. Must be 'smooth' or 'onestep'") 
+        stop("Unknown residual type. Must be 'smooth' or 'onestep'") 
     }
 }
