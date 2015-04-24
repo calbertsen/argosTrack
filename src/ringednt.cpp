@@ -67,10 +67,10 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
   vector<Type> state(4);
   matrix<Type> cov(4,4);
 
-  state(0) = mut(0)-(mutm(0)+veltm(0)*(1.0-exp(-beta(0)*dt/beta(0))));
+  state(0) = mut(0)-(mutm(0)+veltm(0)*(1.0-exp(-beta(0)*dt))/beta(0));
   state(1) = velt(0) - (gamma(0)+exp(-beta(0)*dt)*(veltm(0)-gamma(0)));
 
-  state(2) = mut(1)-(mutm(1)+veltm(1)*(1.0-exp(-beta(1)*dt/beta(1))));
+  state(2) = mut(1)-(mutm(1)+veltm(1)*(1.0-exp(-beta(1)*dt))/beta(1));
   state(3) = velt(1) - (gamma(1)+exp(-beta(1)*dt)*(veltm(1)-gamma(1)));
 
   cov(0,0) = varState(0)/pow(beta(0),2.0)*(dt-2.0*(1.0-exp(-beta(0)*dt))/beta(0)+(1.0-exp(-2.0*beta(0)*dt))/(2.0*beta(0)));
