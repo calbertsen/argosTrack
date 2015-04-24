@@ -148,11 +148,11 @@ Type objective_function<Type>::operator() ()
       //Set up state vector
       state.setZero();
       c = 0;
-      state(0) = mu(c,stateNum)-(mu(c,stateNum-1)+vel(c,stateNum-1)*(1.0-exp(-beta(c)*dt(i))/beta(c)));
+      state(0) = mu(c,stateNum)-(mu(c,stateNum-1)+vel(c,stateNum-1)*(1.0-exp(-beta(c)*dt(i)))/beta(c));
       state(1) = vel(c,stateNum) - (gamma(c)+exp(-beta(c)*dt(i))*(vel(c,stateNum-1)-gamma(c)));    
 
       c = 1;
-      state(2) = mu(c,stateNum)-(mu(c,stateNum-1)+vel(c,stateNum-1)*(1.0-exp(-beta(c)*dt(i))/beta(c)));
+      state(2) = mu(c,stateNum)-(mu(c,stateNum-1)+vel(c,stateNum-1)*(1.0-exp(-beta(c)*dt(i)))/beta(c));
       state(3) = vel(c,stateNum) - (gamma(c)+exp(-beta(c)*dt(i))*(vel(c,stateNum-1)-gamma(c)));    
  
       //Set up covariance matrix
