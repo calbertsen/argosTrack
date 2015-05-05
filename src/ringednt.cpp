@@ -66,6 +66,7 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
 
   vector<Type> state(4);
   matrix<Type> cov(4,4);
+  cov.setZero();
 
   state(0) = mut(0)-(mutm(0)+veltm(0)*(1.0-exp(-beta(0)*dt))/beta(0));
   state(1) = velt(0) - (gamma(0)+exp(-beta(0)*dt)*(veltm(0)-gamma(0)));
@@ -82,6 +83,47 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
   cov(3,3) = varState(1)*(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1));
   cov(2,3) = varState(1)*(1.0-2.0*exp(-beta(1)*dt)+exp(-2.0*beta(1)*dt))/(2.0*pow(beta(1),2.0));
   cov(3,2) = cov(2,3);
+	
+  return MVNORM<Type>(cov)(state);
+}
+
+// Mixed memory continuous-time correlated random walk
+template<class Type>
+Type nll_mmctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
+
+  vector<Type> state(6);
+  matrix<Type> cov(6,6);
+  cov.setZero();
+
+  state(0) = mut(0)-(mutm(0)+veltm(0)*(1.0-exp(-beta(0)*dt))/beta(0)+veltm(2)*(1.0-exp(-beta(2)*dt))/beta(2));
+  state(1) = velt(0) - (gamma(0)+exp(-beta(0)*dt)*(veltm(0)-gamma(0)));
+  state(2) = velt(2) - (gamma(2)+exp(-beta(2)*dt)*(veltm(2)-gamma(2)));
+
+  state(3) = mut(1)-(mutm(1)+veltm(1)*(1.0-exp(-beta(1)*dt))/beta(1)+veltm(3)*(1.0-exp(-beta(3)*dt))/beta(3));
+  state(4) = velt(1) - (gamma(1)+exp(-beta(1)*dt)*(veltm(1)-gamma(1)));
+  state(5) = velt(3) - (gamma(3)+exp(-beta(3)*dt)*(veltm(3)-gamma(3)));
+
+  cov(0,0) = varState(0)/pow(beta(0),2.0)*(dt-2.0*(1.0-exp(-beta(0)*dt))/beta(0)+(1.0-exp(-2.0*beta(0)*dt))/(2.0*beta(0)));
+  cov(0,0) += varState(2)/pow(beta(2),2.0)*(dt-2.0*(1.0-exp(-beta(2)*dt))/beta(2)+(1.0-exp(-2.0*beta(2)*dt))/(2.0*beta(2)));
+  cov(1,1) = varState(0)*(1.0-exp(-2.0*beta(0)*dt))/(2*beta(0));
+  cov(2,2) = varState(2)*(1.0-exp(-2.0*beta(2)*dt))/(2*beta(2));
+  cov(1,0) = varState(0)*(1.0-2.0*exp(-beta(0)*dt)+exp(-2.0*beta(0)*dt))/(2.0*pow(beta(0),2.0));
+  cov(0,1) = cov(1,0);
+  cov(2,0) = varState(2)*(1.0-2.0*exp(-beta(2)*dt)+exp(-2.0*beta(2)*dt))/(2.0*pow(beta(2),2.0));
+  cov(0,2) = cov(2,0);
+  cov(2,1) = 0.0;
+  cov(1,2) = cov(2,1);
+      
+  cov(3,3) = varState(1)/pow(beta(1),2.0)*(dt-2.0*(1.0-exp(-beta(1)*dt))/beta(1)+(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1)));
+  cov(3,3) += varState(3)/pow(beta(3),2.0)*(dt-2.0*(1.0-exp(-beta(3)*dt))/beta(3)+(1.0-exp(-2.0*beta(3)*dt))/(2.0*beta(3)));
+  cov(4,4) = varState(1)*(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1));
+  cov(5,5) = varState(3)*(1.0-exp(-2.0*beta(3)*dt))/(2.0*beta(3));
+  cov(3,4) = varState(1)*(1.0-2.0*exp(-beta(1)*dt)+exp(-2.0*beta(1)*dt))/(2.0*pow(beta(1),2.0));
+  cov(4,3) = cov(3,4);
+  cov(3,5) = varState(3)*(1.0-2.0*exp(-beta(3)*dt)+exp(-2.0*beta(3)*dt))/(2.0*pow(beta(3),2.0));
+  cov(5,3) = cov(3,5);
+  cov(4,5) = 0.0;
+  cov(5,4) = cov(4,5);
 	
   return MVNORM<Type>(cov)(state);
 }
@@ -141,6 +183,12 @@ Type objective_function<Type>::operator() ()
   PARAMETER(numdata);
 
   vector<Type> beta = exp(logbeta);
+
+  if(moveModelCode == 2){
+    beta(2) += beta(0);
+    beta(3) += beta(1);
+  }
+
   vector<Type> varState = exp(Type(2.0)*logSdState);
   matrix<Type> varObs(logCorrection.rows(),logCorrection.cols()+1);
   matrix<Type> correction = logCorrection.array().exp().matrix();
@@ -158,8 +206,8 @@ Type objective_function<Type>::operator() ()
   MVNORM_t<Type> nll_dist;//(df(0));
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
 
-  matrix<Type> cov(4,4);
-  vector<Type> state(4);
+  // matrix<Type> cov(4,4);
+  // vector<Type> state(4);
   matrix<Type> covObs(2,2);
   vector<Type> obs(2);
 
@@ -206,6 +254,12 @@ Type objective_function<Type>::operator() ()
       nll_dist.setSigma(cov);
       nll += nll_dist(state);
       */
+      //nll += -dnorm(vel(0,0),Type(0.0),Type(0.1),true);
+      //nll += -dnorm(vel(1,0),Type(0.0),Type(0.1),true);
+      if(moveModelCode == 2){
+	nll += -dnorm(vel(2,0),Type(0.0),Type(0.001),true);
+	nll += -dnorm(vel(3,0),Type(0.0),Type(0.001),true);
+      }
     }else if(dt(i)>0){ //Only at first time step
       //First states
 
@@ -221,6 +275,13 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)vel.col(stateNum),
 			 (vector<Type>)vel.col(stateNum-1),
 			 dt(i),beta,gamma,varState);
+	break;
+      case 2:
+	nll += nll_mmctcrw((vector<Type>)mu.col(stateNum),
+			   (vector<Type>)mu.col(stateNum-1),
+			   (vector<Type>)vel.col(stateNum),
+			   (vector<Type>)vel.col(stateNum-1),
+			   dt(i),beta,gamma,varState);
 	break;
       default:
 	error("Movement model not implemented");

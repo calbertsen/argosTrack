@@ -78,7 +78,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-    movModNames <- c("rw","ctcrw")
+    movModNames <- c("rw","ctcrw","mmctcrw")
     modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
@@ -103,21 +103,22 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 minDf = minDf,
                 moveModelCode = modelCodeNum
                 )
-                   
 
-    parameters <- list(logbeta = c(0,0),
-                       logSdState = c(0,0),
+    numStates <- ifelse(movementmodel == "mmctcrw",4,2)
+    
+    parameters <- list(logbeta = rep(0,numStates),
+                       logSdState = rep(0,numStates),
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
-                       gamma = c(0,0),
+                       gamma = rep(0,numStates),
                        mu = matrix(0,
                            nrow=2,
                            ncol=length(dat$lon[dat$dt>0])),
                        vel = matrix(0,
-                           nrow=2,
+                           nrow=numStates,
                            ncol=length(dat$lon[dat$dt>0]))
                        )
-
+ 
     if(any(!include) || any(!argosClasses%in%locationclass)){
         argosClassUse <- argosClasses[argosClasses%in%locationclass[include]]
         dat$qual[!include] <- argosClassUse[1]
@@ -137,7 +138,14 @@ argosTrack <- function(lon,lat,dates,locationclass,
     map <- list()
     
     if(equalbetas){
-        map$logbeta <- factor(c(1,1))
+        if(movementmodel == "mmctcrw"){
+            map$logbeta <- factor(c(1,1,2,2))
+        }else{
+             map$logbeta <- factor(c(1,1))
+         }
+    }
+    if(movementmodel == "mmctcrw"){
+        map$gamma <- factor(1,2,NA,NA)
     }
     if(fixgammas){
         map$gamma <- factor(NA*parameters$gamma)
