@@ -105,6 +105,7 @@ Type nll_mmctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<
 
   cov(0,0) = varState(0)/pow(beta(0),2.0)*(dt-2.0*(1.0-exp(-beta(0)*dt))/beta(0)+(1.0-exp(-2.0*beta(0)*dt))/(2.0*beta(0)));
   cov(0,0) += varState(2)/pow(beta(2),2.0)*(dt-2.0*(1.0-exp(-beta(2)*dt))/beta(2)+(1.0-exp(-2.0*beta(2)*dt))/(2.0*beta(2)));
+  cov(0,0) += dt*varState(4);
   cov(1,1) = varState(0)*(1.0-exp(-2.0*beta(0)*dt))/(2*beta(0));
   cov(2,2) = varState(2)*(1.0-exp(-2.0*beta(2)*dt))/(2*beta(2));
   cov(1,0) = varState(0)*(1.0-2.0*exp(-beta(0)*dt)+exp(-2.0*beta(0)*dt))/(2.0*pow(beta(0),2.0));
@@ -116,6 +117,7 @@ Type nll_mmctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<
       
   cov(3,3) = varState(1)/pow(beta(1),2.0)*(dt-2.0*(1.0-exp(-beta(1)*dt))/beta(1)+(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1)));
   cov(3,3) += varState(3)/pow(beta(3),2.0)*(dt-2.0*(1.0-exp(-beta(3)*dt))/beta(3)+(1.0-exp(-2.0*beta(3)*dt))/(2.0*beta(3)));
+  cov(3,3) += dt*varState(5);
   cov(4,4) = varState(1)*(1.0-exp(-2.0*beta(1)*dt))/(2.0*beta(1));
   cov(5,5) = varState(3)*(1.0-exp(-2.0*beta(3)*dt))/(2.0*beta(3));
   cov(3,4) = varState(1)*(1.0-2.0*exp(-beta(1)*dt)+exp(-2.0*beta(1)*dt))/(2.0*pow(beta(1),2.0));
@@ -142,7 +144,12 @@ Type nll_rw(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> varState)
 }
 
 
+// (Irregularized version of) Discrete Time Correlated Random Walk
+template<class Type>
+Type nll_dtcrw(){
 
+  return(Type(0.0));
+}
 
 
 
@@ -256,10 +263,10 @@ Type objective_function<Type>::operator() ()
       */
       //nll += -dnorm(vel(0,0),Type(0.0),Type(0.1),true);
       //nll += -dnorm(vel(1,0),Type(0.0),Type(0.1),true);
-      if(moveModelCode == 2){
-	nll += -dnorm(vel(2,0),Type(0.0),Type(0.001),true);
-	nll += -dnorm(vel(3,0),Type(0.0),Type(0.001),true);
-      }
+      // if(moveModelCode == 2){
+      // 	nll += -dnorm(vel(2,0),Type(0.0),Type(1),true);
+      // 	nll += -dnorm(vel(3,0),Type(0.0),Type(1),true);
+      // }
     }else if(dt(i)>0){ //Only at first time step
       //First states
 
@@ -311,8 +318,8 @@ Type objective_function<Type>::operator() ()
     Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
     nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
 
-    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0)/sdObs(0,qual(i)),Type(0));
-    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1)/sdObs(1,qual(i)),Type(0));
+    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0),Type(0));
+    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1),Type(0));
 	//}
   }
   vector<Type> dfs = exp(df)+minDf;
@@ -320,6 +327,7 @@ Type objective_function<Type>::operator() ()
   ADREPORT(sdObs);
   ADREPORT(dfs);
   ADREPORT(test);
+  ADREPORT(beta);
   return nll;
   
 }

@@ -105,17 +105,22 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 )
 
     numStates <- ifelse(movementmodel == "mmctcrw",4,2)
+    if(movementmodel == "mmctcrw"){
+        numStates <- c(4,6)
+    }else{
+        numStates <- c(2,2)
+    }
     
-    parameters <- list(logbeta = rep(0,numStates),
-                       logSdState = rep(0,numStates),
+    parameters <- list(logbeta = rep(0,numStates[1]),
+                       logSdState = rep(0,numStates[2]),
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
-                       gamma = rep(0,numStates),
+                       gamma = rep(0,numStates[1]),
                        mu = matrix(0,
                            nrow=2,
                            ncol=length(dat$lon[dat$dt>0])),
                        vel = matrix(0,
-                           nrow=numStates,
+                           nrow=numStates[1],
                            ncol=length(dat$lon[dat$dt>0]))
                        )
  
@@ -146,6 +151,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     if(movementmodel == "mmctcrw"){
         map$gamma <- factor(1,2,NA,NA)
+        tt <- cumsum(dat$dt)
+        parameters$logbeta <- c(rep(-2,2),
+                             rep(0,2))
     }
     if(fixgammas){
         map$gamma <- factor(NA*parameters$gamma)
