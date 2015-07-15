@@ -174,7 +174,9 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(minDf);
   DATA_INTEGER(moveModelCode);
   DATA_INTEGER(modelCode);
-  PARAMETER_VECTOR(logbeta); //Length 2 (first lat then lon)
+  DATA_INTEGER(timevary);
+  PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
+  PARAMETER_VECTOR(logSdbeta);
   PARAMETER_VECTOR(logSdState);
   PARAMETER_VECTOR(logSdObs); //length 2
   //DATA_MATRIX(logCorrection); //Dim 2 x number of quality classes (first should be log(1)
@@ -189,12 +191,13 @@ Type objective_function<Type>::operator() ()
   // Number of data points to include
   PARAMETER(numdata);
 
-  vector<Type> beta = exp(logbeta);
+  matrix<Type> beta = logbeta.array().exp().matrix();
 
   if(moveModelCode == 2){
-    beta(2) += beta(0);
-    beta(3) += beta(1);
+    beta.row(2) += beta.row(0);
+    beta.row(3) += beta.row(1);
   }
+
 
   vector<Type> varState = exp(Type(2.0)*logSdState);
   matrix<Type> varObs(logCorrection.rows(),logCorrection.cols()+1);
@@ -209,6 +212,7 @@ Type objective_function<Type>::operator() ()
   matrix<Type> sdObs = varObs.array().sqrt().matrix();
 
   Type nll = 0.0;
+
 
   MVNORM_t<Type> nll_dist;//(df(0));
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
@@ -281,20 +285,33 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)mu.col(stateNum-1),
 			 (vector<Type>)vel.col(stateNum),
 			 (vector<Type>)vel.col(stateNum-1),
-			 dt(i),beta,gamma,varState);
+			 dt(i),
+			 (vector<Type>)beta.col(stateNum),
+			 gamma,varState);
 	break;
       case 2:
 	nll += nll_mmctcrw((vector<Type>)mu.col(stateNum),
 			   (vector<Type>)mu.col(stateNum-1),
 			   (vector<Type>)vel.col(stateNum),
 			   (vector<Type>)vel.col(stateNum-1),
-			   dt(i),beta,gamma,varState);
+			   dt(i),
+			   (vector<Type>)beta.col(stateNum),
+			   gamma,varState);
 	break;
       default:
 	error("Movement model not implemented");
 	break;
       }
-      
+
+      if(timevary){
+	nll -= dnorm(logbeta(0,stateNum),logbeta(0,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(0)));
+	nll -= dnorm(logbeta(1,stateNum),logbeta(1,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(1)));
+	if(moveModelCode == 2){
+	  nll -= dnorm(logbeta(2,stateNum),logbeta(2,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(2)));
+	  nll -= dnorm(logbeta(3,stateNum),logbeta(3,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(3)));
+	}
+      }
+          
     }else{ //Or nothing else happens
     }
 
@@ -331,3 +348,4 @@ Type objective_function<Type>::operator() ()
   return nll;
   
 }
+
