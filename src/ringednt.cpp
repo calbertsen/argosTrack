@@ -176,6 +176,7 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(modelCode);
   DATA_INTEGER(timevary);
   PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
+  PARAMETER_VECTOR(logSdbeta);
   PARAMETER_VECTOR(logSdState);
   PARAMETER_VECTOR(logSdObs); //length 2
   //DATA_MATRIX(logCorrection); //Dim 2 x number of quality classes (first should be log(1)
@@ -302,14 +303,14 @@ Type objective_function<Type>::operator() ()
 	break;
       }
 
-      // if(timevary){
-      // 	nll -= dnorm(logbeta(0,stateNum),logbeta(0,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(0)));
-      // 	nll -= dnorm(logbeta(1,stateNum),logbeta(1,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(1)));
-      // 	if(moveModelCode == 2){
-      // 	  nll -= dnorm(logbeta(2,stateNum),logbeta(2,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(2)));
-      // 	  nll -= dnorm(logbeta(3,stateNum),logbeta(3,stateNum-1),sqrt(dt(stateNum))*exp(logSdbeta(3)));
-      // 	}
-      // }
+      /*if(timevary == 1){
+	nll -= dnorm(logbeta(0,stateNum),logbeta(0,stateNum-1),sqrt(dt(i))*exp(logSdbeta(0)),true);
+	nll -= dnorm(logbeta(1,stateNum),logbeta(1,stateNum-1),sqrt(dt(i))*exp(logSdbeta(1)),true);
+	if(moveModelCode == 2){
+	  nll -= dnorm(logbeta(2,stateNum),logbeta(2,stateNum-1),sqrt(dt(i))*exp(logSdbeta(2)),true);
+	  nll -= dnorm(logbeta(3,stateNum),logbeta(3,stateNum-1),sqrt(dt(i))*exp(logSdbeta(3)),true);
+	}
+	}*/
           
     }else{ //Or nothing else happens
     }
@@ -336,7 +337,7 @@ Type objective_function<Type>::operator() ()
 
     test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0),Type(0));
     test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1),Type(0));
-	//}
+  	//}
   }
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
