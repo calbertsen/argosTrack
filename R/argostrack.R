@@ -27,7 +27,7 @@
 argosTrack <- function(lon,lat,dates,locationclass,
                        include = rep(TRUE,length(dates)),
                        equalbetas = TRUE,
-                       timevarybeta = FALSE,
+                       timevarybeta = 1,
                        fixgammas = TRUE,
                        fixcorrection = FALSE,
                        dfVals = NULL,
@@ -116,7 +116,6 @@ argosTrack <- function(lon,lat,dates,locationclass,
     parameters <- list(logbeta = matrix(0,
                            nrow=numStates[1],
                            ncol=length(dat$lon[dat$dt>0])),
-                       logSdbeta = rep(0,numStates[1]),
                        logSdState = rep(0,numStates[2]),
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
@@ -147,15 +146,21 @@ argosTrack <- function(lon,lat,dates,locationclass,
     #map <- list(df=factor(NA*parameters$df))
     map <- list()
 
-     if(!timevarybeta){
-        mbe <- matrix(1:numStates[1],
-                      nrow=numStates[1],
-                      ncol=length(dat$lon[dat$dt>0]))
-    }else{
-        mbe <- matrix(1:length(parameters$logbeta),
-                      nrow=numStates[1],
-                      ncol=length(dat$lon[dat$dt>0]))
-    }
+    ##  if(timevarybeta<2){
+    ##     mbe <- matrix(1:numStates[1],
+    ##                   nrow=numStates[1],
+    ##                   ncol=length(dat$lon[dat$dt>0]))
+    ## }else{
+    ##     mbe <- matrix(1:length(parameters$logbeta),
+    ##                   nrow=numStates[1],
+    ##                   ncol=length(dat$lon[dat$dt>0]))
+    ## }
+
+    mbe <- matrix(rep(rep(1:timevarybeta,
+                      each=ceiling(length(parameters$logbeta)/timevarybeta))[1:length(parameters$logbeta)],numStates[1]),
+                  byrow=TRUE,
+                  nrow=numStates[1],
+                  ncol=length(dat$lon[dat$dt>0]))
     
     if(equalbetas){
         if(movementmodel == "mmctcrw"){
@@ -166,11 +171,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
         }
     }
     map$logbeta <- factor(as.vector(mbe))
-    if(!timevarybeta){
-        map$logSdbeta <- factor(rep(NA,length(parameters$logSdbeta)))
-    }else{
-        map$logSdbeta <- factor(mbe[,1])
-    }
+    ## if(!timevarybeta){
+    ##     map$logSdbeta <- factor(rep(NA,length(parameters$logSdbeta)))
+    ## }else{
+    ##     map$logSdbeta <- factor(mbe[,1])
+    ## }
     
     if(movementmodel == "mmctcrw"){
         map$gamma <- factor(c(1,2,NA,NA))  # Drift in the slow process
