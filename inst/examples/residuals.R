@@ -1,7 +1,7 @@
 
-devtools::install_local("~/argosTrack")
+devtools::install_local("~/argosTracktest/argosTrack")
 
-## devtools::install_github("calbertsen/argosTrack",ref="timevarying") 
+## install_github("calbertsen/argosTrack",ref="onestepresid") 
 
 library(argosTrack)
 
@@ -9,9 +9,9 @@ dat <- subadult_ringed_seal[1:100,]
 dat <- dat[!(dat$lc=="Z"),]
 table(dat$lc)
 
-## Fit with normal distribution - continuous time correlated random walk movement model
-args <- list(lon = dat$lon + rnorm(length(dat$lon),0,0.00001),
-             lat = dat$lat + rnorm(length(dat$lon),0,0.00001),
+# Fit with normal distribution - continuous time correlated random walk movement model
+args <- list(lon = dat$lon,
+             lat = dat$lat,
              dates = as.character(dat$date),
              locationclass = dat$lc,
              verbose=FALSE,
@@ -22,14 +22,12 @@ args <- list(lon = dat$lon + rnorm(length(dat$lon),0,0.00001),
              )
 fitctcrw <- do.call(argosTrack,args)
 
-res0 <- residuals(fitctcrw,type="onestep")
-
 # Fit with normal distribution - continuous time correlated random walk movement model
 args <- list(lon = dat$lon,
              lat = dat$lat,
              dates = as.character(dat$date),
              locationclass = dat$lc,
-             timevarybeta=10,
+             timevarybeta=TRUE,
              verbose=TRUE,
              fixcorrection=TRUE,
              errordistribution="n",
@@ -38,13 +36,6 @@ args <- list(lon = dat$lon,
              )
 fittv <- do.call(argosTrack,args)
 
-res1 <- residuals(fittv,type="onestep")
-
-par(mfrow=c(2,2))
-plot(res0[[1]][1,],main="een beta latitude")
-plot(res0[[1]][2,],main="een beta longitude")
-plot(res1[[1]][1,],main="flere beta latitude")
-plot(res1[[1]][2,],main="flere beta longitude")
 
 # Fit with normal distribution - mixed memory continuous time correlated random walk movement model
 args <- list(lon = dat$lon,

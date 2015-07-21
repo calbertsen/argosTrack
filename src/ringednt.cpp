@@ -175,6 +175,10 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(moveModelCode);
   DATA_INTEGER(modelCode);
   DATA_INTEGER(timevary);
+
+  DATA_VECTOR_INDICATOR(klon,lon);
+  DATA_VECTOR_INDICATOR(klat,lat);
+  
   PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
   PARAMETER_VECTOR(logSdbeta);
   PARAMETER_VECTOR(logSdState);
@@ -332,18 +336,13 @@ Type objective_function<Type>::operator() ()
     nll_dist_obs.setSigma(covObs);
     */
     //if(include(i)==1){
-    Type keep = CppAD::CondExpLt(Type(i), numdata, Type(1), Type(0));
-    nll += nll_dist_obs(qual(i))(obs)*include(i)*keep;
+    nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
 
-    test(0) += CppAD::CondExpEq(Type(i),numdata,obs(0),Type(0));
-    test(1) += CppAD::CondExpEq(Type(i),numdata,obs(1),Type(0));
-  	//}
   }
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
-  ADREPORT(test);
   ADREPORT(beta);
   return nll;
   
