@@ -138,7 +138,7 @@ Type nll_rw(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> varState)
   matrix<Type> cov(2,2);
 
   state = mut-mutm;
-  cov.diagonal() = varState*sqrt(dt);
+  cov.diagonal() = varState*dt;
 	
   return MVNORM<Type>(cov)(state);
 }
