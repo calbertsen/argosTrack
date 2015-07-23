@@ -108,7 +108,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     ## numStates <- ifelse(movementmodel == "mmctcrw",4,2)
     if(movementmodel == "mmctcrw"){
-        numStates <- c(4,6)
+        numStates <- c(4,4)
     }else{
         numStates <- c(2,2)
     }
@@ -152,7 +152,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                       nrow=numStates[1],
                       ncol=length(dat$lon[dat$dt>0]))
     }else{
-        mbe_vals <- rep(1:10,each=ceiling(length(dat$lon[dat$dt>0])/10))
+        mbe_vals <- rep(1:timevarybeta,
+                        each=ceiling(length(dat$lon[dat$dt>0])/timevarybeta))
         mbe <- matrix(rep(mbe_vals,numStates[1]),
                       nrow=numStates[1],
                       ncol=length(dat$lon[dat$dt>0]),
@@ -178,7 +179,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     ##}
     
     if(movementmodel == "mmctcrw"){
-        map$gamma <- factor(1,2,NA,NA)  # Drift in the slow process
+        map$gamma <- factor(c(1,2,NA,NA))  # Drift in the slow process
         tt <- cumsum(dat$dt)
         parameters$logbeta <- matrix(c(-2,-2,0,0),
                            nrow=numStates[1],

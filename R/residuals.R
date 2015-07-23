@@ -32,7 +32,7 @@ rmvnorm <- function(n,obj,par=obj$env$par,update=TRUE){
 ## Note: smoothpred, simulated and onestep are not actual residuals
 ## and only give predictions at the states (may be fewer than observations)
 
-residuals.argostrack <- function(object,type="onestep",seed=1, parallel=FALSE, ...){
+residuals.argostrack <- function(object,type="onestep",seed=1, parallel=FALSE, osamethod=NULL, ...){
     if(type == "smooth"){
         res <- object$observations - object$positions
         colnames(res) <- object$locationclass
@@ -51,8 +51,12 @@ residuals.argostrack <- function(object,type="onestep",seed=1, parallel=FALSE, .
          return(res)
     }else if(type == "onestep"){
 
-        method <- ifelse(object$errordistribution == "n",
-                         "oneStepGaussian","oneStepGeneric")
+        if(is.null(osamethod)){
+            method <- ifelse(object$errordistribution == "n",
+                             "oneStepGaussian","oneStepGeneric")
+        }else{
+            method <- osamethod
+        }
 
         osa_lat <- oneStepPredict2(object$tmb_object,"lat","klat",
                                    method=method, parallel=parallel)
@@ -278,9 +282,14 @@ oneStepPredict2 <- function(obj,
             g <- function(y){
                 newobj$gr(observation(k, y))[obs.pointer[k]]
             }
-            opt <- nlminb(obs[index], f, g)
-            H <- optimHess(opt$par, f, g)
-            c(observation=obs[index], mean=opt$par, sd=sqrt(1/H))
+            ans <- try({
+                opt <- nlminb(obs[index], f, g)
+                H <- optimHess(opt$par, f, g)
+                c(observation=obs[index], mean=opt$par, sd=sqrt(1/H))
+            })
+        
+            if(is(ans, "try-error")) ans <- c(observation=obs[index], mean=NA, sd=NA)
+            ans
         }
         pred <- do.call("rbind", lapply(1:length(subset), oneStepGaussian))
         pred <- as.data.frame(pred)
