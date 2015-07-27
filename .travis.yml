@@ -7,3 +7,6 @@ install:
   - unzip master.zip
   - cd adcomp-master && make install-metis
   - cd .. && rm -r adcomp-master
+
+r_packages:
+  - devtools
