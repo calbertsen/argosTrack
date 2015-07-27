@@ -1,6 +1,9 @@
 language: r
 sudo: required
 
+r_packages:
+  - devtools
+
 install:
   - sudo apt-get install libsuitesparse-metis-3.1.0
   - wget https://github.com/kaskr/adcomp/archive/master.zip
@@ -8,5 +11,3 @@ install:
   - cd adcomp-master && make install-metis
   - cd .. && rm -r adcomp-master
 
-r_packages:
-  - devtools
