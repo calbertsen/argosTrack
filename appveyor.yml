@@ -14,8 +14,8 @@ install:
 
 before_build:
   - git clone -q --branch=master https://github.com/kaskr/adcomp.git C:\projects\argostrack\TMB
-  - Rscript -e 'setwd("C:\projects\argostrack\TMB");source("install_windows.R")'
-
+  - Rscript -e 'setwd("C:/projects/argostrack/TMB");source("install_windows.R")'
+  - rmdir /Q /S C:\projects\argostrack\TMB
 
 build_script:
   - travis-tool.sh install_deps
