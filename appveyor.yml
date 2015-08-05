@@ -13,7 +13,7 @@ install:
 # Adapt as necessary starting from here
 
 before_build:
-  - git clone -q --branch=timevarying https://github.com/kaskr/adcomp.git C:\projects\argostrack\TMB
+  - git clone -q --branch=master https://github.com/kaskr/adcomp.git C:\projects\argostrack\TMB
   - Rscript -e 'setwd("C:\projects\argostrack\TMB");source("install_windows.R")'
 
 
