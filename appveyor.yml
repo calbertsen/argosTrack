@@ -13,7 +13,8 @@ install:
 # Adapt as necessary starting from here
 
 build_script:
-  - wget https://github.com/kaskr/adcomp/archive/master.zip
+  - curl -s -L https://github.com/kaskr/adcomp/archive/master.zip | gunzip -c > ../
+  - Rscript ../adcomp-master/install_windows.R 
   - travis-tool.sh install_deps
 
 test_script:
