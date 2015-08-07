@@ -145,9 +145,9 @@ Type objective_function<Type>::operator() ()
 			   gamma,varState);
 	break;
       case 3:			// Discrete time correlated random walk on lat+lon
-	nll += Type(0.0) // dtcrw
+	nll += Type(0.0); // dtcrw
       case 4:		 // Discrete steplength + bearings model
-	nll += Type(0.0) //dsb
+	nll += Type(0.0); //dsb
       default:
 	error("Movement model not implemented");
 	break;

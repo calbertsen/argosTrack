@@ -12,7 +12,7 @@ Type nll_rw(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> varState)
   state = mut-mutm;
   cov.diagonal() = varState*dt;
 	
-  return MVNORM<Type>(cov)(state);
+  return density::MVNORM<Type>(cov)(state);
 }
 
 

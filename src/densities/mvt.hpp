@@ -3,7 +3,7 @@
 #ifndef _MULTIVARIATE_T_AND_NORMAL_
 #define _MULTIVARIATE_T_AND_NORMAL_
 
-using density::MVNORM_t
+using density::MVNORM_t;
 
 /** \brief Multivariate t distribution with user supplied scale matrix
 
