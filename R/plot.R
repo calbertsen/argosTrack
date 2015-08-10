@@ -11,11 +11,12 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,z
     esttrack <- matrix(track[,1],nrow=2)
     obs <- object$observations
     dates <- object$dates
-    dt <- object$tmb_object$env$data$dt
 
     if(is.character(dates)){
         dates <- as.POSIXct(dates)      
     }
+
+    dt <- diff(dates)
 
     if(!only_map)
         layout(matrix(c(1,1,2,3),ncol=2))

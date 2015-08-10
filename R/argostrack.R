@@ -95,14 +95,41 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(!fixcorrection)
         logCorrect <- 0*logCorrect
 
+
+    ## Get dtStates
+    if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
+        dtStates <- dates[dates>0]
+    }else{
+        ## no cases yet
+    }
+
+    ## Get previous state
+    if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
+        nonZerodt <- which(dates != 0)
+        prevState <- sapply(1:length(lon),
+                            function(i) max((1:length(nonZerodt))[nonZerodt <= i]))
+    }else{
+        ## no cases yet
+    }
+
+    ## Get stateFrac
+    if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
+        stateFrac <- rep(1,length(lon))
+    }else{
+        ## no cases yet
+    }
+
     
     dat <- list(lon = lon,
                 lat = lat,
-                dt = dates,
+                dtStates = dtStates,
+                prevState = prevState - 1,
+                stateFrac = stateFrac,
                 qual = locclassfactor,
                 include = as.numeric(include),
                 minDf = minDf,
                 moveModelCode = modelCodeNum,
+                nauticalObs = 0,
                 timevary = as.integer(timevarybeta>1)
                 )
 
@@ -115,18 +142,17 @@ argosTrack <- function(lon,lat,dates,locationclass,
     
     parameters <- list(logbeta = matrix(0,
                            nrow=numStates[1],
-                           ncol=length(dat$lon[dat$dt>0])),
-                       logSdbeta = rep(200,numStates[1]),
+                           ncol=length(dat$dtStates)),
                        logSdState = rep(0,numStates[2]),
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
                        mu = matrix(0,
                            nrow=2,
-                           ncol=length(dat$lon[dat$dt>0])),
+                           ncol=length(dat$dtStates)),
                        vel = matrix(0,
                            nrow=numStates[1],
-                           ncol=length(dat$lon[dat$dt>0]))
+                           ncol=length(dat$dtStates))
                        )
  
     if(any(!include) || any(!argosClasses%in%locationclass)){
@@ -150,13 +176,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
      if(!(timevarybeta>1)){
         mbe <- matrix(1:numStates[1],
                       nrow=numStates[1],
-                      ncol=length(dat$lon[dat$dt>0]))
+                      ncol=length(dat$dtStates))
     }else{
         mbe_vals <- rep(1:timevarybeta,
-                        each=ceiling(length(dat$lon[dat$dt>0])/timevarybeta))
+                        each=ceiling(length(dat$dtStates)/timevarybeta))[1:length(dat$dtStates)]
         mbe <- matrix(rep(mbe_vals,numStates[1]),
                       nrow=numStates[1],
-                      ncol=length(dat$lon[dat$dt>0]),
+                      ncol=length(dat$dtStates),
                       TRUE)              
         ## mbe <- matrix(1:length(parameters$logbeta),
         ##               nrow=numStates[1],
@@ -172,18 +198,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
         }
     }
     map$logbeta <- factor(as.vector(mbe))
-    ##if(!timevarybeta){
-        map$logSdbeta <- factor(rep(NA,length(parameters$logSdbeta)))
-    ##}else{
-    ##    map$logSdbeta <- factor(mbe[,1])
-    ##}
     
     if(movementmodel == "mmctcrw"){
         map$gamma <- factor(c(1,2,NA,NA))  # Drift in the slow process
         tt <- cumsum(dat$dt)
         parameters$logbeta <- matrix(c(-2,-2,0,0),
                            nrow=numStates[1],
-                           ncol=length(dat$lon[dat$dt > 0]))
+                           ncol=length(dat$dtStates))
     }
     if(fixgammas){
         map$gamma <- factor(NA*parameters$gamma)
@@ -252,8 +273,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    res$positions <- expandMu(esttrack,dat$dt)
-    res$positions_sd <- expandMu(sdtrack,dat$dt)
+    res$positions <- expandMu(esttrack,dates)
+    res$positions_sd <- expandMu(sdtrack,dates)
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime

@@ -1,6 +1,7 @@
 #include <TMB.hpp>
 #include "densities/all.hpp"
 #include "movement/models.hpp"
+#include "convenience/convenience.hpp"
 
 using namespace density;
 
@@ -10,19 +11,22 @@ Type objective_function<Type>::operator() ()
 
   DATA_VECTOR(lon);
   DATA_VECTOR(lat);
-  DATA_VECTOR(dt);
+  DATA_VECTOR(dtStates);
+  DATA_IVECTOR(prevState);
+  DATA_VECTOR(stateFrac);
   DATA_FACTOR(qual); //Integers
   DATA_VECTOR(include);
   DATA_SCALAR(minDf);
   DATA_INTEGER(moveModelCode);
   DATA_INTEGER(modelCode);
+  //DATA_INTEGER(nauticalStates);
+  DATA_INTEGER(nauticalObs);
   DATA_INTEGER(timevary);
 
   DATA_VECTOR_INDICATOR(klon,lon);
   DATA_VECTOR_INDICATOR(klat,lat);
   
   PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
-  PARAMETER_VECTOR(logSdbeta);
   PARAMETER_VECTOR(logSdState);
   PARAMETER_VECTOR(logSdObs); //length 2
   //DATA_MATRIX(logCorrection); //Dim 2 x number of quality classes (first should be log(1)
@@ -37,14 +41,47 @@ Type objective_function<Type>::operator() ()
   // Number of data points to include
   PARAMETER(numdata);
 
-  matrix<Type> beta = logbeta.array().exp().matrix();
 
+  // Get state coordinates in nautical miles
+  vector<Type> x(mu.cols());
+  vector<Type> y(mu.cols());
+
+  for(int i = 0; i < x.size(); ++i){
+    vector<Type> tmp = ll2n(mu(1,i), mu(0,i));
+    x(i) = tmp(0);
+    y(i) = tmp(1);
+  }
+
+  // Get observation coordinates in nautical miles
+  vector<Type> xobs(lon.size());
+  vector<Type> yobs(lat.size());
+
+  for(int i = 0; i < xobs.size(); ++i){
+    vector<Type> tmp = ll2n(lon(i), lat(i));
+    xobs(i) = tmp(0);
+    yobs(i) = tmp(1);
+  }
+
+  // Get state steplength and bearing
+  vector<Type> stepLengths(x.size());
+  vector<Type> bearings(x.size());
+  stepLengths.setZero();
+  bearings.setZero();
+
+  for(int i = 1; i < stepLengths.size(); ++i){
+    stepLengths(i) = stepLength(x(i-1),y(i-1),x(i),y(i),true);
+    bearings(i) = bearing(x(i-1),y(i-1),x(i),y(i),true);
+  }
+
+
+  // Calculate beta values
+  matrix<Type> beta = logbeta.array().exp().matrix();
   if(moveModelCode == 2){
     beta.row(2) += beta.row(0);
     beta.row(3) += beta.row(1);
   }
 
-
+  // Transform parameters
   vector<Type> varState = exp(Type(2.0)*logSdState);
   matrix<Type> varObs(logCorrection.rows(),logCorrection.cols()+1);
   matrix<Type> correction = logCorrection.array().exp().matrix();
@@ -54,17 +91,14 @@ Type objective_function<Type>::operator() ()
       varObs(i,j) = exp(2.0*(logSdObs(i)+logCorrection(i,j-1)));
     }
   }
-
   matrix<Type> sdObs = varObs.array().sqrt().matrix();
 
+  // Variable for negative log-likelihood
   Type nll = 0.0;
 
 
-  MVNORM_t<Type> nll_dist;//(df(0));
+  // Observational distributions
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
-
-  // matrix<Type> cov(4,4);
-  // vector<Type> state(4);
   matrix<Type> covObs(2,2);
   vector<Type> obs(2);
 
@@ -80,117 +114,92 @@ Type objective_function<Type>::operator() ()
 
   }
 
-
-  int c = 0;
+  // Contribution from first state
   
-  
-
-  //
-  int stateNum = 0; 
-
-  vector<Type> test(2);
-  test.setZero();
-  
-  for(int i = 0; i < dt.size(); ++i){
-
-    if(dt(i) > 0 && i > 0){stateNum += 1;}
-    if(stateNum == 0){//Distribution for first state
-      /*
-      state.setZero();
-      state(0) = mu(0,0)-lat(0);
-      state(1) = vel(0,1);
-      state(2) = mu(1,0)-lon(0);
-      state(3) = vel(1,1);
-
-      cov.setZero();
-      cov(0,0) = 0.1;
-      cov(1,1) = 0.1;
-      cov(2,2) = 0.1;
-      cov(3,3) = 0.1;
-
-      nll_dist.setSigma(cov);
-      nll += nll_dist(state);
-      */
-      //nll += -dnorm(vel(0,0),Type(0.0),Type(0.1),true);
-      //nll += -dnorm(vel(1,0),Type(0.0),Type(0.1),true);
-      // if(moveModelCode == 2){
-      // 	nll += -dnorm(vel(2,0),Type(0.0),Type(1),true);
-      // 	nll += -dnorm(vel(3,0),Type(0.0),Type(1),true);
-      // }
-    }else if(dt(i)>0){ //Only at first time step
-      //First states
-
-      switch(moveModelCode){
-      case 0: 			// Random walk on lat+lon
-	nll += nll_rw((vector<Type>)mu.col(stateNum),
-			 (vector<Type>)mu.col(stateNum-1),
-			 dt(i),varState);
-	break;
-      case 1:			// Continuous Time Correlated Random Walk on lat+lon
-	nll += nll_ctcrw((vector<Type>)mu.col(stateNum),
-			 (vector<Type>)mu.col(stateNum-1),
-			 (vector<Type>)vel.col(stateNum),
-			 (vector<Type>)vel.col(stateNum-1),
-			 dt(i),
-			 (vector<Type>)beta.col(stateNum),
+  // Contributions from states
+  for(int i = 1; i < mu.cols(); ++i){
+    switch(moveModelCode){
+    case 0: 			// Random walk on lat+lon
+      nll += nll_rw((vector<Type>)mu.col(i),
+		    (vector<Type>)mu.col(i-1),
+		    dtStates(i),varState);
+      break;
+    case 1:			// Continuous Time Correlated Random Walk on lat+lon
+      nll += nll_ctcrw((vector<Type>)mu.col(i),
+		       (vector<Type>)mu.col(i-1),
+		       (vector<Type>)vel.col(i),
+		       (vector<Type>)vel.col(i-1),
+		       dtStates(i),
+		       (vector<Type>)beta.col(i),
+		       gamma,varState);
+      break;
+    case 2:			// Mixed memory Continuous Time Correlated Random Walk on lat+lon
+      nll += nll_mmctcrw((vector<Type>)mu.col(i),
+			 (vector<Type>)mu.col(i-1),
+			 (vector<Type>)vel.col(i),
+			 (vector<Type>)vel.col(i-1),
+			 dtStates(i),
+			 (vector<Type>)beta.col(i),
 			 gamma,varState);
-	break;
-      case 2:			// Mixed memory Continuous Time Correlated Random Walk on lat+lon
-	nll += nll_mmctcrw((vector<Type>)mu.col(stateNum),
-			   (vector<Type>)mu.col(stateNum-1),
-			   (vector<Type>)vel.col(stateNum),
-			   (vector<Type>)vel.col(stateNum-1),
-			   dt(i),
-			   (vector<Type>)beta.col(stateNum),
-			   gamma,varState);
-	break;
-      case 3:			// Discrete time correlated random walk on lat+lon
-	nll += Type(0.0); // dtcrw
-      case 4:		 // Discrete steplength + bearings model
-	nll += Type(0.0); //dsb
-      default:
-	error("Movement model not implemented");
-	break;
-      }
-
-      /*if(timevary == 1){
-	nll -= dnorm(logbeta(0,stateNum),logbeta(0,stateNum-1),sqrt(dt(i))*exp(logSdbeta(0)),true);
-	nll -= dnorm(logbeta(1,stateNum),logbeta(1,stateNum-1),sqrt(dt(i))*exp(logSdbeta(1)),true);
-	if(moveModelCode == 2){
-	  nll -= dnorm(logbeta(2,stateNum),logbeta(2,stateNum-1),sqrt(dt(i))*exp(logSdbeta(2)),true);
-	  nll -= dnorm(logbeta(3,stateNum),logbeta(3,stateNum-1),sqrt(dt(i))*exp(logSdbeta(3)),true);
-	}
-	}*/
-          
-    }else{ //Or nothing else happens
+      break;
+    case 3:			// Discrete time correlated random walk on lat+lon
+      nll += Type(0.0); // dtcrw
+    case 4:		 // Discrete steplength + bearings model
+      nll += Type(0.0); //dsb
+    default:
+      error("Movement model not implemented");
+      break;
     }
-
-    //Then observations
-    //Set up observation vector 
-    obs.setZero();
-    obs(0) = lat(i)-mu(0,stateNum);
-    obs(1) = lon(i)-mu(1,stateNum);
-    
-    //Set up covariance matrix
-    /*covObs.setZero();
-    covObs(0,0) = varObs(0,qual(i));
-    covObs(1,1) = varObs(1,qual(i));
-    covObs(1,0) = 0.0; 
-    covObs(0,1) = covObs(1,0);
-    
-
-    nll_dist_obs.setSigma(covObs);
-    */
-    //if(include(i)==1){
-    nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
-
   }
+
+
+  // Contributions from observations
+  for(int i = 0; i < lon.size(); ++i){
+    obs.setZero();
+    if(nauticalObs){
+      obs(0) = yobs(i);
+      obs(1) = xobs(i);
+      if(stateFrac(i)+1 > y.size()){
+	obs(0) -= y(prevState(i));
+	obs(1) -= x(prevState(i));
+      }else{
+	obs(0) -= stateFrac(i) * y(prevState(i)) + (Type(1.0) - stateFrac(i)) * y(prevState(i)+1);
+	obs(1) -= stateFrac(i) * x(prevState(i)) + (Type(1.0) - stateFrac(i)) * x(prevState(i)+1);
+      }
+    }else{
+      obs(0) = lat(i);
+      obs(1) = lon(i);
+      if(stateFrac(i)+1 > mu.cols()){
+	obs(0) -= mu(0,prevState(i));
+	obs(1) -= mu(1,prevState(i));
+      }else{
+	obs(0) -= stateFrac(i) * mu(0,prevState(i)) + (Type(1.0) - stateFrac(i)) * mu(0,prevState(i)+1);
+	obs(1) -= stateFrac(i) * mu(1,prevState(i)) + (Type(1.0) - stateFrac(i)) * mu(1,prevState(i)+1);
+      }
+    }
+    nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
+  }
+
+
+  // ADREPORT(x);
+  REPORT(x);
+  // ADREPORT(y);
+  REPORT(y);
+  // ADREPORT(stepLengths);
+  REPORT(stepLengths);
+  // ADREPORT(bearings);
+  REPORT(bearings);
+  REPORT(xobs);
+  REPORT(yobs);
+  
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
   ADREPORT(beta);
+
+  
   return nll;
   
-}
+  }
 
