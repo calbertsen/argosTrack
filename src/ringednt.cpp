@@ -145,7 +145,13 @@ Type objective_function<Type>::operator() ()
     case 3:			// Discrete time correlated random walk on lat+lon
       nll += Type(0.0); // dtcrw
     case 4:		 // Discrete steplength + bearings model
-      nll += Type(0.0); //dsb
+      nll += nll_dsb(stepLengths(i),
+		      bearings(i),
+		      bearings(i-1),
+		      Type(0.99)/(Type(1.0)+exp(-logbeta(0,i))) + Type(0.005),
+		      varState(0),
+		      varState(1));
+      break;
     default:
       error("Movement model not implemented");
       break;

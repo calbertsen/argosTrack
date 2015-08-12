@@ -37,6 +37,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        movementmodel = "ctcrw",
                        verbose = TRUE,
                        timeunit = "mins",
+                       nStates = NULL,
                        nlminb.control = list(eval.max=2000,
                            iter.max=1500,
                            rel.tol=1e-3,
@@ -79,7 +80,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-    movModNames <- c("rw","ctcrw","mmctcrw")
+    movModNames <- c("rw","ctcrw","mmctcrw","dtcrw","dsb")
     modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
@@ -99,8 +100,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
     ## Get dtStates
     if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
         dtStates <- dates[dates>0]
+        stateTimeStamp <- if(is.numeric(dates_in)){ dates_in }else{ as.POSIXct(dates_in)}
+    }else if(movementmodel %in% c("dsb")){
+        dateExtremes <- range(cumsum(dates)-1)
+        dtStates <- rep(c(1,(ceiling(dateExtremes[2])-dateExtremes[1])/(nStates-1)),times=c(1,nStates-1))
+        stateTimeStamp <- if(is.numeric(dates_in)){ dates_in[1]+cumsum(dtStates)-1 }else{ as.POSIXct(dates_in[1]) + as.difftime(cumsum(dtStates)-1, units = timeunit)}
     }else{
-        ## no cases yet
+
     }
 
     ## Get previous state
@@ -108,15 +114,24 @@ argosTrack <- function(lon,lat,dates,locationclass,
         nonZerodt <- which(dates != 0)
         prevState <- sapply(1:length(lon),
                             function(i) max((1:length(nonZerodt))[nonZerodt <= i]))
-    }else{
-        ## no cases yet
+    }else if(movementmodel %in% c("dsb")){
+        dateObs <- cumsum(dates)
+        dateStates <- cumsum(dtStates)
+        prevState <- sapply(1:length(lon),
+                            function(i) max((1:length(dateStates))[dateStates <= dateObs[i]]))
+        ## dateStates <- dateStates[1:(max(prevState)+1)]
+        ## dtStates <- dtStates[1:(max(prevState)+1)]
     }
 
     ## Get stateFrac
     if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
         stateFrac <- rep(1,length(lon))
     }else{
-        ## no cases yet
+        stateFrac <- sapply(1:length(lon),
+                            function(i) 1 - (dateObs[i] - dateStates[prevState[i]]) / diff(dateStates[prevState[i] + 0:1]))
+        ## if(stateFrac[length(stateFrac)] == 1)
+        ##     dateStates <- dateStates[-length(dateStates)]
+        ## if(max(prevState) < length(
     }
 
     
@@ -139,15 +154,31 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }else{
         numStates <- c(2,2)
     }
+
+
+    if(movementmodel == "dsb"){
+        y <- t(apply(cbind(lon,lat),1,
+                   function(x)c(x[1]*60*cos(x[2]*pi/180),x[2]*60)))
+        logsinit <- log(sqrt(y[,1] ^ 2 + y[,2] ^ 2))
+        phiinit <- atan2(y[,2],y[,1])
+        fntmp <- function(par) -sum(dweibull(x=exp(logsinit),
+                                             scale=exp(par[1]),
+                                             shape=exp(par[2]),
+                                             log=TRUE))
+        initpars <- nlminb(c(logScale=0,logShape=0),fntmp)$par/2
+    }else{
+        initpars <- rep(0,numStates[2])
+    }
     
     parameters <- list(logbeta = matrix(0,
                            nrow=numStates[1],
                            ncol=length(dat$dtStates)),
-                       logSdState = rep(0,numStates[2]),
+                       logSdState = initpars,
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
-                       mu = matrix(0,
+                       mu = matrix(
+                          c(0,rnorm((2*length(dat$dtStates)-1)*(movementmodel=="dsb"),0,0.1)),
                            nrow=2,
                            ncol=length(dat$dtStates)),
                        vel = matrix(0,
@@ -197,6 +228,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
             mbe[2,] <- mbe[1,]
         }
     }
+    if(movementmodel == "dsb")
+        mbe[2,] <- mbe[1,]
+
     map$logbeta <- factor(as.vector(mbe))
     
     if(movementmodel == "mmctcrw"){
@@ -246,6 +280,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$gamma <- factor(parameters$gamma*NA)
     }
 
+    if(movementmodel == "dsb"){
+        map$vel <- factor(parameters$vel*NA)
+        map$gamma <- factor(parameters$gamma*NA)
+    }
+
 
 
     parameters$numdata <- length(dat$lon)
@@ -255,10 +294,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
     ## }else{
         rnd <- c("mu","vel")
     ## }
-    obj <- TMB::MakeADFun(dat,parameters,map,random=rnd,DLL="argosTrack")
+    obj <- TMB::MakeADFun(dat,parameters,map,random=rnd,DLL="argosTrack",
+                          inner.control = list(LaplaceNonZeroGradient=TRUE))
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
-
+    
     esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     
     srep <- TMB::summary.sdreport(TMB::sdreport(obj))
@@ -270,6 +310,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     
     res$errordistribution <- errordistribution
     res$dates <- dates_in
+    res$state_dates <- stateTimeStamp
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
@@ -284,5 +325,3 @@ argosTrack <- function(lon,lat,dates,locationclass,
     return(res)
     
 }
-
-                       

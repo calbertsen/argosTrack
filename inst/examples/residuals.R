@@ -267,9 +267,6 @@ dev.off()
 
 
 
-
-
-
 argosTrack <- function(lon,lat,dates,locationclass,
                        include = rep(TRUE,length(dates)),
                        equalbetas = TRUE,
@@ -283,6 +280,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        movementmodel = "ctcrw",
                        verbose = TRUE,
                        timeunit = "mins",
+                       nStates = NULL,
                        nlminb.control = list(eval.max=2000,
                            iter.max=1500,
                            rel.tol=1e-3,
@@ -325,7 +323,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-    movModNames <- c("rw","ctcrw","mmctcrw")
+    movModNames <- c("rw","ctcrw","mmctcrw","dtcrw","dsb")
     modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
@@ -345,8 +343,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
     ## Get dtStates
     if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
         dtStates <- dates[dates>0]
+        stateTimeStamp <- if(is.numeric(dates_in)){ dates_in }else{ as.POSIXct(dates_in)}
+    }else if(movementmodel %in% c("dsb")){
+        dateExtremes <- range(cumsum(dates)-1)
+        dtStates <- rep(c(1,(ceiling(dateExtremes[2])-dateExtremes[1])/(nStates-1)),times=c(1,nStates-1))
+        stateTimeStamp <- if(is.numeric(dates_in)){ dates_in[1]+cumsum(dtStates)-1 }else{ as.POSIXct(dates_in[1]) + as.difftime(cumsum(dtStates)-1, units = timeunit)}
     }else{
-        ## no cases yet
+
     }
 
     ## Get previous state
@@ -354,15 +357,24 @@ argosTrack <- function(lon,lat,dates,locationclass,
         nonZerodt <- which(dates != 0)
         prevState <- sapply(1:length(lon),
                             function(i) max((1:length(nonZerodt))[nonZerodt <= i]))
-    }else{
-        ## no cases yet
+    }else if(movementmodel %in% c("dsb")){
+        dateObs <- cumsum(dates)
+        dateStates <- cumsum(dtStates)
+        prevState <- sapply(1:length(lon),
+                            function(i) max((1:length(dateStates))[dateStates <= dateObs[i]]))
+        ## dateStates <- dateStates[1:(max(prevState)+1)]
+        ## dtStates <- dtStates[1:(max(prevState)+1)]
     }
 
     ## Get stateFrac
     if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
         stateFrac <- rep(1,length(lon))
     }else{
-        ## no cases yet
+        stateFrac <- sapply(1:length(lon),
+                            function(i) 1 - (dateObs[i] - dateStates[prevState[i]]) / diff(dateStates[prevState[i] + 0:1]))
+        ## if(stateFrac[length(stateFrac)] == 1)
+        ##     dateStates <- dateStates[-length(dateStates)]
+        ## if(max(prevState) < length(
     }
 
     
@@ -375,7 +387,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 include = as.numeric(include),
                 minDf = minDf,
                 moveModelCode = modelCodeNum,
-                nauticalObs = 0,
+                nauticalObs = 1,
                 timevary = as.integer(timevarybeta>1)
                 )
 
@@ -385,15 +397,31 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }else{
         numStates <- c(2,2)
     }
+
+
+    if(movementmodel == "dsb"){
+        y <- t(apply(cbind(lon,lat),1,
+                   function(x)c(x[1]*60*cos(x[2]*pi/180),x[2]*60)))
+        logsinit <- log(sqrt(y[,1] ^ 2 + y[,2] ^ 2))
+        phiinit <- atan2(y[,2],y[,1])
+        fntmp <- function(par) -sum(dweibull(x=exp(logsinit),
+                                             scale=exp(par[1]),
+                                             shape=exp(par[2]),
+                                             log=TRUE))
+        initpars <- nlminb(c(logScale=0,logShape=0),fntmp)$par/2
+    }else{
+        initpars <- rep(0,numStates[2])
+    }
     
     parameters <- list(logbeta = matrix(0,
                            nrow=numStates[1],
                            ncol=length(dat$dtStates)),
-                       logSdState = rep(0,numStates[2]),
+                       logSdState = initpars,
                        logSdObs = c(0,0),
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
-                       mu = matrix(0,
+                       mu = matrix(
+                          c(0,rnorm((2*length(dat$dtStates)-1)*(movementmodel=="dsb"),0,0.1)),
                            nrow=2,
                            ncol=length(dat$dtStates)),
                        vel = matrix(0,
@@ -425,7 +453,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                       ncol=length(dat$dtStates))
     }else{
         mbe_vals <- rep(1:timevarybeta,
-                        each=ceiling(length(dat$dtStates)/timevarybeta))
+                        each=ceiling(length(dat$dtStates)/timevarybeta))[1:length(dat$dtStates)]
         mbe <- matrix(rep(mbe_vals,numStates[1]),
                       nrow=numStates[1],
                       ncol=length(dat$dtStates),
@@ -443,6 +471,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
             mbe[2,] <- mbe[1,]
         }
     }
+    if(movementmodel == "dsb")
+        mbe[2,] <- mbe[1,]
+
     map$logbeta <- factor(as.vector(mbe))
     
     if(movementmodel == "mmctcrw"){
@@ -492,6 +523,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$gamma <- factor(parameters$gamma*NA)
     }
 
+    if(movementmodel == "dsb"){
+        map$vel <- factor(parameters$vel*NA)
+        map$gamma <- factor(parameters$gamma*NA)
+    }
+
 
 
     parameters$numdata <- length(dat$lon)
@@ -501,12 +537,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
     ## }else{
         rnd <- c("mu","vel")
     ## }
-    obj <- TMB::MakeADFun(dat,parameters,map,random=rnd,DLL="argosTrack")
+    obj <- TMB::MakeADFun(dat,parameters,map,random=rnd,DLL="argosTrack",
+                          inner.control = list(LaplaceNonZeroGradient=TRUE))
     obj$env$inner.control$trace <- verbose
     obj$env$tracemgc <- verbose
-
     return(obj)
-    
+
     esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     
     srep <- TMB::summary.sdreport(TMB::sdreport(obj))
@@ -518,11 +554,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
     
     res$errordistribution <- errordistribution
     res$dates <- dates_in
+    res$state_dates <- stateTimeStamp
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    res$positions <- expandMu(esttrack,dates)
-    res$positions_sd <- expandMu(sdtrack,dates)
+    ## res$positions <- expandMu(esttrack,dates)
+    ## res$positions_sd <- expandMu(sdtrack,dates)
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime
@@ -534,112 +571,56 @@ argosTrack <- function(lon,lat,dates,locationclass,
 }
 
                        
+dat <- data.frame(lon = cumsum(rnorm(100)+0.5) + rnorm(100,0,1.5),
+             lat = cumsum(rnorm(100)+0.5) + rnorm(100,0,1.5),
+             date = Sys.time() + as.difftime(0:(100-1),units="hours"),
+             lc = rep("3",100))
 
+## Fit with normal distribution - continuous time correlated random walk movement model
+args <- list(lon = dat$lon + rnorm(length(dat$lon),0,0.00001),
+             lat = dat$lat + rnorm(length(dat$lon),0,0.00001),
+             dates = as.character(dat$date),
+             locationclass = dat$lc,
+             verbose=FALSE,
+             fixcorrection=FALSE,
+             errordistribution="n",
+             movementmodel="dsb",
+             timeunit="hours",
+             nStates = 350,
+             include = rep(TRUE,length(dat$date)),
+             equalbetas = TRUE,
+             timevarybeta = 1,
+             fixgammas = TRUE,
+             dfVals = NULL,
+             dfMap = NULL,
+             minDf = 3.0,
+             nlminb.control = list(eval.max=2000,
+                 iter.max=1500,
+                 rel.tol=1e-3,
+                 x.tol=1.5e-2)
+             )
+attach(args)
 
-plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
-    object <- x
-    srep <- object$sdreport_summary
-    track <- srep[rownames(srep)=="mu",]
-    sdtrack <- matrix(track[,2],nrow=2)
-    esttrack <- matrix(track[,1],nrow=2)
-    obs <- object$observations
-    dates <- object$dates
+plot(lon,lat,type="l")
 
-    if(is.character(dates)){
-        dates <- as.POSIXct(dates)      
-    }
+if(exists("f"))rm(f)
+f <- do.call(argosTrack,args)
+if(exists("opt"))rm(opt)
+opt <- nlminb(f$par,f$fn,f$gr)
+opt
 
-    dt <- diff(dates)
+plot(t(f$env$parList(par=f$env$last.par.best)$mu),type="l",col="red",ylim=range(lon),xlim=range(lat))
+points(lat,lon,pch=".")
 
-    if(!only_map)
-        layout(matrix(c(1,1,2,3),ncol=2))
+xx <- f$env$par[-(1:5)]
 
-    if(zoom_to_obs){
-        xrng <- c(min(obs[2,])-0.2, max(obs[2,])+0.2)
-        yrng <- c(min(obs[1,])-0.2, max(obs[1,])+0.2)
-    }else{
-        xrng <- c(min(esttrack[2,])-0.2, max(esttrack[2,])+0.2)
-        yrng <- c(min(esttrack[1,])-0.2, max(esttrack[1,])+0.2)
-    }
-    
-    if(bg_style=="none"){
-        
-        plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
-             xlim=xrng,
-             ylim=yrng,
-             asp=1/cos((mean(yrng) * pi) / 180),
-             xlab = expression(paste("Longitude (",degree,")",sep="")),
-             ylab = expression(paste("Latitude (",degree,")",sep="")))
-        lines(esttrack[2,],esttrack[1,])
-        
-    }else if(bg_style=="map"){ 
-        data('worldShorelines',package="argosTrack")
-        data('worldShorelinesArea',package="argosTrack")
-        plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
-             xlab = expression(paste("Longitude (",degree,")",sep="")),
-             ylab = expression(paste("Latitude (",degree,")",sep="")))
-        # Need faster way to plot the polygons
-        invisible(lapply(worldShorelines[worldShorelinesArea>min_area],function(x){
-            polygon(x[,1],x[,2],col=grey(0.8),border=NA)
-        }))
-        box()
-        lines(obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
-        lines(esttrack[2,],esttrack[1,])
+fn <- function(x)f$env$f(c(f$env$par[1:5],x))
+gr <- function(x)f$env$f(c(f$env$par[1:5],x),order=1)[-(1:5)]
+he <- function(x)as.matrix(f$env$spHess(c(f$env$par[1:5],x),random=TRUE))
+optin <- nlminb(xx,fn,gr,he,control=list(eval.max=1000,iter.max=1000))
+optin
+gr(optin$par)
 
-    }else{
-        stop("Background style is not valid.")
-    }
-
-    if(!only_map){
-        plot(dates,obs[2,],pch=16,col="grey",
-             xlab = "Date",
-             ylab =  expression(paste("Longitude (",degree,")",sep="")))
-        lines(dates[dt>0],esttrack[2,])
-        lines(dates[dt>0],esttrack[2,]+2*sdtrack[2,],lty=3)
-        lines(dates[dt>0],esttrack[2,]-2*sdtrack[2,],lty=3)
-        
-        plot(dates,obs[1,],pch=16,col="grey",
-             xlab = "Date",
-             ylab =  expression(paste("Latitude (",degree,")",sep="")))
-        lines(dates[dt>0],esttrack[1,])
-        lines(dates[dt>0],esttrack[1,]+2*sdtrack[1,],lty=3)
-        lines(dates[dt>0],esttrack[1,]-2*sdtrack[1,],lty=3)
-    }
-
-}
-
-#' @export
-plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
-    object <- x
-    msearray <- object$mse
-    pdatlat <- data.frame(V1 = object$mse[1,,1])
-    pdatlon <- data.frame(V1 = object$mse[2,,1])
-
-    if(dim(msearray)[3]>1){
-        for(i in 1:dim(msearray)[3]){
-            pdatlat[,i] <- object$mse[1,,i]
-            pdatlon[,i] <- object$mse[2,,i]
-        }
-    }
-    dnam <- dimnames(object$mse)
-    if(!is.null(dnam)){
-        if(!is.null(dnam[[3]])){
-            colnames(pdatlat) <- dnam[[3]]
-            colnames(pdatlon) <- dnam[[3]]
-        }
-    }
-    #if(!is.null(names)){
-    #    colnames(pdatlat) <- names
-    #    colnames(pdatlon) <- names
-    #}
-
-    if(vertical){
-        layout(matrix(c(1,2),ncol=1))
-    }else{
-        layout(matrix(c(1,2),nrow=1))
-    }
-    boxplot(pdatlon,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")),...)
-    boxplot(pdatlat,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")),...)
-}
+fn(xx)
+gr(xx)
+he(xx)
