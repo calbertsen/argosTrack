@@ -314,8 +314,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    res$positions <- expandMu(esttrack,dates)
-    res$positions_sd <- expandMu(sdtrack,dates)
+    res$positions <- if(movementmodel %in% c("dsb")){esttrack}else{expandMu(esttrack,dates)}
+    res$positions_sd <- if(movementmodel %in% c("dsb")){sdtrack}else{expandMu(sdtrack,dates)}
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime
