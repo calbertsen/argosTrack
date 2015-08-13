@@ -111,3 +111,99 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
     boxplot(pdatlat,na.rm=TRUE,main=NULL,
             ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")),...)
 }
+
+
+.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, ...){
+
+    gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
+    shortfrac <- Vectorize(
+        function(x,y,txt){  
+            if(x==y)
+                return(substitute(expression(d),list(d=as.symbol(txt))))
+            v <- x/y
+            if(round(v)==v){
+                return(substitute(expression(a*d),list(a=v,d=as.symbol(txt))))
+            }
+            v <- gcd(x,y)
+            x <- x/v
+            y <- y/v
+            if(x==1)
+                return(substitute(expression(frac(d,b)),list(b=y,d=as.symbol(txt))))
+            return(substitute(expression(frac(a,b)*d),list(a=x,b=y,d=as.symbol(txt))))
+    })
+    
+    if(breaks == "Sturges"){    
+        nbrk <- nclass.Sturges(x %% (2 * pi))
+    }else if(is.numeric(breaks) & length(breaks) == 1){
+        nbrk <- breaks
+    }else{
+        stop("WRONG BREAKS")
+    }
+    
+    nslp <- 100
+    h <- hist(x %% (2 * pi),
+              breaks = seq(0, 2 * pi, len = nbrk),
+              plot = FALSE)
+    vals <- if(prob){h$density}else{h$counts}
+
+    slices <- lapply(as.list(1:length(vals)),
+                     function(i)complex(arg=c(0,
+                                            seq(h$breaks[i],
+                                                h$breaks[i + 1],
+                                                len = nslp),
+                                            0),
+                                        mod=c(0,
+                                            rep(vals[i],nslp),
+                                            0)
+                                        )
+                     )
+    shw <- pretty(c(0,max(vals)),11)[-1]
+    mshw <- max(shw)
+    shw <- shw[-length(shw)]
+    plot(mshw*cos(seq(0,2 * pi,len=1000)),mshw*sin(seq(0,2*pi,len=1000)),type="l",
+         asp=1,axes=FALSE,
+         main = main,
+         ylab="",xlab="")
+    a <- lapply(as.list(shw),
+                function(x)lines(x*cos(seq(0,2*pi,len=1000)),
+                                 x*sin(seq(0,2*pi,len=1000)),
+                                 col="grey",lty=2))
+    a <- lapply(as.list(shw),
+                function(x) text(0,-shw,labels=shw,col="grey",cex=0.75))
+    segments(x0=mshw*cos(seq(0,pi,len=9)),
+             y0=mshw*sin(seq(0,pi,len=9)),
+             x1=mshw*cos(pi+seq(0,pi,len=9)),
+             y1=mshw*sin(pi+seq(0,pi,len=9)),
+             col="grey")
+    a <- lapply(slices,function(x)polygon(x,...))
+
+    nlabs <- 7
+    labval <- cbind(1:nlabs,(nlabs+1)/2)
+    
+    pos <- cbind(1.05*mshw*cos(seq(0,2*pi,len=nlabs+2)[-1]),
+                 1.05*mshw*sin(seq(0,2*pi,len=nlabs+2)[-1]))
+    sapply(1:nrow(labval),function(i)
+        text(pos[i,1],pos[i,2],eval(shortfrac(labval[i,1],labval[i,2],"pi")[[1]]),cex=0.75))
+    text(pos[nlabs+1,1],pos[nlabs+1,2],"0",cex=0.75)
+}
+
+    
+
+
+
+
+#' @export
+plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",...){
+    if(type=="both"){
+        layout(matrix(1:2,1,2))
+    }
+    if(type %in% c("both","step"))
+        hist(x$steplengths_per_hour,
+             xlab = "Step length per hour",
+             main = NULL,
+             nclass = nclass,
+             prob = prob,
+             ...)
+    if(type %in% c("both","angle"))
+        .roseplot(x$turningangles,breaks = nclass,prob=prob,...)
+}
