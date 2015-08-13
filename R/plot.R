@@ -5,12 +5,13 @@
 
 plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
     object <- x
-    srep <- object$sdreport_summary
-    track <- srep[rownames(srep)=="mu",]
-    sdtrack <- matrix(track[,2],nrow=2)
-    esttrack <- matrix(track[,1],nrow=2)
+    ## srep <- object$sdreport_summary
+    ## track <- srep[rownames(srep)=="mu",]
+    sdtrack <- object$positions_sd ## matrix(track[,2],nrow=2)
+    esttrack <- object$positions ## matrix(track[,1],nrow=2)
     obs <- object$observations
     dates <- object$dates
+    posdates <- object$state_dates
 
     if(is.character(dates)){
         dates <- as.POSIXct(dates)      
@@ -61,16 +62,16 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,z
         plot(dates,obs[2,],pch=16,col="grey",
              xlab = "Date",
              ylab =  expression(paste("Longitude (",degree,")",sep="")))
-        lines(dates[dt>0],esttrack[2,])
-        lines(dates[dt>0],esttrack[2,]+2*sdtrack[2,],lty=3)
-        lines(dates[dt>0],esttrack[2,]-2*sdtrack[2,],lty=3)
+        lines(posdates,esttrack[2,])
+        lines(posdates,esttrack[2,]+2*sdtrack[2,],lty=3)
+        lines(posdates,esttrack[2,]-2*sdtrack[2,],lty=3)
         
         plot(dates,obs[1,],pch=16,col="grey",
              xlab = "Date",
              ylab =  expression(paste("Latitude (",degree,")",sep="")))
-        lines(dates[dt>0],esttrack[1,])
-        lines(dates[dt>0],esttrack[1,]+2*sdtrack[1,],lty=3)
-        lines(dates[dt>0],esttrack[1,]-2*sdtrack[1,],lty=3)
+        lines(posdates,esttrack[1,])
+        lines(posdates,esttrack[1,]+2*sdtrack[1,],lty=3)
+        lines(posdates,esttrack[1,]-2*sdtrack[1,],lty=3)
     }
 
 }
