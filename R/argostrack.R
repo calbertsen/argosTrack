@@ -101,12 +101,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(movementmodel %in% c("rw","ctcrw","mmctcrw")){
         dtStates <- dates[dates>0]
         stateTimeStamp <- if(is.numeric(dates_in)){ dates_in }else{ as.POSIXct(dates_in)}
-    }else if(movementmodel %in% c("dsb")){
+    }else{
         dateExtremes <- range(cumsum(dates)-1)
         dtStates <- rep(c(1,(ceiling(dateExtremes[2])-dateExtremes[1])/(nStates-1)),times=c(1,nStates-1))
         stateTimeStamp <- if(is.numeric(dates_in)){ dates_in[1]+cumsum(dtStates)-1 }else{ as.POSIXct(dates_in[1]) + as.difftime(cumsum(dtStates)-1, units = timeunit)}
-    }else{
-
     }
 
     ## Get previous state
@@ -114,7 +112,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
         nonZerodt <- which(dates != 0)
         prevState <- sapply(1:length(lon),
                             function(i) max((1:length(nonZerodt))[nonZerodt <= i]))
-    }else if(movementmodel %in% c("dsb")){
+    }else{
         dateObs <- cumsum(dates)
         dateStates <- cumsum(dtStates)
         prevState <- sapply(1:length(lon),
@@ -228,7 +226,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
             mbe[2,] <- mbe[1,]
         }
     }
-    if(movementmodel == "dsb")
+    if(movementmodel %in% c("dsb","dtcrw"))
         mbe[2,] <- mbe[1,]
 
     map$logbeta <- factor(as.vector(mbe))
@@ -285,6 +283,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$gamma <- factor(parameters$gamma*NA)
     }
 
+    if(movementmodel == "dtcrw"){
+        map$gamma <- factor(1:2)
+        map$vel <- factor(parameters$vel*NA)
+    }
 
 
     parameters$numdata <- length(dat$lon)
@@ -314,8 +316,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    res$positions <- if(movementmodel %in% c("dsb")){esttrack}else{expandMu(esttrack,dates)}
-    res$positions_sd <- if(movementmodel %in% c("dsb")){sdtrack}else{expandMu(sdtrack,dates)}
+    res$positions <- if(movementmodel %in% c("dtcrw","dsb")){esttrack}else{expandMu(esttrack,dates)}
+    res$positions_sd <- if(movementmodel %in% c("dtcrw","dsb")){sdtrack}else{expandMu(sdtrack,dates)}
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime

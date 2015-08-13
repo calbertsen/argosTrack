@@ -143,7 +143,23 @@ Type objective_function<Type>::operator() ()
 			 gamma,varState);
       break;
     case 3:			// Discrete time correlated random walk on lat+lon
-      nll += Type(0.0); // dtcrw
+      if(i == 1){
+	nll += nll_dtcrw1((vector<Type>)mu.col(i),
+			 (vector<Type>)mu.col(i-1),
+			 Type(2.0)/(Type(1.0)+exp(-logbeta(0,i))) - Type(1.0),
+			 gamma(0),
+			 Type(2.0)/(Type(1.0)+exp(-gamma(1))) - Type(1.0),
+			 varState);
+      }else{
+	nll += nll_dtcrw((vector<Type>)mu.col(i),
+			 (vector<Type>)mu.col(i-1),
+			 (vector<Type>)mu.col(i-2),
+			 Type(2.0)/(Type(1.0)+exp(-logbeta(0,i))) - Type(1.0),
+			 gamma(0),
+			 Type(2.0)/(Type(1.0)+exp(-gamma(1))) - Type(1.0),
+			 varState);
+      }
+      break;
     case 4:		 // Discrete steplength + bearings model
       nll += nll_dsb(stepLengths(i),
 		      bearings(i),
