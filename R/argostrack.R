@@ -38,6 +38,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        verbose = TRUE,
                        timeunit = "mins",
                        nStates = NULL,
+                       nauticalObs = FALSE,
                        nlminb.control = list(eval.max=2000,
                            iter.max=1500,
                            rel.tol=1e-3,
@@ -142,7 +143,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 include = as.numeric(include),
                 minDf = minDf,
                 moveModelCode = modelCodeNum,
-                nauticalObs = 0,
+                nauticalObs = as.numeric(nauticalObs),
                 timevary = as.integer(timevarybeta>1)
                 )
 
