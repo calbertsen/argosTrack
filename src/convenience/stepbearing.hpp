@@ -29,7 +29,7 @@ Type bearing (Type x0, Type y0, Type x1, Type y1, bool nautical = true){
     dx = ll2n(x1,y1) - ll2n(x0,y0);
   }
 
-  return atan(dx(1) / dx(0));
+  return atan2(dx(1),dx(0));
 }
 
 #endif
