@@ -1,0 +1,18 @@
+# Version x.y.z-alpha
+- Added movement models: Discrete Time Correlated Random Walk (dtcrw), Discrete Step lenght and Bearings model (dsb)
+- Possibility of extracting and plotting step lengths and turning angles between predicted states for all models
+- Support for modelling on a scale of either nautical miles or latitude/longitude for both states and observations.
+
+# Version 0.1.0
+- Added movement models: Random Walk (rw) and Multiple Persistence Continuous Time Correlated Random Walk (mpctcrw)
+- New residual types (besided the old ”smooth”): Smooth predictions (”smoothpred”), Simulated residuals (”simulated”), and one step residuals (”onestep”)
+- Possibility of using multiple $log(\beta)$ parameters over time
+- Added type=”map” to plot.argostrack to include background map in plot of estimated track
+
+
+# Version 0.0.2
+- First official release, submitted to Ecology
+- Implemented Continuous Time Correlated Random Walk (ctcrw) with normal/t distributed measurement errors
+- Function to simulate from the ctcrw based on a model fit.
+- Function to get smoothed residuals
+- Function to bootstrap the model based on a model fit

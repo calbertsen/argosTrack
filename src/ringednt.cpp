@@ -5,6 +5,7 @@
 
 using namespace density;
 
+
 template<class Type>
 Type objective_function<Type>::operator() ()
 {
@@ -134,7 +135,7 @@ Type objective_function<Type>::operator() ()
 		       gamma,varState);
       break;
     case 2:			// Mixed memory Continuous Time Correlated Random Walk on lat+lon
-      nll += nll_mmctcrw((vector<Type>)mu.col(i),
+      nll += nll_mpctcrw((vector<Type>)mu.col(i),
 			 (vector<Type>)mu.col(i-1),
 			 (vector<Type>)vel.col(i),
 			 (vector<Type>)vel.col(i-1),

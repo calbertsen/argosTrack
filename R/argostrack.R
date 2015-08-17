@@ -81,10 +81,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(any(is.na(locclassfactor))){
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
-    movModNames <- c("rw","ctcrw","mmctcrw","dtcrw","dsb")
+    movModNames <- c("rw","ctcrw","mpctcrw","dtcrw","dsb")
     modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
-       stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
+       stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,collapse=", "),"."))
 
     logCorrect <- matrix(c(0.6507,0.8231,
                            2.3432,2.0532,
@@ -147,8 +147,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 timevary = as.integer(timevarybeta>1)
                 )
 
-    ## numStates <- ifelse(movementmodel == "mmctcrw",4,2)
-    if(movementmodel == "mmctcrw"){
+    ## numStates <- ifelse(movementmodel == "mpctcrw",4,2)
+    if(movementmodel == "mpctcrw"){
         numStates <- c(4,4)
     }else{
         numStates <- c(2,2)
@@ -220,7 +220,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     
     if(equalbetas){
-        if(movementmodel == "mmctcrw"){
+        if(movementmodel == "mpctcrw"){
             mbe[2,] <- mbe[1,]
             mbe[4,] <- mbe[3,]
         }else{
@@ -232,7 +232,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     map$logbeta <- factor(as.vector(mbe))
     
-    if(movementmodel == "mmctcrw"){
+    if(movementmodel == "mpctcrw"){
         map$gamma <- factor(c(1,2,NA,NA))  # Drift in the slow process
         tt <- cumsum(dat$dt)
         parameters$logbeta <- matrix(c(-2,-2,0,0),
