@@ -10,6 +10,7 @@ Type nll_dsb(Type st, Type phit, Type phitm, Type rho, Type scale, Type shape){
   Type res = -dweibull(st, shape, scale, true);
   // rho must be positive
   res -= dwcauchy(phit,phitm,rho,true);
+  res -= log(st);
   
   return res;
 }

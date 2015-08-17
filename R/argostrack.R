@@ -160,7 +160,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(movementmodel == "dsb"){
         y <- t(apply(cbind(lon,lat),1,
                      function(x)c(x[1]*60*cos(x[2]*pi/180),x[2]*60)))
-        y <- diff(y)
+        ## y <- diff(y)
         logsinit <- log(sqrt(y[,1] ^ 2 + y[,2] ^ 2))   
         phiinit <- atan2(y[,2],y[,1])
         fntmp <- function(par) -sum(dweibull(x=exp(logsinit),
