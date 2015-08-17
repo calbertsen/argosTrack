@@ -89,7 +89,7 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
 
 // Mixed memory continuous-time correlated random walk
 template<class Type>
-Type nll_mmctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
+Type nll_mpctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
 
   vector<Type> state(6);
   matrix<Type> cov(6,6);
@@ -294,7 +294,7 @@ Type objective_function<Type>::operator() ()
 			 gamma,varState);
 	break;
       case 2:
-	nll += nll_mmctcrw((vector<Type>)mu.col(stateNum),
+	nll += nll_mpctcrw((vector<Type>)mu.col(stateNum),
 			   (vector<Type>)mu.col(stateNum-1),
 			   (vector<Type>)vel.col(stateNum),
 			   (vector<Type>)vel.col(stateNum-1),
