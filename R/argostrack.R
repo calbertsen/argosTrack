@@ -82,7 +82,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     movModNames <- c("rw","ctcrw","mpctcrw")
     modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
     if(is.na(modelCodeNum))
-       stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,sep=", "),"."))
+       stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,collapse=", "),"."))
 
     logCorrect <- matrix(c(0.6507,0.8231,
                            2.3432,2.0532,
