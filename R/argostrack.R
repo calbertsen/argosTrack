@@ -38,6 +38,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        verbose = TRUE,
                        timeunit = "mins",
                        nStates = NULL,
+                       nauticalStates = FALSE,
                        nauticalObs = FALSE,
                        nlminb.control = list(eval.max=2000,
                            iter.max=1500,
@@ -127,7 +128,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
         stateFrac <- rep(1,length(lon))
     }else{
         stateFrac <- sapply(1:length(lon),
-                            function(i) 1 - (dateObs[i] - dateStates[prevState[i]]) / diff(dateStates[prevState[i] + 0:1]))
+                            function(i) 1 - (dateObs[i] - dateStates[prevState[i]]) / na.omit(c(diff(dateStates[prevState[i] + 0:1]),1))[1])
         ## if(stateFrac[length(stateFrac)] == 1)
         ##     dateStates <- dateStates[-length(dateStates)]
         ## if(max(prevState) < length(
@@ -143,6 +144,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 include = as.numeric(include),
                 minDf = minDf,
                 moveModelCode = modelCodeNum,
+                nauticalStates = as.numeric(nauticalStates),
                 nauticalObs = as.numeric(nauticalObs),
                 timevary = as.integer(timevarybeta>1)
                 )
@@ -157,8 +159,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(movementmodel == "dsb"){
         y <- t(apply(cbind(lon,lat),1,
-                   function(x)c(x[1]*60*cos(x[2]*pi/180),x[2]*60)))
-        logsinit <- log(sqrt(y[,1] ^ 2 + y[,2] ^ 2))
+                     function(x)c(x[1]*60*cos(x[2]*pi/180),x[2]*60)))
+        y <- diff(y)
+        logsinit <- log(sqrt(y[,1] ^ 2 + y[,2] ^ 2))   
         phiinit <- atan2(y[,2],y[,1])
         fntmp <- function(par) -sum(dweibull(x=exp(logsinit),
                                              scale=exp(par[1]),

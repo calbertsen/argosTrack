@@ -35,8 +35,8 @@ print.summary_argostrack <- function(x, ...){
         cat(paste("Average turning angle (radians):",
                   round(Arg(mean(complex(argument=x$turningangles))),4),
                   "\n\n"))
-        cat(paste("Average step length per hour:",
-                  round(mean(x$steplengths_per_hour),4),
+        cat(paste("Average step length (km/h):",
+                  round(mean(x$steplengths_per_hour * 1.852),4),
                   "\n\n"))
 	
 	cat("Location classes:\n\n")

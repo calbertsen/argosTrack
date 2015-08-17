@@ -20,7 +20,7 @@ Type objective_function<Type>::operator() ()
   DATA_SCALAR(minDf);
   DATA_INTEGER(moveModelCode);
   DATA_INTEGER(modelCode);
-  //DATA_INTEGER(nauticalStates);
+  DATA_INTEGER(nauticalStates);
   DATA_INTEGER(nauticalObs);
   DATA_INTEGER(timevary);
 
@@ -46,11 +46,26 @@ Type objective_function<Type>::operator() ()
   // Get state coordinates in nautical miles
   vector<Type> x(mu.cols());
   vector<Type> y(mu.cols());
+  // Get state coordinates in latitude/longitude
+  vector<Type> slon(mu.cols());
+  vector<Type> slat(mu.cols());
 
-  for(int i = 0; i < x.size(); ++i){
-    vector<Type> tmp = ll2n(mu(1,i), mu(0,i));
-    x(i) = tmp(0);
-    y(i) = tmp(1);
+  if(nauticalStates){
+    for(int i = 0; i < x.size(); ++i){
+      vector<Type> tmp = n2ll(mu(1,i), mu(0,i));
+      x(i) = mu(1,i);
+      y(i) = mu(0,i);
+      slon(i) = tmp(0);
+      slat(i) = tmp(1);
+    }
+  }else{
+    for(int i = 0; i < x.size(); ++i){
+      vector<Type> tmp = ll2n(mu(1,i), mu(0,i));
+      x(i) = tmp(0);
+      y(i) = tmp(1);
+      slon(i) = mu(1,i);
+      slat(i) = mu(0,i);
+    }
   }
 
   // Get observation coordinates in nautical miles
@@ -165,7 +180,7 @@ Type objective_function<Type>::operator() ()
       nll += nll_dsb(stepLengths(i),
 		      bearings(i),
 		      bearings(i-1),
-		      Type(0.99)/(Type(1.0)+exp(-logbeta(0,i))) + Type(0.005),
+		      beta(0,i),
 		      varState(0),
 		      varState(1));
       break;
@@ -192,25 +207,23 @@ Type objective_function<Type>::operator() ()
     }else{
       obs(0) = lat(i);
       obs(1) = lon(i);
-      if(stateFrac(i)+1 > mu.cols()){
-	obs(0) -= mu(0,prevState(i));
-	obs(1) -= mu(1,prevState(i));
+      if(stateFrac(i)+1 > slat.size()){
+	obs(0) -= slat(prevState(i));
+	obs(1) -= slon(prevState(i));
       }else{
-	obs(0) -= stateFrac(i) * mu(0,prevState(i)) + (Type(1.0) - stateFrac(i)) * mu(0,prevState(i)+1);
-	obs(1) -= stateFrac(i) * mu(1,prevState(i)) + (Type(1.0) - stateFrac(i)) * mu(1,prevState(i)+1);
+	obs(0) -= stateFrac(i) * slat(prevState(i)) + (Type(1.0) - stateFrac(i)) * slat(prevState(i)+1);
+	obs(1) -= stateFrac(i) * slon(prevState(i)) + (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
       }
     }
     nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
   }
 
 
-  // ADREPORT(x);
   REPORT(x);
-  // ADREPORT(y);
   REPORT(y);
-  // ADREPORT(stepLengths);
+  REPORT(slat);
+  REPORT(slon);
   REPORT(stepLengths);
-  // ADREPORT(bearings);
   REPORT(bearings);
   REPORT(xobs);
   REPORT(yobs);
@@ -220,6 +233,9 @@ Type objective_function<Type>::operator() ()
   ADREPORT(sdObs);
   ADREPORT(dfs);
   ADREPORT(beta);
+
+  // ADREPORT(slat);
+  // ADREPORT(slon);
 
   
   return nll;

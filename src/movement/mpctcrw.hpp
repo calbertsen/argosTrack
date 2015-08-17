@@ -1,10 +1,10 @@
 
-#ifndef _MMCTCRW_
-#define _MMCTCRW_
+#ifndef _MPCTCRW_
+#define _MPCTCRW_
 
 // Mixed memory continuous-time correlated random walk
 template<class Type>
-Type nll_mmctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
+Type nll_mpctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
 
   vector<Type> state(6);
   matrix<Type> cov(6,6);

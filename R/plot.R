@@ -113,7 +113,7 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
 }
 
 
-.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, ...){
+.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "", ...){
 
     gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
     shortfrac <- Vectorize(
@@ -163,7 +163,7 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
     plot(mshw*cos(seq(0,2 * pi,len=1000)),mshw*sin(seq(0,2*pi,len=1000)),type="l",
          asp=1,axes=FALSE,
          main = main,
-         ylab="",xlab="")
+         ylab="",xlab=xlab)
     a <- lapply(as.list(shw),
                 function(x)lines(x*cos(seq(0,2*pi,len=1000)),
                                  x*sin(seq(0,2*pi,len=1000)),
@@ -198,12 +198,12 @@ plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",...){
         layout(matrix(1:2,1,2))
     }
     if(type %in% c("both","step"))
-        hist(x$steplengths_per_hour,
-             xlab = "Step length per hour",
+        hist(x$steplengths_per_hour * 1.852,
+             xlab = "Step length (km/h)",
              main = NULL,
              nclass = nclass,
              prob = prob,
              ...)
     if(type %in% c("both","angle"))
-        .roseplot(x$turningangles,breaks = nclass,prob=prob,...)
+        .roseplot(x$turningangles,breaks = nclass,prob=prob,xlab="Turning angles between states (radians)",...)
 }
