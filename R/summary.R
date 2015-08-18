@@ -11,7 +11,7 @@ summary.argostrack <- function(object, ...){
     lcs <- table(object$locationclass[object$tmb_object$env$data$include==1])
     daterange <- range(object$dates)
     stepLengths <- object$tmb_object$report()$stepLengths[-1]
-    turningAngles <- object$tmb_object$report()$bearings[-1]
+    turningAngles <- diff(object$tmb_object$report()$bearings)
     tStates <- object$state_dates
     if(is.numeric(tStates)){
         dtstate <- diff(tStates)
