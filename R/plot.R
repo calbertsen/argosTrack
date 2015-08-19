@@ -27,7 +27,8 @@ plot.argostrack <- function(x,only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE,
         xrng <- c(min(esttrack[2,])-0.2, max(esttrack[2,])+0.2)
         yrng <- c(min(esttrack[1,])-0.2, max(esttrack[1,])+0.2)
     }
-    
+
+    bg_style <- "none"
     if(bg_style=="none"){
         
         plot(obs[2,],obs[1,],type="l",lty=2,col="grey",
