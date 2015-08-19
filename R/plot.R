@@ -193,7 +193,7 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
 
 
 #' @export
-plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",...){
+plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",bearings=FALSE,...){
     if(type=="both"){
         layout(matrix(1:2,1,2))
     }
@@ -205,5 +205,15 @@ plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",...){
              prob = prob,
              ...)
     if(type %in% c("both","angle"))
-        .roseplot(x$turningangles,breaks = nclass,prob=prob,xlab="Turning angles between states (radians)",...)
+        if(bearings){
+            .roseplot(cumsum(x$turningangles),
+                      breaks = nclass,
+                      prob=prob,
+                      xlab="Directional bearings (radians)",...)
+        }else{
+            .roseplot(x$turningangles,
+                      breaks = nclass,
+                      prob=prob,
+                      xlab="Turning angles between states (radians)",...)
+        }
 }
