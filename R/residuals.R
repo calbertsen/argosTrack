@@ -59,8 +59,10 @@ residuals.argostrack <- function(object,type="onestep",seed=1, parallel=FALSE, o
         }
 
         osa_lat <- oneStepPredict2(object$tmb_object,"lat","klat",
+                                   discrete = FALSE,
                                    method=method, parallel=parallel)
         osa_lon <- oneStepPredict2(object$tmb_object,"lon","klon",
+                                   discrete = FALSE,
                                    method=method, parallel=parallel)
 
         res <- rbind(osa_lat$residual,osa_lon$residual)
