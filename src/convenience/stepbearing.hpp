@@ -29,14 +29,14 @@ Type atan3(Type y, Type x){
         Type pi2(2. * atan(1.));
 	Type pi(2. * pi2);
 
-	Type ax = abs(x) + 1e-6;
-	Type ay = abs(y) + 1e-6;
+	Type ax = abs(x);
+	Type ay = abs(y);
 	
 	// if( ax > ay )
 	// 	theta = atan(ay / ax);
 	// else	theta = pi2 - atan(ax / ay);
-	alpha = atan(ay / ax);
-	beta  = pi2 - atan(ax / ay);
+	alpha = atan(ay / (ax + 1e-6));
+	beta  = pi2 - atan(ax / (ay + 1e-6));
 	theta = CppAD::CondExpGt(ax, ay, alpha, beta);         // use of CondExp
 
 	// if( x <= 0 )
