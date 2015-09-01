@@ -21,7 +21,7 @@ VECTORIZE3_tti(dwcauchy);
 
 template <class Type>
 Type dvonmises(Type x, Type mu, Type kappa, int give_log = 0){
-  Type logres = kappa * cos(x - mu) - log(2*M_PI) - log(besselK(kappa, Type(0)));
+  Type logres = kappa * cos(x - mu) - log(2*M_PI) - log(besselI(kappa, Type(0)));
   if(give_log) return logres; else return exp(logres);
 }
 

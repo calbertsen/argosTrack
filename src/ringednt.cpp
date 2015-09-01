@@ -1,7 +1,7 @@
 #include <TMB.hpp>
+#include "convenience/convenience.hpp"
 #include "densities/all.hpp"
 #include "movement/models.hpp"
-#include "convenience/convenience.hpp"
 
 using namespace density;
 
