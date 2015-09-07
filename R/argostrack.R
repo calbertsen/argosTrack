@@ -240,7 +240,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     
-    srep <- TMB::summary.sdreport(TMB::sdreport(obj))
+    srep <- TMB:::summary.sdreport(TMB::sdreport(obj))
     track <- srep[rownames(srep)=="mu",]
     sdtrack <- matrix(track[,2],nrow=2)
     esttrack <- matrix(track[,1],nrow=2)

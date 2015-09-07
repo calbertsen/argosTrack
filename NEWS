@@ -1,3 +1,7 @@
+# Version 0.1.1
+- Fixed error caused by TMB no longer exporting summary.sdreport
+
+
 # Version 0.1.0
 - Added movement models: Random Walk (rw) and Multiple Persistence Continuous Time Correlated Random Walk (mpctcrw)
 - New residual types (besided the old ”smooth”): Smooth predictions (”smoothpred”), Simulated residuals (”simulated”), and one step residuals (”onestep”)
