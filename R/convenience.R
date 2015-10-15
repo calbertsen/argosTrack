@@ -64,7 +64,7 @@ simStates <- function(object,newpar=NULL){
             cc[3,4] <- varState[2]*(1-2*exp(-beta[2]*dt[i])+exp(-2*beta[2]*dt[i]))/(2*beta[2]^2)
             cc[2,1] <- cc[1,2]
             cc[4,3] <- cc[3,4]
-            rr <- as.vector(mvtnorm::rmvnorm(1,mm,cc))
+            rr <- as.vector(.Call("rmvnorm",1,mm,cc, PACKAGE="argosTrack"))
             mu[,i] <- rr[c(1,3)]
             vel[,i] <- rr[c(2,4)]                    
           

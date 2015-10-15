@@ -9,6 +9,5 @@ Description: R package for analysing Argos data
 License: GPL-2
 LazyData: true
 Imports:
-    TMB,
-    mvtnorm
-LinkingTo: TMB, mvtnorm
+    TMB
+LinkingTo: TMB
