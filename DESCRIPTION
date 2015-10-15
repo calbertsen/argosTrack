@@ -1,11 +1,11 @@
 Package: argosTrack
 Type: Package
-Title: Fit movement models to Argos data for marine animals
-Version: 0.1.0.9000
-Date: 2015-08-17
+Title: Fit Movement Models to Argos Data for Marine Animals
+Version: 0.1.0.9001
+Date: 2015-10-14
 Author: Christoffer Moesgaard Albertsen
 Maintainer: Christoffer Moesgaard Albertsen <cmoe@aqua.dtu.dk>
-Description: R package for analysing Argos data
+Description: As a wrapper for the package TMB, this package implements movement models for marine animal data with Argos tags. 
 License: GPL-2
 LazyData: true
 Imports:
