@@ -7,39 +7,63 @@
 argosTrack(lon, lat, dates, locationclass, include = rep(TRUE, length(dates)),
   equalbetas = TRUE, timevarybeta = 1, fixgammas = TRUE,
   fixcorrection = FALSE, dfVals = NULL, dfMap = NULL, minDf = 3,
-  errordistribution = "t", movementmodel = "ctcrw", verbose = TRUE,
-  timeunit = "mins", nStates = NULL, nauticalStates = FALSE,
-  nauticalObs = FALSE, nlminb.control = list(eval.max = 2000, iter.max =
-  1500, rel.tol = 0.001, x.tol = 0.015))
+  errordistribution = c("n", "t"), movementmodel = c("rw", "ctcrw",
+  "mpctcrw", "dtcrw", "dsb"), silent = FALSE, timeunit = "hours",
+  nStates = NULL, nauticalStates = FALSE, nauticalObs = FALSE,
+  nlminb.control = list(eval.max = 2000, iter.max = 1500, rel.tol = 0.001,
+  x.tol = 0.015))
 }
 \arguments{
-\item{lon}{}
+\item{lon}{Vector of observed longitude coordinate.}
 
-\item{lat}{}
+\item{lat}{Vector of observed latitude coordinate}
 
-\item{dates}{}
+\item{dates}{Vector of dates of observations. Must be either numerical or characters convertable to POSIXct}
 
-\item{locationclass}{}
+\item{locationclass}{Vector of Argos location class for observations. Values must be in c("3", "2", "1", "0", "A", "B","Z")}
 
-\item{include}{}
+\item{include}{Boolean vector indicating which observations to include in the analysis.}
 
 \item{equalbetas}{}
+
+\item{timevarybeta}{}
 
 \item{fixgammas}{}
 
 \item{fixcorrection}{}
 
+\item{dfVals}{}
+
 \item{dfMap}{}
 
-\item{errordistribution}{}
+\item{minDf}{}
 
-\item{verbose}{Write maximum gradient components to the terminal?}
+\item{errordistribution}{Error distribution to use. Either multivariate Gaussian (n) or multivariate t (t).}
 
-\item{timeunit}{}
+\item{movementmodel}{Movement model to use. See details.}
 
-\item{modelcode}{}
+\item{silent}{Disable all tracing information from TMB?}
+
+\item{timeunit}{Time unit to use when calculating time between states.}
+
+\item{nStates}{}
+
+\item{nauticalStates}{Should the states be estimated in nautical miles?}
+
+\item{nauticalObs}{Should the observations be transformed to nautical miles?}
+
+\item{nlminb.control}{Control list passed to nlminb for estimation}
+}
+\value{
+list of stuff
 }
 \description{
-Estimate animal movement track from Argos data using TMB (tmb-project.org).
+Estimate track from Argos data.
+}
+\details{
+Function to estimate animal movement track from Argos data using TMB (tmb-project.org).
+}
+\author{
+Christoffer Moesgaard Albertsen
 }
 

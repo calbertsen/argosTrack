@@ -1,9 +1,22 @@
 
 
-
-#' @export
-
-plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,zoom_to_obs=TRUE, ...){
+##' Plot the fit from argosTrack
+##' @param x fitted argosTrack object
+##' @param bg_style If 'none' an empty background is plotted. If 'map' a map is plotted in the background.
+##' @param only_map Should only a map be plotted or also coordinate wise estimates?
+##' @param min_area Minimum area of land polygons to plot.
+##' @param zoom_to_obs If TRUE all observations will be shown. If FALSE outliers may be left outside the plotting area.
+##' @param ...
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+plot.argostrack <- function(x,
+                            bg_style=c("none","map"),
+                            only_map = FALSE,
+                            min_area = 0.01,
+                            zoom_to_obs=TRUE,
+                            ...){
+    
+    bg_style <- match.arg(bg_style)
     object <- x
     ## srep <- object$sdreport_summary
     ## track <- srep[rownames(srep)=="mu",]
@@ -41,21 +54,19 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,z
         lines(esttrack[2,],esttrack[1,])
         
     }else if(bg_style=="map"){ 
-        data('worldShorelines',package="argosTrack")
-        data('worldShorelinesArea',package="argosTrack")
+        ## data('worldShorelines',package="argosTrack")
+        ## data('worldShorelinesArea',package="argosTrack")
         plot(NA, xlim=xrng, ylim=yrng,asp=1/cos((mean(yrng) * pi) / 180),
              xlab = expression(paste("Longitude (",degree,")",sep="")),
              ylab = expression(paste("Latitude (",degree,")",sep="")))
         # Need faster way to plot the polygons
-        invisible(lapply(worldShorelines[worldShorelinesArea>min_area],function(x){
+        invisible(lapply(argosTrack::worldShorelines[argosTrack::worldShorelinesArea>min_area],function(x){
             polygon(x[,1],x[,2],col=grey(0.8),border=NA)
         }))
         box()
         lines(obs[2,],obs[1,],type="l",lty=2,col=grey(0.5))
         lines(esttrack[2,],esttrack[1,])
 
-    }else{
-        stop("Background style is not valid.")
     }
 
     if(!only_map){
@@ -76,43 +87,16 @@ plot.argostrack <- function(x,bg_style="none",only_map = FALSE,min_area = 0.01,z
 
 }
 
-#' @export
-plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
-    object <- x
-    msearray <- object$mse
-    pdatlat <- data.frame(V1 = object$mse[1,,1])
-    pdatlon <- data.frame(V1 = object$mse[2,,1])
 
-    if(dim(msearray)[3]>1){
-        for(i in 1:dim(msearray)[3]){
-            pdatlat[,i] <- object$mse[1,,i]
-            pdatlon[,i] <- object$mse[2,,i]
-        }
-    }
-    dnam <- dimnames(object$mse)
-    if(!is.null(dnam)){
-        if(!is.null(dnam[[3]])){
-            colnames(pdatlat) <- dnam[[3]]
-            colnames(pdatlon) <- dnam[[3]]
-        }
-    }
-    #if(!is.null(names)){
-    #    colnames(pdatlat) <- names
-    #    colnames(pdatlon) <- names
-    #}
-
-    if(vertical){
-        layout(matrix(c(1,2),ncol=1))
-    }else{
-        layout(matrix(c(1,2),nrow=1))
-    }
-    boxplot(pdatlon,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Longitude (",degree,")",sep="")),...)
-    boxplot(pdatlat,na.rm=TRUE,main=NULL,
-            ylab=expression(paste("MSE for estimates, Latitude (",degree,")",sep="")),...)
-}
-
-
+##' Roseplot / radar histogram
+##' @title Roseplot / radar histogram
+##' @param x 
+##' @param breaks 
+##' @param prob 
+##' @param main 
+##' @param xlab 
+##' @param ... 
+##' @author Christoffer Moesgaard Albertsen
 .roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "", ...){
 
     gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
@@ -147,12 +131,12 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
     vals <- if(prob){h$density}else{h$counts}
 
     slices <- lapply(as.list(1:length(vals)),
-                     function(i)complex(arg=c(0,
+                     function(i)complex(argument=c(0,
                                             seq(h$breaks[i],
                                                 h$breaks[i + 1],
                                                 len = nslp),
                                             0),
-                                        mod=c(0,
+                                        modulus=c(0,
                                             rep(vals[i],nslp),
                                             0)
                                         )
@@ -191,7 +175,14 @@ plot.argostrack_bootstrap <- function(x, vertical = TRUE, ...){
 
 
 
-
+#' Plot of the summary of an argosTrack fit.
+#' @param x 
+#' @param nclass 
+#' @param prob 
+#' @param type 
+#' @param bearings 
+#' @param ...
+#' @author Christoffer Moesgaard Albertsen
 #' @export
 plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",bearings=FALSE,...){
     if(type=="both"){

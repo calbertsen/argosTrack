@@ -3,6 +3,7 @@
 - Possibility of extracting and plotting step lengths and turning angles between predicted states for all models
 - Support for modelling on a scale of either nautical miles or latitude/longitude for both states and observations.
 - Removed bootstrap functionality
+- argosTrack argument "verbose" changed to "silent"
 
 # Version 0.1.0
 - Added movement models: Random Walk (rw) and Multiple Persistence Continuous Time Correlated Random Walk (mpctcrw)

@@ -9,7 +9,7 @@
 #'   \item{date}{Date and time of the observation}
 #'   \item{lc}{Argos location class of the observation}
 #'   \item{lat}{Observed latitude (degrees north) from the Argos system}
-#'   \item{lc}{Observed longitude (degrees east) from the Argos system}
+#'   \item{lon}{Observed longitude (degrees east) from the Argos system}
 #'   
 #' }
 #' @source Fisheries and Oceans Canada
@@ -23,7 +23,7 @@
 #'   \item{date}{Date and time of the observation}
 #'   \item{lc}{Argos location class of the observation}
 #'   \item{lat}{Observed latitude (degrees north) from the Argos system}
-#'   \item{lc}{Observed longitude (degrees east) from the Argos system}
+#'   \item{lon}{Observed longitude (degrees east) from the Argos system}
 #'   
 #' }
 #' @source Fisheries and Oceans Canada

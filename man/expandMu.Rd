@@ -11,7 +11,16 @@ expandMu(eststat, dt)
 
 \item{dt}{vector of length m>=n of time difference to previous observation}
 }
+\value{
+matrix of expanded estimates
+}
 \description{
-Expand estimated states to all time points
+Expand estimated states to all observations
+}
+\details{
+Internal function to expand estimated states to all observations when there are multiple observations at time points
+}
+\author{
+Christoffer Moesgaard Albertsen
 }
 

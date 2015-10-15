@@ -1,10 +1,16 @@
 
 
-#' Expand estimated states to all time points
-#' @param eststat 2xn Matrix of estimated states
-#' @param dt vector of length m>=n of time difference to previous observation
 
-expandMu <- function(eststat,dt){
+##' Expand estimated states to all observations
+##'
+##' Internal function to expand estimated states to all observations when there are multiple observations at time points
+##' @title Expand estimated states to all time points
+##' @param eststat 2xn Matrix of estimated states
+##' @param dt vector of length m>=n of time difference to previous observation
+##' @return matrix of expanded estimates
+##' @author Christoffer Moesgaard Albertsen
+expandMu <- function(eststat,
+                     dt){
 res<-array(dim=c(2,length(dt)))
     st <- 1
     for(i in 1:length(dt)){
@@ -18,10 +24,13 @@ res<-array(dim=c(2,length(dt)))
 }
 
 #' Simulate states given an argostrack object
-#' @param object Argostrack object
-#' @param locationclass The location classes of the track
-
-simStates <- function(object,newpar=NULL){
+##' @param object Argostrack object
+##' @param newpar List of new parameters
+##' @param locationclass The location classes of the track
+##' @return list of simulated positions (mu) and velocities (vel)
+##' @author Christoffer Moesgaard Albertsen
+simStates <- function(object,
+                      newpar=NULL){
     if(!class(object)=="argostrack"){
         stop("Object must be of class argostrack")
     }
