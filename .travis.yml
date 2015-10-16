@@ -6,7 +6,8 @@ os:
 
 env:
   global:
-    - R_CHECK_ARGS="--as-cran --timings"
+    - R_CHECK_ARGS="--as-cran --timings --no-manual"
+    - R_BUILD_ARGS="--no-manual"
     - _R_CHECK_TIMINGS_="0"
 
 sudo: required
