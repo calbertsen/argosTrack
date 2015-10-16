@@ -1,447 +1,84 @@
-# Sample random effects
-rmvnorm <- function(n,obj,par=obj$env$par,update=TRUE){
-    # From TMB
-    updateCholesky <- function(L,H,t=0){
-        .Call("destructive_CHM_update",L,H,as.double(t),PACKAGE="Matrix")
-    }
 
-    h <- obj$env$spHess(par,random=TRUE)
-    L <- obj$env$L.created.by.newton
-    if(update)
-        updateCholesky(L,h) ## P %*% h %*% Pt = L %*% Lt
-
-    u <- matrix(rnorm(ncol(L)*n),ncol(L),n)
-    u <- Matrix::solve(L,u,system="Lt") ## Solve Lt^-1 %*% u
-    u <- Matrix::solve(L,u,system="Pt") ## Multiply Pt %*% u
-    as.matrix(u)
-}
-
-
-
-
-
-
-#' Extract model residuals
-#'
-#' @export
-
-#residuals <- function(object, ...) UseMethod("residuals",object)
-
-
-## Implementation for argostrack object
-## Note: smoothpred, simulated and onestep are not actual residuals
-## and only give predictions at the states (may be fewer than observations)
-
-residuals.argostrack <- function(object,type="onestep",seed=1, parallel=FALSE, osamethod=NULL, ...){
+##' Residuals for argosTrack object
+##'
+##' The function calculated residuals for an argosTrack object.
+##' There are currently two types of residuals:
+##' \itemize{
+##' \item{smooth}{Gives smoothed residuals, i.e., the observations minus the smoothed estimated states}
+##' \item{oneste}{Gives one step ahead prediction residuals calculated by the \pkg{TMB} function \code{oneStepPredict}}
+##' }
+##' @section Note:
+##' The one step ahead residuals are calculated and standardize coordinatewise. Hence, they need not be independent between coordinates.
+##' 
+##' @title Residuals for argosTrack object
+##' @param object argosTrack object
+##' @param type Type of residual (see details)
+##' @param seed Seed for simulations.
+##' @param parallel Should one step predictions be calculated in parallel?
+##' @param osamethod Method for calculating one step predictions. Default to \code{oneStepGaussianOffMode} for Gaussian models and \code{oneStepGeneric} for t models.
+##' @param conditional Subset of observations to condition on.
+##' @param first First observation to calculate residuals for.
+##' @param ... Passed to nowhere
+##' @return Matrix of latitude and longitude residuals.
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+residuals.argostrack <- function(object,
+                                 type=c("smooth", "onestep"),
+                                 seed=1,
+                                 parallel=FALSE,
+                                 osamethod=NULL,
+                                 conditional = 1,
+                                 first = 2,
+                                 ...){
+    requireNamespace("TMB")
+    type <- match.arg(type)
     if(type == "smooth"){
         res <- object$observations - object$positions
         colnames(res) <- object$locationclass
         return(res)
-    }else if(type == "smoothpred"){
-         res <- object$positions[,object$tmb_object$env$data$dt > 0]
-         return(res)
-    }else if(type == "simulated"){
-         set.seed(seed)
-         dimPos <- dim(object$positions)
-         reNames <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
-         estX <- object$sdreport_summary[rownames(object$sdreport_summary) %in% reNames,1]
+    ## }else if(type == "smoothpred"){
+    ##      res <- object$positions[,object$tmb_object$env$data$dt > 0]
+    ##      return(res)
+    ## }else if(type == "simulated"){
+    ##      set.seed(seed)
+    ##      dimPos <- dim(object$positions)
+    ##      reNames <- unique(names(object$tmb_object$env$par[object$tmb_object$env$random]))
+    ##      estX <- object$sdreport_summary[rownames(object$sdreport_summary) %in% reNames,1]
          
-         Xrn <- rmvnorm(1,object$tmb_object,object$tmb_object$env$last.par.best,FALSE) + estX
-         res <- matrix(Xrn[names(estX) == "mu"],nrow=2)
-         return(res)
+    ##      Xrn <- rmvnorm(1,object$tmb_object,object$tmb_object$env$last.par.best,FALSE) + estX
+    ##      res <- matrix(Xrn[names(estX) == "mu"],nrow=2)
+    ##      return(res)
     }else if(type == "onestep"){
 
         if(is.null(osamethod)){
             method <- ifelse(object$errordistribution == "n",
-                             "oneStepGaussian","oneStepGeneric")
+                             "oneStepGaussianOffMode","oneStepGeneric")
         }else{
             method <- osamethod
         }
 
-        osa_lat <- oneStepPredict2(object$tmb_object,"lat","klat",
+        osa_lat <- TMB::oneStepPredict(object$tmb_object,"lat","klat",
                                    discrete = FALSE,
+                                   conditional = conditional,
+                                   seed = seed,
+                                   subset = (first:dim(object$observations)[2]),
                                    method=method, parallel=parallel)
-        osa_lon <- oneStepPredict2(object$tmb_object,"lon","klon",
+        osa_lon <- TMB::oneStepPredict(object$tmb_object,"lon","klon",
                                    discrete = FALSE,
+                                   conditional = conditional,
+                                   seed = seed,
+                                   subset = (first:dim(object$observations)[2]),
                                    method=method, parallel=parallel)
 
-        res <- rbind(osa_lat$residual,osa_lon$residual)
+        nas <- matrix(NA,ncol=first-1,nrow=2)
+        res <- cbind(nas,rbind(osa_lat$residual,osa_lon$residual))
+ 
         rownames(res) <- c("latitude","longitude")
         colnames(res) <- object$locationclass
-
+        class(res) <- "argostrack_residual"
         return(res)
         
     }else{
         stop("Unknown residual type. Must be 'smooth' or 'onestep'") 
     }
-}
-
-
-
-
-
-
-## Slightly modified version of residuals from TMB
-## https://github.com/kaskr/adcomp/blob/master/TMB/R/validation.R
-oneStepPredict2 <- function(obj,
-                           ## Names of data objects (not all are optional)
-                           observation.name = NULL,
-                           data.term.indicator = NULL,
-                           method=c(
-                               "oneStepGaussianOffMode",
-                               "fullGaussian",
-                               "oneStepGeneric",
-                               "oneStepGaussian",
-                               "cdf"),
-                           subset = NULL,
-                           conditional = NULL,
-                           discrete = NULL,
-                           discreteSupport = NULL,
-                           seed = 123,
-                           parallel = FALSE,
-                           trace = TRUE
-                            ){
-    require(TMB)
-    if (missing(observation.name)) stop("'observation.name' must define a data component")
-    if (!(observation.name %in% names(obj$env$data))) stop("'observation.name' must be in data component")
-    if (is.null(obj$env$random)) stop("oneStepPredict is only for random effect models")
-    method <- match.arg(method)
-    if (is.null(data.term.indicator)){
-        if(method != "fullGaussian"){
-            stop(paste0("method='",method,"' requires a 'data.term.indicator'"))
-        }
-    }
-    obs <- as.vector(obj$env$data[[observation.name]])
-    if(is.null(discrete)){
-        ndup <- sum(duplicated(obs))
-        if(ndup > 0){
-            warning("Observations do not look continuous. Number of duplicates = ", ndup)
-            stop("Argument 'discrete' (TRUE/FALSE) must be specified.")
-        }
-        discrete <- FALSE
-    } else {
-        stopifnot(is.logical(discrete))
-    }
-    ## Using wrong method for discrete data ?
-    if (discrete){
-        if (! (method %in% c("oneStepGeneric", "cdf")) ){
-            stop(paste0("method='",method,"' is not for discrete observations."))
-        }
-    }
-    ## Default subset/permutation:
-    if(is.null(subset)){
-        subset <- 1:length(obs)
-        subset <- setdiff(subset, conditional)
-    }
-    ## Check
-    if(!is.null(conditional)){
-        if(length(intersect(subset, conditional)) > 0){
-            stop("'subset' and 'conditional' have non-empty intersection")
-        }
-    }
-    unconditional <- setdiff(1:length(obs), union(subset, conditional))
-
-    ## Args to construct copy of 'obj'
-    args <- as.list(obj$env)[intersect(names(formals(MakeADFun)), ls(obj$env))]
-    ## Use the best encountered parameter for new object
-    args$parameters <- obj$env$parList(par = obj$env$last.par.best)
-    ## Fix all non-random components of parameter list
-    ## tmp <- as.logical(obj$env$par * 0)
-    ## tmp[-obj$env$random] <- TRUE
-    ## li <- lapply(obj$env$parList(par = tmp), function(x) any(x!=0))
-    ## fix <- names(li)[unlist(li)]
-    li <- unique(names(obj$env$par[obj$env$random]))
-    fix <- names(args$parameters)[!(names(args$parameters) %in% li)]
-    parameters <- obj$env$parameters
-    map <- lapply(args$parameters[fix], function(x)factor(x*NA))
-    args$map <- map ## Overwrite map
-    ## Find randomeffects character
-    args$random <- unique(names(obj$env$par[obj$env$random])) ## names(li[!unlist(li)])
-    ## Move data$name to parameter$name
-    args$parameters[observation.name] <- args$data[observation.name]
-    args$data[observation.name] <- NULL
-    ## Make data.term.indicator in parameter list
-    if(!is.null(data.term.indicator)){
-        one <- rep(1, length(obs))
-        zero <- rep(0, length(obs))
-        if(method=="cdf"){
-            args$parameters[[data.term.indicator]] <- cbind(one, zero, zero)
-        } else {
-            args$parameters[[data.term.indicator]] <- cbind(one)
-        }
-    }
-    ## Pretend these are *not observed*:
-    if(length(unconditional)>0){
-        if(is.null(data.term.indicator))
-            stop("Failed to disable some data terms (because 'data.term.indicator' missing)")
-        args$parameters[[data.term.indicator]][unconditional, 1] <- 0
-    }
-    ## Pretend these are *observed*:
-    if(length(conditional)>0){
-        if(is.null(data.term.indicator))
-            stop("Failed to enable some data terms (because 'data.term.indicator' missing)")
-        args$parameters[[data.term.indicator]][conditional, 1] <- 1
-    }
-    ## Make map for observations and indicator variables:
-    makeFac <- function(x){
-        fac <- as.matrix(x)
-        fac[] <- 1:length(x)
-        fac[conditional, ] <- NA
-        fac[unconditional, ] <- NA
-        fac[subset, ] <- 1:(length(subset)*ncol(fac)) ## Permutation
-        factor(fac)
-    }
-    map <- list()
-    map[[observation.name]] <- makeFac(obs)
-    if(!is.null(data.term.indicator)){
-        map[[data.term.indicator]] <- makeFac(args$parameters[[data.term.indicator]])
-    }
-    args$map <- c(args$map, map)
-    ## New object be silent
-    args$silent <- TRUE
-    ## Create new object
-    newobj <- do.call("MakeADFun", args)
-
-    ## Helper function to loop through observations:
-    nm <- names(newobj$par)
-    obs.pointer <- which(nm == observation.name)
-
-    if(method=="cdf"){
-        tmp <- matrix(which(nm == data.term.indicator), ncol=3)
-        data.term.pointer <- tmp[,1]
-        lower.cdf.pointer <- tmp[,2]
-        upper.cdf.pointer <- tmp[,3]
-    } else {
-        data.term.pointer <- which(nm == data.term.indicator)
-        lower.cdf.pointer <- NULL
-        upper.cdf.pointer <- NULL
-    }
-    observation <- local({
-        obs.local <- newobj$par
-        i <- 1:length(subset)
-        function(k, y=NULL, lower.cdf=FALSE, upper.cdf=FALSE){
-            ## Disable all observations later than k:
-            obs.local[data.term.pointer[k<i]] <- 0
-            ## On request, overwrite k'th observation:
-            if(!is.null(y)) obs.local[obs.pointer[k]] <- y
-           ## On request, get tail probs rather than point probs:
-            if(lower.cdf | upper.cdf){
-                obs.local[data.term.pointer[k]] <- 0
-                if(lower.cdf) obs.local[lower.cdf.pointer[k]] <- 1
-                if(upper.cdf) obs.local[upper.cdf.pointer[k]] <- 1
-            }
-            obs.local
-        }
-    })
-
-    ## Parallel case: overload lapply
-    if(parallel){
-        ## mclapply uses fork => must set nthreads=1
-        nthreads.restore <- TMB::openmp()
-        on.exit( TMB::openmp( nthreads.restore ), add=TRUE)
-        TMB::openmp(1)
-        library(parallel)
-        lapply <- parallel::mclapply
-    }
-    ## Trace one-step functions
-    tracefun <- function(k)if(trace)print(k)
-    ## Apply a one-step method and generate common output assuming
-    ## the method generates at least:
-    ##   * nll
-    ##   * nlcdf.lower
-    ##   * nlcdf.upper
-    applyMethod <- function(oneStepMethod){
-        pred <- do.call("rbind", lapply(1:length(subset), oneStepMethod))
-        pred <- as.data.frame(pred)
-        pred$Fx <- 1 / ( 1 + exp(pred$nlcdf.lower - pred$nlcdf.upper) )
-        pred$px <- 1 / ( exp(-pred$nlcdf.lower + pred$nll) +
-                         exp(-pred$nlcdf.upper + pred$nll) )
-        if(discrete){
-            if(!is.null(seed)){
-                ## Restore RNG on exit:
-                Random.seed <- .GlobalEnv$.Random.seed
-                on.exit(.GlobalEnv$.Random.seed <- Random.seed)
-                set.seed(seed)
-            }
-            U <- runif(nrow(pred))
-        } else {
-            U <- 0
-        }
-        pred$residual <- qnorm(pred$Fx - U * pred$px)
-        pred
-    }
-
-    ## ######################### CASE: oneStepGaussian
-    if(method == "oneStepGaussian"){
-        p <- newobj$par
-        newobj$fn(p) ## Test eval
-        oneStepGaussian <- function(k){
-            tracefun(k)
-            index <- subset[k]
-            f <- function(y){
-                newobj$fn(observation(k, y))
-            }
-            g <- function(y){
-                newobj$gr(observation(k, y))[obs.pointer[k]]
-            }
-            ans <- try({
-                opt <- nlminb(obs[index], f, g)
-                H <- optimHess(opt$par, f, g)
-                c(observation=obs[index], mean=opt$par, sd=sqrt(1/H))
-            })
-        
-            if(is(ans, "try-error")) ans <- c(observation=obs[index], mean=NA, sd=NA)
-            ans
-        }
-        pred <- do.call("rbind", lapply(1:length(subset), oneStepGaussian))
-        pred <- as.data.frame(pred)
-        pred$residual <- (pred$observation-pred$mean)/pred$sd
-    }
-
-    ## ######################### CASE: oneStepGaussianOffMode
-    if(method == "oneStepGaussianOffMode"){
-        p <- newobj$par
-        newobj$fn(p) ## Test eval
-        newobj$env$random.start <- expression({last.par[random]})
-        nll0 <- newobj$fn(observation(0))
-        oneStepGaussian <- function(k){
-            tracefun(k)
-            index <- subset[k]
-            f <- function(y){
-                newobj$fn(observation(k, y))
-            }
-            g <- function(y){
-                newobj$gr(observation(k, y))[obs.pointer[k]]
-            }
-            c(nll = f(obs[index]), grad = g(obs[index]))
-        }
-        pred <- do.call("rbind", lapply(1:length(subset), oneStepGaussian))
-        pred <- as.data.frame(pred)
-        ################### Convert value and gradient to residual
-        ## Need Lambert W function: x = W(x) * exp( W(x) ) , x > 0
-        ## Vectorized in x and tested on extreme cases W(.Machine$double.xmin)
-        ## and W(.Machine$double.xmax).
-        W <- function(x){
-            ## Newton: f(y)  = y * exp(y) - x
-            ##         f'(y) = y * exp(y) + exp(y)
-            rel.tol <- sqrt(.Machine$double.eps)
-            logx <- log(x)
-            fdivg <- function(y)(y - exp(logx - y)) / (1 + y)
-            y <- pmax(logx, 0)
-            while( any( abs( logx - log(y) - y) > rel.tol, na.rm=TRUE) ) {
-                y <- y - fdivg(y)
-            }
-            y
-        }
-        getResid <- function(value, grad){
-            Rabs <- sqrt( W( exp( 2*(value - log(sqrt(2*pi)) + log(abs(grad))) ) ) )
-            R <- sign(grad) * Rabs
-            R
-        }
-        pred$residual <- getResid( diff( c(nll0, pred$nll) ), pred$grad )
-    }
-
-    ## ######################### CASE: oneStepGeneric
-    if((method == "oneStepGeneric") & (!discrete)){
-        p <- newobj$par
-        newobj$fn(p) ## Test eval
-        newobj$env$value.best <- -Inf ## <-- Never overwrite last.par.best
-        nan2zero <- function(x)if(!is.finite(x)) 0 else x
-        oneStepGeneric <- function(k){
-            tracefun(k)
-            ans <- try({
-                index <- subset[k]
-                f <- function(y){
-                    newobj$fn(observation(k, y))
-                }
-                nll <- f(obs[index]) ## Marginal negative log-likelihood
-                F1 <- integrate(Vectorize( function(x)nan2zero( exp(-(f(x) - nll)) ) ), -Inf, obs[index])$value
-                F2 <- integrate(Vectorize( function(x)nan2zero( exp(-(f(x) - nll)) ) ), obs[index], Inf)$value
-                nlcdf.lower = nll - log(F1)
-                nlcdf.upper = nll - log(F2)
-                c(nll=nll, nlcdf.lower=nlcdf.lower, nlcdf.upper=nlcdf.upper)
-            })
-            if(is(ans, "try-error")) ans <- NaN
-            ans
-        }
-        pred <- applyMethod(oneStepGeneric)
-    }
-
-    ## ######################### CASE: oneStepDiscrete
-    if((method == "oneStepGeneric") & (discrete)){
-        p <- newobj$par
-        newobj$fn(p) ## Test eval
-        obs <- as.integer(round(obs))
-        if(is.null(discreteSupport)){
-            warning("Setting 'discreteSupport' to ",min(obs),":",max(obs))
-            discreteSupport <- min(obs):max(obs)
-        }
-        oneStepDiscrete <- function(k){
-            tracefun(k)
-            ans <- try({
-                index <- subset[k]
-                f <- function(y){
-                    newobj$fn(observation(k, y))
-                }
-                nll <- f(obs[index]) ## Marginal negative log-likelihood
-                F <- Vectorize(function(x)exp(-(f(x) - nll))) (discreteSupport)
-                F1 <- sum( F[discreteSupport <= obs[index]] )
-                F2 <- sum( F[discreteSupport >  obs[index]] )
-                nlcdf.lower = nll - log(F1)
-                nlcdf.upper = nll - log(F2)
-                c(nll=nll, nlcdf.lower=nlcdf.lower, nlcdf.upper=nlcdf.upper)
-            })
-            if(is(ans, "try-error")) ans <- NaN
-            ans
-        }
-        pred <- applyMethod(oneStepDiscrete)
-    }
-
-    ## ######################### CASE: fullGaussian
-    if(method == "fullGaussian"){
-        ## Same object with y random:
-        args2 <- args
-        args2$random <- c(args2$random, observation.name)
-        ## Change map: Fix everything except observations
-        fix <- data.term.indicator
-        args2$map[fix] <- lapply(args2$map[fix],
-                                 function(x)factor(NA*unclass(x)))
-        newobj2 <- do.call("MakeADFun", args2)
-        newobj2$fn() ## Test-eval to find mode
-        mode <- newobj2$env$last.par
-        GMRFmarginal <- function (Q, i, ...) {
-            ind <- 1:nrow(Q)
-            i1 <- (ind)[i]
-            i0 <- setdiff(ind, i1)
-            if (length(i0) == 0)
-                return(Q)
-            Q0 <- as(Q[i0, i0, drop = FALSE], "symmetricMatrix")
-            L0 <- Cholesky(Q0, ...)
-            ans <- Q[i1, i1, drop = FALSE] - Q[i1, i0, drop = FALSE] %*%
-                solve(Q0, Q[i0, i1, drop = FALSE])
-            ans
-        }
-        h <- newobj2$env$spHess(mode, random=TRUE)
-        i <- which(names(newobj2$env$par[newobj2$env$random]) == observation.name)
-        Sigma <- solve( as.matrix( GMRFmarginal(h, i) ) )
-        res <- obs[subset] - mode[i]
-        L <- t(chol(Sigma))
-        pred <- data.frame(residual = as.vector(solve(L, res)))
-    }
-
-    ## ######################### CASE: cdf
-    if(method == "cdf"){
-        p <- newobj$par
-        newobj$fn(p) ## Test eval
-        cdf <- function(k){
-            tracefun(k)
-            nll <- newobj$fn(observation(k))
-            nlcdf.lower <- newobj$fn(observation(k, lower.cdf = TRUE))
-            nlcdf.upper <- newobj$fn(observation(k, upper.cdf = TRUE))
-            c(nll=nll, nlcdf.lower=nlcdf.lower, nlcdf.upper=nlcdf.upper)
-        }
-        pred <- applyMethod(cdf)
-    }
-
-    pred
 }

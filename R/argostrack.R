@@ -12,30 +12,46 @@ NULL
 
 #' Estimate track from Argos data.
 #'
-#' Function to estimate animal movement track from Argos data using TMB (tmb-project.org).
+#' Function to estimate animal movement track from Argos data using TMB (\url{http://tmb-project.org}).
 ##' @title Estimate track from Argos data
 ##' @param lon Vector of observed longitude coordinate.
 ##' @param lat Vector of observed latitude coordinate
 ##' @param dates Vector of dates of observations. Must be either numerical or characters convertable to POSIXct
 ##' @param locationclass Vector of Argos location class for observations. Values must be in c("3", "2", "1", "0", "A", "B","Z")
 ##' @param include Boolean vector indicating which observations to include in the analysis.
-##' @param equalbetas 
-##' @param timevarybeta 
-##' @param fixgammas 
-##' @param fixcorrection 
-##' @param dfVals 
-##' @param dfMap 
-##' @param minDf 
+##' @param equalbetas Should the autocorrelation parameters be equal in the two coordinates?
+##' @param timevarybeta Number of autocorrelation parameters over time.
+##' @param fixgammas Should the drift parameters be equal in the two coordinates?
+##' @param fixcorrection Should the observational variance be fixed relative to the best location class?
+##' @param dfVals Specify the degrees of freedom used for each location class.
+##' @param dfMap Empose hypotheses on the degrees of freedom.
+##' @param minDf Lower bound for the degrees of freedom.
 ##' @param errordistribution Error distribution to use. Either multivariate Gaussian (n) or multivariate t (t).
 ##' @param movementmodel Movement model to use. See details.
 ##' @param silent Disable all tracing information from TMB?
 ##' @param timeunit Time unit to use when calculating time between states.
-##' @param nStates 
+##' @param nStates Number of hidden states for \code{dtcrw} and \code{dsb}
 ##' @param nauticalStates Should the states be estimated in nautical miles?
 ##' @param nauticalObs Should the observations be transformed to nautical miles?
 ##' @param nlminb.control Control list passed to nlminb for estimation
 ##' @return list of stuff
+##' 
+##' @examples
+##' dat <- subadult_ringed_seal
+##' dat <- dat[!(dat$lc=="Z"),][1:100,]
+##' args <- list(lon = dat$lon,
+##'              lat = dat$lat,
+##'              dates = as.character(dat$date),
+##'              locationclass = dat$lc,
+##'              silent = TRUE,
+##'              fixcorrection=TRUE,
+##'              errordistribution="n",
+##'              movementmodel="rw"
+##'          )
+##' fit <- do.call("argosTrack",args)
+##' 
 ##' @author Christoffer Moesgaard Albertsen
+##' @export
 argosTrack <- function(lon,lat,dates,locationclass,
                        include = rep(TRUE,length(dates)),
                        equalbetas = TRUE,
@@ -58,10 +74,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            x.tol=1.5e-2)){
 
 
-    movementmodel <- match.arg(movementmodel)
     errordistribution <- match.arg(errordistribution)
 
-    if(!is.numeric(timevarybeta) || !is.integer(timevarybeta) || timevarybeta <= 0)
+    if(!(is.numeric(timevarybeta) || is.integer(timevarybeta)) || timevarybeta <= 0)
         stop("timevarybeta must be a positive integer")
 
     if(minDf <= 0)
@@ -106,8 +121,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
         stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
     }
 
-    movModNames <- formals(sys.function(sys.parent()))$movementmodel
-    modelCodeNum <- as.integer(factor(movementmodel,levels=movModNames))[1]-1
+    movModNames <- eval(formals(sys.function(sys.parent()))$movementmodel)
+    movementmodel <- match.arg(movementmodel)
+    modelCodeNum <- as.integer(factor(movementmodel,
+                                      levels=as.vector(movModNames)))[1]-1
     if(is.na(modelCodeNum))
        stop(paste0("Wrong movement model code. Must be one of: ",paste(movModNames,collapse=", "),"."))
 

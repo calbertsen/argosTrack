@@ -8,17 +8,17 @@
   type = "both", bearings = FALSE, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{argosTrack object}
 
-\item{nclass}{}
+\item{nclass}{Number of classes in the histogram}
 
-\item{prob}{}
+\item{prob}{Standardize to proportions?}
 
-\item{type}{}
+\item{type}{Type of plot: step, angle or both}
 
-\item{bearings}{}
+\item{bearings}{Plot bearings instead of turning angles?}
 
-\item{...}{}
+\item{...}{Passed to histogram and roseplot}
 }
 \description{
 Plot of the summary of an argosTrack fit.

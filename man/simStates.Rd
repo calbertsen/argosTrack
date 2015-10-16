@@ -10,8 +10,6 @@ simStates(object, newpar = NULL)
 \item{object}{Argostrack object}
 
 \item{newpar}{List of new parameters}
-
-\item{locationclass}{The location classes of the track}
 }
 \value{
 list of simulated positions (mu) and velocities (vel)
@@ -22,4 +20,5 @@ Simulate states given an argostrack object
 \author{
 Christoffer Moesgaard Albertsen
 }
+\keyword{internal}
 

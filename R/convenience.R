@@ -9,6 +9,7 @@
 ##' @param dt vector of length m>=n of time difference to previous observation
 ##' @return matrix of expanded estimates
 ##' @author Christoffer Moesgaard Albertsen
+##' @keywords internal
 expandMu <- function(eststat,
                      dt){
 res<-array(dim=c(2,length(dt)))
@@ -26,9 +27,9 @@ res<-array(dim=c(2,length(dt)))
 #' Simulate states given an argostrack object
 ##' @param object Argostrack object
 ##' @param newpar List of new parameters
-##' @param locationclass The location classes of the track
 ##' @return list of simulated positions (mu) and velocities (vel)
 ##' @author Christoffer Moesgaard Albertsen
+##' @keywords internal
 simStates <- function(object,
                       newpar=NULL){
     if(!class(object)=="argostrack"){

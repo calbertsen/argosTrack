@@ -2,12 +2,48 @@
 % Please edit documentation in R/residuals.R
 \name{residuals.argostrack}
 \alias{residuals.argostrack}
-\title{Extract model residuals}
+\title{Residuals for argosTrack object}
 \usage{
-\method{residuals}{argostrack}(object, type = "onestep", seed = 1,
-  parallel = FALSE, osamethod = NULL, ...)
+\method{residuals}{argostrack}(object, type = c("smooth", "onestep"),
+  seed = 1, parallel = FALSE, osamethod = NULL, conditional = 1,
+  first = 2, ...)
+}
+\arguments{
+\item{object}{argosTrack object}
+
+\item{type}{Type of residual (see details)}
+
+\item{seed}{Seed for simulations.}
+
+\item{parallel}{Should one step predictions be calculated in parallel?}
+
+\item{osamethod}{Method for calculating one step predictions. Default to \code{oneStepGaussianOffMode} for Gaussian models and \code{oneStepGeneric} for t models.}
+
+\item{conditional}{Subset of observations to condition on.}
+
+\item{first}{First observation to calculate residuals for.}
+
+\item{...}{Passed to nowhere}
+}
+\value{
+Matrix of latitude and longitude residuals.
 }
 \description{
-Extract model residuals
+Residuals for argosTrack object
+}
+\details{
+The function calculated residuals for an argosTrack object.
+There are currently two types of residuals:
+\itemize{
+\item{smooth}{Gives smoothed residuals, i.e., the observations minus the smoothed estimated states}
+\item{oneste}{Gives one step ahead prediction residuals calculated by the \pkg{TMB} function \code{oneStepPredict}}
+}
+}
+\section{Note}{
+
+The one step ahead residuals are calculated and standardize coordinatewise. Hence, they need not be independent between coordinates.
+}
+\author{
+Christoffer Moesgaard Albertsen
 }
 

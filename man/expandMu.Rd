@@ -23,4 +23,5 @@ Internal function to expand estimated states to all observations when there are 
 \author{
 Christoffer Moesgaard Albertsen
 }
+\keyword{internal}
 

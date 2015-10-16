@@ -18,7 +18,7 @@
 
 \item{zoom_to_obs}{If TRUE all observations will be shown. If FALSE outliers may be left outside the plotting area.}
 
-\item{...}{}
+\item{...}{Passed to nowhere}
 }
 \description{
 Plot the fit from argosTrack

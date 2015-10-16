@@ -1,28 +1,11 @@
 
 
 #' @export
-
 print.argostrack <- function(x, ...){
     cat("Time to estimate:\n")
     print(unname(x$estimation_time[3]))
     cat("\nOptimization result:\n")
     print(x$optimization)
-}
-#' @export
-
-print.argostrack_bootstrap <- function(x, ...){
-    print(x$mse)
-}
-
-#' @export
-
-print.summary_argostrack_bootstrap <- function(x, ...){
-	cat("MSE in latitude direction:\n\n")
-	print(x$mseLatitude)
-	cat("\nMSE in longitude direction:\n\n")
-	print(x$mseLongitude)
-	cat("Proportion converged:\n\n")
-	print(apply(x$converged,2,function(x)x/sum(x)))
 }
 
 #' @export

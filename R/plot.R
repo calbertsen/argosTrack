@@ -6,7 +6,7 @@
 ##' @param only_map Should only a map be plotted or also coordinate wise estimates?
 ##' @param min_area Minimum area of land polygons to plot.
 ##' @param zoom_to_obs If TRUE all observations will be shown. If FALSE outliers may be left outside the plotting area.
-##' @param ...
+##' @param ... Passed to nowhere
 ##' @author Christoffer Moesgaard Albertsen
 ##' @export
 plot.argostrack <- function(x,
@@ -90,14 +90,15 @@ plot.argostrack <- function(x,
 
 ##' Roseplot / radar histogram
 ##' @title Roseplot / radar histogram
-##' @param x 
-##' @param breaks 
-##' @param prob 
-##' @param main 
-##' @param xlab 
-##' @param ... 
+##' @param x Vector of values
+##' @param breaks Either \code{Sturges} or the number of breaks to use.
+##' @param prob Should the bars be standardized?
+##' @param main Main title of the plot
+##' @param xlab x-axis label of the plot
+##' @param ... Passed to polygons for plotting the bars
 ##' @author Christoffer Moesgaard Albertsen
-.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "", ...){
+##' @keywords internal
+roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "", ...){
 
     gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
     shortfrac <- Vectorize(
@@ -176,15 +177,20 @@ plot.argostrack <- function(x,
 
 
 #' Plot of the summary of an argosTrack fit.
-#' @param x 
-#' @param nclass 
-#' @param prob 
-#' @param type 
-#' @param bearings 
-#' @param ...
+#' @param x argosTrack object
+#' @param nclass Number of classes in the histogram
+#' @param prob Standardize to proportions?
+#' @param type Type of plot: step, angle or both
+#' @param bearings Plot bearings instead of turning angles?
+#' @param ... Passed to histogram and roseplot
 #' @author Christoffer Moesgaard Albertsen
 #' @export
-plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",bearings=FALSE,...){
+plot.summary_argostrack <- function(x,
+                                    nclass = 35,
+                                    prob=TRUE,
+                                    type="both",
+                                    bearings=FALSE,
+                                    ...){
     if(type=="both"){
         layout(matrix(1:2,1,2))
     }
@@ -197,12 +203,12 @@ plot.summary_argostrack <- function(x,nclass = 35,prob=TRUE,type="both",bearings
              ...)
     if(type %in% c("both","angle"))
         if(bearings){
-            .roseplot(cumsum(x$turningangles),
+            roseplot(cumsum(x$turningangles),
                       breaks = nclass,
                       prob=prob,
                       xlab="Directional bearings (radians)",...)
         }else{
-            .roseplot(x$turningangles,
+            roseplot(x$turningangles,
                       breaks = nclass,
                       prob=prob,
                       xlab="Turning angles between states (radians)",...)

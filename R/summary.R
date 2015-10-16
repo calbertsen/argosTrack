@@ -1,6 +1,5 @@
 
 #' @export
-
 summary.argostrack <- function(object, ...){
 
     npar <- length(object$optimization$par)
@@ -33,8 +32,8 @@ summary.argostrack <- function(object, ...){
 	class(res) <- "summary_argostrack"
 	return(res)
 }
-#' @export
 
+#' @export
 summary.argostrack_bootstrap <- function(object, ...){
 	convUse <- object$convergence
 	convUse[is.na(convUse)] <- 1

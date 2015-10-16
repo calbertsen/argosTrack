@@ -24,19 +24,19 @@ argosTrack(lon, lat, dates, locationclass, include = rep(TRUE, length(dates)),
 
 \item{include}{Boolean vector indicating which observations to include in the analysis.}
 
-\item{equalbetas}{}
+\item{equalbetas}{Should the autocorrelation parameters be equal in the two coordinates?}
 
-\item{timevarybeta}{}
+\item{timevarybeta}{Number of autocorrelation parameters over time.}
 
-\item{fixgammas}{}
+\item{fixgammas}{Should the drift parameters be equal in the two coordinates?}
 
-\item{fixcorrection}{}
+\item{fixcorrection}{Should the observational variance be fixed relative to the best location class?}
 
-\item{dfVals}{}
+\item{dfVals}{Specify the degrees of freedom used for each location class.}
 
-\item{dfMap}{}
+\item{dfMap}{Empose hypotheses on the degrees of freedom.}
 
-\item{minDf}{}
+\item{minDf}{Lower bound for the degrees of freedom.}
 
 \item{errordistribution}{Error distribution to use. Either multivariate Gaussian (n) or multivariate t (t).}
 
@@ -46,7 +46,7 @@ argosTrack(lon, lat, dates, locationclass, include = rep(TRUE, length(dates)),
 
 \item{timeunit}{Time unit to use when calculating time between states.}
 
-\item{nStates}{}
+\item{nStates}{Number of hidden states for \code{dtcrw} and \code{dsb}}
 
 \item{nauticalStates}{Should the states be estimated in nautical miles?}
 
@@ -61,7 +61,21 @@ list of stuff
 Estimate track from Argos data.
 }
 \details{
-Function to estimate animal movement track from Argos data using TMB (tmb-project.org).
+Function to estimate animal movement track from Argos data using TMB (\url{http://tmb-project.org}).
+}
+\examples{
+dat <- subadult_ringed_seal
+dat <- dat[!(dat$lc=="Z"),][1:100,]
+args <- list(lon = dat$lon,
+             lat = dat$lat,
+             dates = as.character(dat$date),
+             locationclass = dat$lc,
+             silent = TRUE,
+             fixcorrection=TRUE,
+             errordistribution="n",
+             movementmodel="rw"
+         )
+fit <- do.call("argosTrack",args)
 }
 \author{
 Christoffer Moesgaard Albertsen
