@@ -11,5 +11,5 @@ License: GPL-2
 BugReports: https://github.com/calbertsen/argosTrack/issues
 LazyData: true
 Imports:
-    TMB
+    TMB, stats
 LinkingTo: TMB
