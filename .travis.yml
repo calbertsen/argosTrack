@@ -6,13 +6,14 @@ os:
 
 env:
   global:
-    - OS=$(uname -s)
+    - R_CHECK_ARGS="--as-cran --timings"
+    - _R_CHECK_TIMINGS_="0"
 
 sudo: required
 
 before_install:
-  - if test ${OS} = Darwin; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; fi
-  - if test ${OS} = Darwin; then sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
+  - if test ${TRAVIS_OS_NAME} = osx; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; fi
+  - if test ${TRAVIS_OS_NAME} = osx; then sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
   - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
   - chmod 755 ./travis-tool.sh
   - ./travis-tool.sh bootstrap
