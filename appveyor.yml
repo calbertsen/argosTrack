@@ -21,7 +21,6 @@ install:
 before_build:
   - cd
   - ls
-  - g++ --version
   - git clone -q --branch=cran-version3 https://github.com/kaskr/adcomp.git "C:\projects\TMB"
   - travis-tool.sh install_devtools
   - cd C:\projects\TMB\

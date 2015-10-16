@@ -1,0 +1,98 @@
+---
+title: "Introduction to argosTrack"
+author: "Christoffer Moesgaard Albertsen"
+email: "cmoe@aqua.dtu.dk"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to argosTrack}
+  %\VignetteEngine{knitr::knitr}
+  \usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+For each coordinate $c=1,2$ (1: latitude, 2: longitude) the instantaneous velocity of the animal $\nu_{c,i+1}$ at time $i+1$ is described by the Ornstein-Uhlenbeck process: 
+$$
+\nu_{c,i+1}-\gamma_c = e^{-\beta_c\Delta_{i+1}}[\nu_{c,i}-\gamma_c]+\eta_{c,i},
+$$
+where $\eta_{c,i}$ follows a Gaussian distribution with mean zero and variance
+$$
+V\left(\eta_{c,i}\right) = \sigma_c^2(1-e^{-2\beta_c\Delta_i})/(2\beta_c),
+$$
+where $\sigma_c^2$ is a scale parameter.
+
+By integrating over the velocity process one obtains the location process: 
+$$
+\mu_{c,i+1} = \mu_{c,i}+\nu_{c,i}\left(1-e^{-\beta_c\Delta_i}\right)/\beta_c+\zeta_{c,i}.
+$$
+where $\zeta_{c,i}$ follows a Gaussian distribution with zero mean and
+
+$$
+V\left(\zeta_{c,i}\right)=\frac{\sigma_c^2}{\beta_c^2}\left(\Delta_i-2\left(1-e^{-\beta_c\Delta_i}\right)/\beta_c+\left(1-e^{-2\beta_c\Delta_i}\right)/(2\beta_c)\right).
+$$
+
+The joint distribution of $\eta_{c,i}$ and $\zeta_{c,i}$ is a bivariate Gaussian distribution with
+$$
+Cov\left(\eta_{c,i},\zeta_{c,i}\right)= \frac{\sigma_c^2}{2\beta_c^2}\left(1-2e^{-\beta_c\Delta_i}+e^{-2\beta_c\Delta_i}\right).
+$$
+
+
+# Estimating tracks
+
+```{r intro}
+library(argosTrack)
+data(adult_ringed_seal)
+head(adult_ringed_seal)
+```
+Latitude should be degrees north (-90 to 90) and longitude should be degrees east (-180 to 180).
+
+Default is to fit with $\beta_1 = \beta_2$ and $\gamma_1=\gamma_2=0$. The default error distribution is a t distribution with 10 degrees of freedom.
+
+```{r fitall, warning=FALSE}
+args <- list(lon = adult_ringed_seal$lon,
+             lat = adult_ringed_seal$lat,
+             dates = as.character(adult_ringed_seal$date),
+             locationclass = adult_ringed_seal$lc,
+             silent=TRUE
+             )
+fitobj<- do.call(argosTrack,args)
+fitobj
+```
+
+```{r fitsummary}
+summary(fitobj)
+```
+
+```{r fitplot1}
+plot(fitobj)
+```
+
+```{r fitplot2}
+plot(fitobj, bg_style = "map", only_map = TRUE, minArea = 0.1)
+```
+
+
+## Filtering observations
+
+```{r swimspeed}
+args2 <- args
+args2$include <- !(args2$locationclass %in% c("B","Z"))
+```
+
+```{r fitsecond, warning=FALSE}
+fitobj2<- do.call(argosTrack,args2)
+fitobj2
+```
+
+```{r fitsummarysecond}
+summary(fitobj2)
+```
+
+```{r fitplot1second}
+plot(fitobj2)
+```
+
+```{r fitplot2second}
+plot(fitobj2, bg_style = "map", only_map = TRUE, minArea = 0.1)
+```

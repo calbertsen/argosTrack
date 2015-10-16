@@ -13,3 +13,5 @@ LazyData: true
 Imports:
     TMB, stats
 LinkingTo: TMB
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
