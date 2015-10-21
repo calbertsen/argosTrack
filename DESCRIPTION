@@ -12,6 +12,6 @@ BugReports: https://github.com/calbertsen/argosTrack/issues
 LazyData: true
 Imports:
     TMB, stats
-LinkingTo: TMB
+LinkingTo: TMB, RcppEigen
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
