@@ -1,1 +1,5 @@
 inst/doc
+libs/
+src/*.so
+src/*.o
+.Rhistory

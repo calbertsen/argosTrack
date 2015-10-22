@@ -13,22 +13,37 @@ NULL
 #' Estimate track from Argos data.
 #'
 #' Function to estimate animal movement track from Argos data using TMB (\url{http://tmb-project.org}).
+#' 
 #' @section Movement models:
 #' There are five movement models implemented to choose from.
 #' The random walk (rw) model is defined by (Nielsen et al. 2006)
-#' \eq{X_t = X_{t-1} + \epsilon_t}
+#' \cr\cr
+#' \eqn{X_t = X_{t-1} + \epsilon_t}
+#' \cr\cr
 #' The Continuous Time Correlated Random Walk (ctcrw) models the velocity by
-#'\eg{\nu_t - \gamma  =  ...}
+#' \cr\cr
+#' \eqn{\nu_t - \gamma  =  ...}
+#' \cr\cr
 #' and the locations by
-#' \eq{X_t = ...}
+#' \cr\cr
+#' \eqn{X_t = ...}
+#' \cr\cr
 #' The Mixed Persistence Continuous Time Correlated Random Walk (mpctcrw) models the velocity by
-#'
+#'\cr\cr
+#' \eqn{X_t = ...}
+#' \cr\cr
 #' and the locations by
-#'
-#' The Discrete Time Correlated Random Walk (dtcrw) models the locations (Jonsen et al. 2005) by
-#'
+#'\cr\cr
+#' \eqn{X_t = ...}
+#' \cr\cr
+#' #' The Discrete Time Correlated Random Walk (dtcrw) models the locations (Jonsen et al. 2005) by
+#'\cr\cr
+#' \eqn{X_t = ...}
+#' \cr\cr
 #' The Discrete Step-lenght and Bearings model (dsb) models the locations by
-#'
+#' \cr\cr
+#' \eqn{X_t = ...}
+#' \cr\cr
 #' 
 ##' @title Estimate track from Argos data
 ##' @param lon Vector of observed longitude coordinate.
