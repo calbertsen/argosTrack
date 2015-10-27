@@ -218,7 +218,8 @@ Type objective_function<Type>::operator() ()
 	obs(1) -= stateFrac(i) * slon(prevState(i)) + (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
       }
     }
-    nll += nll_dist_obs(qual(i))(obs)*include(i)*keep.col(i).prod(); // keep(0,i)*keep(1,i)?
+    Rcout << i << "  " << keep.col(i) << "\n";
+    nll += nll_dist_obs(qual(i))(obs,keep.col(i))*include(i); // keep(0,i)*keep(1,i)?
   }
 
 

@@ -53,6 +53,24 @@ public:
 
     if(useNorm) return ndens; else return tdens;
   }
+
+   /** \brief Evaluate _projected_ negative log density
+      \param keep Vector of 0/1 indicating marginal to evaluate.
+   */
+  Type operator()(vector<Type> x, vector<Type> keep){
+    matrix<Type> S = subset(this->Sigma,keep);
+    MVNORM_t<Type> newmvn(S);
+    vector<Type> nx = subset(x,keep);
+
+    Type p = nx.size();
+    //Lange et al. 1989 http://www.jstor.org/stable/2290063
+    Type tdens = -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*newmvn.logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+newmvn.Quadform(nx)/df);
+    Type ndens = -Type(.5)*newmvn.logdetQ + Type(.5)*newmvn.Quadform(nx) + p*Type(log(sqrt(2.0*M_PI)));
+
+    if(useNorm) return ndens; else return tdens;
+  }
+
+  
 };
 
 
