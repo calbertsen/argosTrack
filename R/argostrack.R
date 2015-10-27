@@ -208,8 +208,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
 
     
-    dat <- list(lon = lon,
-                lat = lat,
+    dat <- list(lonlat = t(array(c(lon,lat),dim=c(length(lon),2))),
+                ##lon = lon,
+                ##lat = lat,
                 dtStates = dtStates,
                 prevState = prevState - 1,
                 stateFrac = stateFrac,

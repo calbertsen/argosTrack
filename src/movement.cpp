@@ -10,8 +10,9 @@ template<class Type>
 Type objective_function<Type>::operator() ()
 {
 
-  DATA_VECTOR(lon);
-  DATA_VECTOR(lat);
+  DATA_ARRAY(lonlat); // stateDim x timeDim
+  // DATA_VECTOR(lon);
+  // DATA_VECTOR(lat);
   DATA_VECTOR(dtStates);
   DATA_IVECTOR(prevState);
   DATA_VECTOR(stateFrac);
@@ -24,8 +25,9 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(nauticalObs);
   DATA_INTEGER(timevary);
 
-  DATA_VECTOR_INDICATOR(klon,lon);
-  DATA_VECTOR_INDICATOR(klat,lat);
+  DATA_ARRAY_INDICATOR(keep,lonlat);
+  // DATA_VECTOR_INDICATOR(klon,lon);
+  // DATA_VECTOR_INDICATOR(klat,lat);
   
   PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
   PARAMETER_VECTOR(logSdState);
@@ -69,13 +71,14 @@ Type objective_function<Type>::operator() ()
   }
 
   // Get observation coordinates in nautical miles
-  vector<Type> xobs(lon.size());
-  vector<Type> yobs(lat.size());
+  array<Type> xyobs(lonlat.dim[0], lonlat.dim[1]);
+  // vector<Type> xobs(lon.size());
+  // vector<Type> yobs(lat.size());
 
-  for(int i = 0; i < xobs.size(); ++i){
-    vector<Type> tmp = ll2n(lon(i), lat(i));
-    xobs(i) = tmp(0);
-    yobs(i) = tmp(1);
+  for(int i = 0; i < xyobs.dim[1]; ++i){
+    vector<Type> tmp = ll2n(lonlat(0,i), lonlat(1,i));
+    xyobs(0,i) = tmp(0);
+    xyobs(1,i) = tmp(1);
   }
 
   // Get state steplength and bearing
@@ -185,18 +188,18 @@ Type objective_function<Type>::operator() ()
 		      varState(1));
       break;
     default:
-      error("Movement model not implemented");
+      // error("Movement model not implemented");
       break;
     }
   }
 
 
   // Contributions from observations
-  for(int i = 0; i < lon.size(); ++i){
+  for(int i = 0; i < lonlat.dim[1]; ++i){
     obs.setZero();
     if(nauticalObs){
-      obs(0) = yobs(i);
-      obs(1) = xobs(i);
+      obs(0) = xyobs(1,i);
+      obs(1) = xyobs(0,i);
       if(stateFrac(i)+1 > y.size()){
 	obs(0) -= y(prevState(i));
 	obs(1) -= x(prevState(i));
@@ -205,8 +208,8 @@ Type objective_function<Type>::operator() ()
 	obs(1) -= stateFrac(i) * x(prevState(i)) + (Type(1.0) - stateFrac(i)) * x(prevState(i)+1);
       }
     }else{
-      obs(0) = lat(i);
-      obs(1) = lon(i);
+      obs(0) = lonlat(1,i);
+      obs(1) = lonlat(0,i);
       if(stateFrac(i)+1 > slat.size()){
 	obs(0) -= slat(prevState(i));
 	obs(1) -= slon(prevState(i));
@@ -215,7 +218,7 @@ Type objective_function<Type>::operator() ()
 	obs(1) -= stateFrac(i) * slon(prevState(i)) + (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
       }
     }
-    nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
+    nll += nll_dist_obs(qual(i))(obs)*include(i)*keep.col(i).prod(); // keep(0,i)*keep(1,i)?
   }
 
 
@@ -225,8 +228,9 @@ Type objective_function<Type>::operator() ()
   REPORT(slon);
   REPORT(stepLengths);
   REPORT(bearings);
-  REPORT(xobs);
-  REPORT(yobs);
+  REPORT(xyobs);
+  // REPORT(xobs);
+  // REPORT(yobs);
   
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
