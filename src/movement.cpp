@@ -13,6 +13,7 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(lon);
   DATA_VECTOR(lat);
   DATA_VECTOR(dtStates);
+  DATA_VECTOR(dayOfYear);
   DATA_IVECTOR(prevState);
   DATA_VECTOR(stateFrac);
   DATA_FACTOR(qual); //Integers
@@ -23,6 +24,9 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(nauticalStates);
   DATA_INTEGER(nauticalObs);
   DATA_INTEGER(timevary);
+  DATA_IVECTOR(varModelCode);
+
+  DATA_VECTOR(splineKnots);
 
   DATA_VECTOR_INDICATOR(klon,lon);
   DATA_VECTOR_INDICATOR(klat,lat);
@@ -113,12 +117,22 @@ Type objective_function<Type>::operator() ()
   Type nll = 0.0;
 
 
+  //Set up covariance matrix for observations
   // Observational distributions
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
   matrix<Type> covObs(2,2);
   vector<Type> obs(2);
 
-  //Set up covariance matrix for observations
+  // for known positions
+  matrix<Type> covKnown(2,2);
+  covKnown.setZero(); covKnown(0,0) = Type(0.00001); covKnown(1,1) = Type(0.00001);
+  MVT_tt<Type> nll_dist_known(covKnown,Type(10000.0), 1); // Normal distribution
+  // For geolocation
+  // Create spline
+  tmbutils::splinefun<Type> logSplLat(splineKnots,logSdObs.tail(logSdObs.size()-2));
+  MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,modelCode);
+
+  // For argos data
   for(int i = 0; i < nll_dist_obs.size(); ++i){
     covObs.setZero();
     covObs(0,0) = varObs(0,i);
@@ -127,7 +141,6 @@ Type objective_function<Type>::operator() ()
     covObs(0,1) = covObs(1,0);
     //ModelCode: 0: t; 1: norm
     nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf,modelCode);
-
   }
 
   // Contribution from first state
@@ -215,7 +228,19 @@ Type objective_function<Type>::operator() ()
 	obs(1) -= stateFrac(i) * slon(prevState(i)) + (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
       }
     }
-    nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
+
+    switch(varModelCode(i)){
+    case 0: 			// Argos data with location class GPS,3,2,1,0,A,B,Z
+      nll += nll_dist_obs(qual(i))(obs)*include(i)*klon(i)*klat(i);
+      break;
+    case 1:			// "known" position
+      nll += nll_dist_known(obs)*include(i)*klon(i)*klat(i);
+      break;
+    case 2:			// Geolocation data
+      nll_dist_geoloc.setSigma(geolocVarMat(exp(logSdObs(0)), dayOfYear(i), logSplLat));
+      nll += nll_dist_geoloc(obs)*include(i)*klon(i)*klat(i);
+      break;
+    }
   }
 
 

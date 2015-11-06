@@ -102,8 +102,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        nauticalObs = FALSE,
                        nlminb.control = list(eval.max=2000,
                            iter.max=1500,
-                           rel.tol=1e-3,
-                           x.tol=1.5e-2)){
+                           rel.tol=1e-10,
+                           x.tol=1.5e-8)){
 
 
     errordistribution <- match.arg(errordistribution)
@@ -116,7 +116,11 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     
     requireNamespace("TMB")
-    argosClasses <- c("3", "2", "1", "0", "A", "B","Z")
+    argosClasses <- c("GPS","3", "2", "1", "0", "A", "B","Z")
+
+    varModelCode <- ifelse(locationclass=="K",1,
+                    ifelse(locationclass=="S", 2,0))
+    
 
     if(is.factor(dates)){
         dates <- as.character(dates)
@@ -149,9 +153,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     locclassfactor <- factor(locationclass,
                             levels=argosClasses[argosClasses%in%locationclass])
-    if(any(is.na(locclassfactor))){
-        stop("Location classes must be: 3, 2, 1, 0, A, B, or Z")
+    if(any(is.na(locclassfactor[varModelCode==0]))){
+        stop("Location classes must be: GPS, 3, 2, 1, 0, A, B, or Z")
     }
+
+    if(!is.logical(include))
+        stop("include must be a logical vector")
 
     movModNames <- eval(formals(sys.function(sys.parent()))$movementmodel)
     movementmodel <- match.arg(movementmodel)
@@ -165,7 +172,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            3.8514,2.9602,
                            3.8280,3.0463,
                            4.4417,3.6951,
-                           5.5714,5.5149),
+                           5.5714,5.5149,
+                           8,8),
                          nrow=2,
                          ncol=length(argosClasses)-1)
     if(!fixcorrection)
@@ -211,6 +219,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     dat <- list(lon = lon,
                 lat = lat,
                 dtStates = dtStates,
+                dayOfYear = rep(1,length(lon)),
                 prevState = prevState - 1,
                 stateFrac = stateFrac,
                 qual = locclassfactor,
@@ -219,7 +228,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 moveModelCode = modelCodeNum,
                 nauticalStates = as.numeric(nauticalStates),
                 nauticalObs = as.numeric(nauticalObs),
-                timevary = as.integer(timevarybeta>1)
+                timevary = as.integer(timevarybeta>1),
+                varModelCode = varModelCode, #rep(0,length(lon)),
+                splineKnots = seq(0,366,len = 13) #13 if geolocation
                 )
 
     ## numStates <- ifelse(movementmodel == "mpctcrw",4,2)
@@ -249,7 +260,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            nrow=numStates[1],
                            ncol=length(dat$dtStates)),
                        logSdState = initpars,
-                       logSdObs = c(0,0),
+                       logSdObs = rep(0,15),
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
                        mu = matrix(
@@ -267,7 +278,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
         dat$qual <- factor(dat$qual,levels=argosClassUse)
         parameters$logCorrection = matrix(0,
                            nrow=2,
-                           ncol=length(argosClassUse)-1)
+                           ncol=max(c(length(argosClassUse)-1,0)))
     }
 
     if(!is.null(dfVals)){
@@ -365,6 +376,17 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$vel <- factor(parameters$vel*NA)
     }
 
+    if(!any(varModelCode==2))
+        map$logSdObs <- factor(c(1,2,rep(NA,13)))
+
+    cat(any(varModelCode==0))
+    if(!any(varModelCode==0)){
+        cat("HELLO HELLO")
+        map$logSdObs <- factor(c(0,NA,1,2:12,13))
+        #map$logCorrection <- factor(as.vector(parameters$logCorrection)*NA)
+        
+    }
+        
 
     parameters$numdata <- length(dat$lon)
     map$numdata <- factor(NA)
