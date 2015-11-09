@@ -113,8 +113,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
 
     if(minDf <= 0)
         stop("minDf must be positive")
-
-    
+   
     requireNamespace("TMB")
     argosClasses <- c("GPS","3", "2", "1", "0", "A", "B","Z")
 
@@ -127,24 +126,27 @@ argosTrack <- function(lon,lat,dates,locationclass,
     }
     
     dates_in <- dates
-    if(is.numeric(dates)){
-        dates <- c(1,diff(dates))
+    ## if(is.numeric(dates)){
+    ##     dates <- c(1,diff(dates))
 
-    }else if(is.character(dates)){
+    ## }else
+    if(is.character(dates)){
         dates <- as.POSIXct(dates)
+        dayOfYear <- as.numeric(strftime(dates,"%j"))
         dates <- c(1,as.numeric(difftime(dates[(1+1):length(dates)],
                                          dates[1:(length(dates)-1)],
                                          units=timeunit)
                                 )
                    )
     }else if(class(dates)[1]=="POSIXct"){
+        dayOfYear <- as.numeric(strftime(dates,"%j"))
         dates <- c(1,as.numeric(difftime(dates[(1+1):length(dates)],
                                          dates[1:(length(dates)-1)],
                                          units=timeunit)
                                 )
                    )
     }else{
-        stop("Dates must be a factor, numeric, character or POSIXct vector")
+        stop("Dates must be a POSIXct vector or a factor or character vector that can be converted to POSIXct.")
     }
 
     # No negative time differences
@@ -155,6 +157,9 @@ argosTrack <- function(lon,lat,dates,locationclass,
                             levels=argosClasses[argosClasses%in%locationclass])
     if(any(is.na(locclassfactor[varModelCode==0]))){
         stop("Location classes must be: GPS, 3, 2, 1, 0, A, B, or Z")
+    }
+    if(all(is.na(locclassfactor))){
+        locclassfactor <- factor(rep("3",length(locclassfactor)))
     }
 
     if(!is.logical(include))
@@ -215,11 +220,13 @@ argosTrack <- function(lon,lat,dates,locationclass,
         ## if(max(prevState) < length(
     }
 
-    
+
+    nKnots <- ifelse(exists("argosTrack.nSplineKnots"),argosTrack.nSplineKnots,11)
+
     dat <- list(lon = lon,
                 lat = lat,
                 dtStates = dtStates,
-                dayOfYear = rep(1,length(lon)),
+                dayOfYear = dayOfYear,
                 prevState = prevState - 1,
                 stateFrac = stateFrac,
                 qual = locclassfactor,
@@ -230,7 +237,10 @@ argosTrack <- function(lon,lat,dates,locationclass,
                 nauticalObs = as.numeric(nauticalObs),
                 timevary = as.integer(timevarybeta>1),
                 varModelCode = varModelCode, #rep(0,length(lon)),
-                splineKnots = seq(0,366,len = 13) #13 if geolocation
+                splineKnots = c(0,
+                                quantile(dayOfYear[varModelCode == 2],
+                                         seq(0,1,len=nKnots))[-c(1,nKnots)],
+                            366)
                 )
 
     ## numStates <- ifelse(movementmodel == "mpctcrw",4,2)
@@ -260,7 +270,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            nrow=numStates[1],
                            ncol=length(dat$dtStates)),
                        logSdState = initpars,
-                       logSdObs = rep(0,15),
+                       logSdObs = rep(0,2),
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
                        mu = matrix(
@@ -269,10 +279,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
                            ncol=length(dat$dtStates)),
                        vel = matrix(0,
                            nrow=numStates[1],
-                           ncol=length(dat$dtStates))
+                           ncol=length(dat$dtStates)),
+                       splineXlogSd = 0,
+                       knotPars = rep(0,length(dat$splineKnots))
                        )
  
-    if(any(!include) || any(!argosClasses%in%locationclass)){
+    if((any(!include) || any(!argosClasses%in%locationclass)) && any(varModelCode == 0)){
         argosClassUse <- argosClasses[argosClasses%in%locationclass[include]]
         dat$qual[!include] <- argosClassUse[1]
         dat$qual <- factor(dat$qual,levels=argosClassUse)
@@ -284,7 +296,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
     if(!is.null(dfVals)){
         parameters$df <- log(dfVals)
     }else{
-        parameters$df <- rep(log(8),nlevels(dat$qual))
+        parameters$df <- rep(log(8),ncol(parameters$logCorrection)+1)
     }
 
     #map <- list(df=factor(NA*parameters$df))
@@ -376,15 +388,19 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$vel <- factor(parameters$vel*NA)
     }
 
-    if(!any(varModelCode==2))
-        map$logSdObs <- factor(c(1,2,rep(NA,13)))
+    if(!any(varModelCode==2)){
+        map$splineXlogSd <- factor(parameters$splineXlogSd * NA)
+        map$knotPars <- factor(parameters$knotPars * NA)
 
-    cat(any(varModelCode==0))
+    }else{
+        map$knotPars <- factor(c(1,
+                                 2:(length(parameters$knotPars)-1),
+                                 1))
+    }
+    
     if(!any(varModelCode==0)){
-        cat("HELLO HELLO")
-        map$logSdObs <- factor(c(0,NA,1,2:12,13))
-        #map$logCorrection <- factor(as.vector(parameters$logCorrection)*NA)
-        
+        map$logSdObs <- factor(parameters$logSdObs * NA)
+        map$logCorrection <-  factor(as.vector(parameters$logCorrection*NA))
     }
         
 
@@ -396,8 +412,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     rnd <- c("mu","vel")
     ## }
     obj <- TMB::MakeADFun(dat,parameters,map,random=rnd,DLL="argosTrack",
-                          inner.control = list(LaplaceNonZeroGradient=TRUE),
-                          silent = TRUE)
+                          silent = silent)
+    a <- obj$fn()
     
     esttime <- system.time(opt <- nlminb(obj$par,obj$fn,obj$gr,control=nlminb.control))
     

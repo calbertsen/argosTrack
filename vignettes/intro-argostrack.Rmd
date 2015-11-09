@@ -6,7 +6,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to argosTrack}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
@@ -64,11 +64,11 @@ fitobj
 summary(fitobj)
 ```
 
-```{r fitplot1}
+```{r fitplot1, fig.width = 10, fig.height = 10}
 plot(fitobj)
 ```
 
-```{r fitplot2}
+```{r fitplot2, fig.width = 10, fig.height = 10}
 plot(fitobj, bg_style = "map", only_map = TRUE, minArea = 0.1)
 ```
 
@@ -89,10 +89,10 @@ fitobj2
 summary(fitobj2)
 ```
 
-```{r fitplot1second}
+```{r fitplot1second, fig.width = 10, fig.height = 10}
 plot(fitobj2)
 ```
 
-```{r fitplot2second}
+```{r fitplot2second, fig.width = 10, fig.height = 10}
 plot(fitobj2, bg_style = "map", only_map = TRUE, minArea = 0.1)
 ```

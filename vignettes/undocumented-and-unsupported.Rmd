@@ -1,0 +1,12 @@
+---
+title: "Undocumented and unsupported features in argosTrack"
+author: "Christoffer Moesgaard Albertsen"
+email: "cmoe@aqua.dtu.dk"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Undocumented and unsupported features in argosTrack}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+ text

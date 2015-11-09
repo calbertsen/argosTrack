@@ -41,10 +41,14 @@ Type objective_function<Type>::operator() ()
   PARAMETER_MATRIX(mu); // Dim 2 x lon.size()
   PARAMETER_MATRIX(vel); // Dim 2 x lon.size()
 
+  PARAMETER(splineXlogSd);
+  PARAMETER_VECTOR(knotPars);
+
+  
   PARAMETER_VECTOR(df);  //Length as number of quality classes
 
   // Number of data points to include
-  PARAMETER(numdata);
+    PARAMETER(numdata);
 
 
   // Get state coordinates in nautical miles
@@ -129,7 +133,7 @@ Type objective_function<Type>::operator() ()
   MVT_tt<Type> nll_dist_known(covKnown,Type(10000.0), 1); // Normal distribution
   // For geolocation
   // Create spline
-  tmbutils::splinefun<Type> logSplLat(splineKnots,logSdObs.tail(logSdObs.size()-2));
+  tmbutils::splinefun<Type> logSplLat(splineKnots,knotPars);
   MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,modelCode);
 
   // For argos data
@@ -220,7 +224,7 @@ Type objective_function<Type>::operator() ()
     }else{
       obs(0) = lat(i);
       obs(1) = lon(i);
-      if(stateFrac(i)+1 > slat.size()){
+      if(prevState(i)+1 >= slat.size()){
 	obs(0) -= slat(prevState(i));
 	obs(1) -= slon(prevState(i));
       }else{
@@ -237,12 +241,15 @@ Type objective_function<Type>::operator() ()
       nll += nll_dist_known(obs)*include(i)*klon(i)*klat(i);
       break;
     case 2:			// Geolocation data
-      nll_dist_geoloc.setSigma(geolocVarMat(exp(logSdObs(0)), dayOfYear(i), logSplLat));
+      nll_dist_geoloc.setSigma(geolocVarMat(exp(splineXlogSd), dayOfYear(i), logSplLat));
       nll += nll_dist_geoloc(obs)*include(i)*klon(i)*klat(i);
       break;
     }
   }
 
+  vector<Type> splineSd(366);
+  for(int i = 0; i < splineSd.size(); ++i)
+    splineSd(i) = exp(logSplLat(i+1));
 
   REPORT(x);
   REPORT(y);
@@ -252,12 +259,14 @@ Type objective_function<Type>::operator() ()
   REPORT(bearings);
   REPORT(xobs);
   REPORT(yobs);
+  REPORT(splineSd);
   
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
   ADREPORT(beta);
+  ADREPORT(splineSd);
 
   // ADREPORT(slat);
   // ADREPORT(slon);
