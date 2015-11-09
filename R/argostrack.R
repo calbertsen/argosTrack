@@ -190,6 +190,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
         dtStates <- dates[dates>0]
         stateTimeStamp <- if(is.numeric(dates_in)){ dates_in }else{ as.POSIXct(dates_in)}
     }else{
+        if(is.null(nStates))
+            stop("nStates must be given for the discrete time models")
         dateExtremes <- range(cumsum(dates)-1)
         dtStates <- rep(c(1,(ceiling(dateExtremes[2])-dateExtremes[1])/(nStates-1)),times=c(1,nStates-1))
         stateTimeStamp <- if(is.numeric(dates_in)){ dates_in[1]+cumsum(dtStates)-1 }else{ as.POSIXct(dates_in[1]) + as.difftime(cumsum(dtStates)-1, units = timeunit)}
