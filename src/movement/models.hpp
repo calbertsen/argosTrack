@@ -3,5 +3,6 @@
 #include "mpctcrw.hpp"
 #include "rw.hpp"
 #include "dtcrw.hpp"
-#include "dsb.hpp"
+#include "dsb_weibull.hpp"
+#include "dsb_halfnorm.hpp"
 

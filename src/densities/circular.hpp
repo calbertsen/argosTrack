@@ -16,7 +16,7 @@ Type dwcauchy(Type x, Type mu, Type gamma, int give_log = 0){
 
 }
 
-VECTORIZE3_tti(dwcauchy);
+VECTORIZE4_ttti(dwcauchy);
 
 
 template <class Type>
@@ -25,6 +25,6 @@ Type dvonmises(Type x, Type mu, Type kappa, int give_log = 0){
   if(give_log) return logres; else return exp(logres);
 }
 
-VECTORIZE3_tti(dvonmises);
+VECTORIZE4_ttti(dvonmises);
 
 #endif

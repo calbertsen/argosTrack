@@ -94,7 +94,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        dfMap = NULL,
                        minDf = 3.0,
                        errordistribution = c("n","t"),
-                       movementmodel = c("rw","ctcrw","mpctcrw","dtcrw","dsb"),
+                       movementmodel = c("rw","ctcrw","mpctcrw","dtcrw","dsb","dsb2"),
                        silent = FALSE,
                        timeunit = "hours",
                        nStates = NULL,
@@ -276,7 +276,7 @@ argosTrack <- function(lon,lat,dates,locationclass,
                        logCorrection = logCorrect,
                        gamma = rep(0,numStates[1]),
                        mu = matrix(
-                          c(0,rnorm((2*length(dat$dtStates)-1)*(movementmodel=="dsb"),0,0.1)),
+                          c(0,rnorm((2*length(dat$dtStates)-1)*(movementmodel%in%c("dsb","dsb2")),0,0.1)),
                            nrow=2,
                            ncol=length(dat$dtStates)),
                        vel = matrix(0,
@@ -385,6 +385,12 @@ argosTrack <- function(lon,lat,dates,locationclass,
         map$gamma <- factor(parameters$gamma*NA)
     }
 
+    if(movementmodel == "dsb2"){
+        map$vel <- factor(parameters$vel*NA)
+        map$gamma <- factor(parameters$gamma*NA)
+        map$logSdState <- factor(rep(1,length(parameters$logSdState)))
+    }
+
     if(movementmodel == "dtcrw"){
         map$gamma <- factor(1:2)
         map$vel <- factor(parameters$vel*NA)
@@ -432,8 +438,8 @@ argosTrack <- function(lon,lat,dates,locationclass,
     res$locationclass <- factor(locationclass,levels=argosClasses)
     res$observations <- t(cbind(lat,lon))
     rownames(res$observations) <- c("latitude","longitude")
-    res$positions <- if(movementmodel %in% c("dtcrw","dsb")){esttrack}else{expandMu(esttrack,dates)}
-    res$positions_sd <- if(movementmodel %in% c("dtcrw","dsb")){sdtrack}else{expandMu(sdtrack,dates)}
+    res$positions <- if(movementmodel %in% c("dtcrw","dsb","dsb2")){esttrack}else{expandMu(esttrack,dates)}
+    res$positions_sd <- if(movementmodel %in% c("dtcrw","dsb","dsb2")){sdtrack}else{expandMu(sdtrack,dates)}
     rownames(res$positions) <- c("latitude","longitude")
     res$optimization <- opt
     res$estimation_time <- esttime

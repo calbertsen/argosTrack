@@ -194,13 +194,20 @@ Type objective_function<Type>::operator() ()
       }
       break;
     case 4:		 // Discrete steplength + bearings model
-      nll += nll_dsb(stepLengths(i),
-		      bearings(i),
-		      bearings(i-1),
-		      beta(0,i),
-		      varState(0),
-		      varState(1));
+      nll += nll_dsb_weibull(stepLengths(i),
+			     bearings(i),
+			     bearings(i-1),
+			     beta(0,i),
+			     varState(0),
+			     varState(1));
       break;
+    case 5:		 // Discrete steplength + bearings model
+      nll += nll_dsb_halfnorm(stepLengths(i),
+			      bearings(i),
+			      bearings(i-1),
+			      beta(0,i),
+			      varState(0));
+      break;      
     default:
       error("Movement model not implemented");
       break;
