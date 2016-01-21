@@ -18,26 +18,6 @@ install:
 
 # Adapt as necessary starting from here
 
-before_build:
-  - cd
-  - ls
-  - g++ --version
-  - git clone -q --branch=master https://github.com/kaskr/adcomp.git "C:\projects\TMB"
-  - travis-tool.sh install_devtools
-  - cd C:\projects\TMB\
-  - git show origin/cppad-20140612:TMB/inst/include/cppad/local/pod_vector.hpp > TMB/inst/include/cppad/local/pod_vector.hpp
-  - cd TMB\inst\include\cppad\local\
-  - findstr /v /c:"template <> inline bool is_pod<size_t>(void)" pod_vector.hpp > pod_vector2.hpp
-  - del pod_vector.hpp
-  - move pod_vector2.hpp pod_vector.hpp
-  - type pod_vector.hpp
-  - cd C:\projects\TMB\
-  - R CMD BATCH install_windows.R out.Rout
-  - ls
-  - type out.Rout
-  - make install
-  - cd C:\projects\argostrack\
-  - ls
 
 
 build_script:
