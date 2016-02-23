@@ -3,6 +3,12 @@
 #define _BESSELI_
 
 
+  extern "C" {
+    /* See comment to namespace atomic::Rmath https://github.com/kaskr/adcomp/blob/master/TMB/inst/include/atomic_math.hpp */
+    double	Rf_bessel_i(double, double, double);
+  }
+
+
 /** \brief Atomic version of \f$besselI(x,\nu)\f$.
     Valid parameter range: \f$x =(x,\nu) \in \mathbb{R}_+\times\mathbb{R}\f$.
     \note Derivative wrt. \f$\nu\f$ is currently not implemented.
@@ -18,7 +24,7 @@ TMB_ATOMIC_VECTOR_FUNCTION(
 			   1
 			   ,
 			   // ATOMIC_DOUBLE
-			   ty[0] = atomic::Rmath::Rf_bessel_i(tx[0], tx[1], 1.0 /* Not scaled */);
+			   ty[0] = Rf_bessel_i(tx[0], tx[1], 1.0 /* Not scaled */);
 			   ,
 			   // ATOMIC_REVERSE
 			   Type value = ty[0];
