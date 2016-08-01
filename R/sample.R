@@ -57,8 +57,9 @@ rmvt <- function(n, mu, sigma, df){
 ##' @return Vector of simulated values
 ##' @author Christoffer Moesgaard Albertsen
 ##' @keywords internal
+##' @importFrom stats rnorm
 rhalfnorm <- function(n, sigma){
-    X <- abs(rnorm(n,0,sigma))
+    X <- abs(stats::rnorm(n,0,sigma))
     return(X)
 }
 
@@ -73,6 +74,7 @@ rhalfnorm <- function(n, sigma){
 ##' @return A vector of simulated values
 ##' @author Christoffer Moesgaard Albertsen
 ##' @keywords internal
+##' @importFrom stats rt
 rwcauchy <- function(n, mu, gamma){
     if(is.numsca(gamma))
         stop("mu must be a scalar")
@@ -80,6 +82,6 @@ rwcauchy <- function(n, mu, gamma){
             stop("gamma must be a scalar")
     if(gamma < 0)
         stop("gamma must be positive")
-    X <- replicate(n,((rt(1,1) * gamma + mu)) %% (2 * pi))
+    X <- replicate(n,((stats::rt(1,1) * gamma + mu)) %% (2 * pi))
     return(X)
 }

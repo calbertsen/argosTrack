@@ -39,8 +39,6 @@ obs <- Observation(lon = d$lon,
 meas <- Measurement(model="n")
 mov <- RW(unique(obs$dates))
 roseplot(mov)
-anim <- Animal(obs,mov,meas,"Subadult")
-plot(anim)
 }
 \author{
 Christoffer Moesgaard Albertsen

@@ -16,8 +16,6 @@ Plots time \eqn{\times} latitude, time \eqn{\times} longitude and longitude \eqn
 }
 \author{
 Christoffer Moesgaard Albertsen
-
-Christoffer Moesgaard Albertsen
 }
 \seealso{
 \code{\link{plotMap}}, \code{\link{plotLat}}, and \code{\link{plotLon}}

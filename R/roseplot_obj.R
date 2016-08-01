@@ -22,6 +22,8 @@ setGeneric("roseplot",
 ##' @param ... not used
 ##' @return Invisibly returns a list of bearings, step lengths and step lengths in km/h.
 ##' @author Christoffer Moesgaard Albertsen
+##' @importFrom utils head tail
+##' @importFrom graphics layout hist
 ##'
 ##' @examples
 ##' d <- subadult_ringed_seal
@@ -33,8 +35,6 @@ setGeneric("roseplot",
 ##' meas <- Measurement(model="n")
 ##' mov <- RW(unique(obs$dates))
 ##' roseplot(mov)
-##' anim <- Animal(obs,mov,meas,"Subadult")
-##' plot(anim)
 ##' 
 setMethod("roseplot", "Movement",
           function(object,
@@ -58,16 +58,16 @@ setMethod("roseplot", "Movement",
                                          tail(object$mu[2,],-1),
                                          tail(object$mu[1,],-1),
                                          object$nauticalStates)
-              steplengths_per_hour <- steplengths / as.numeric(difftime(tail(object$dates,-1),
-                                                                        head(object$dates,-1),
+              steplengths_per_hour <- steplengths / as.numeric(difftime(utils::tail(object$dates,-1),
+                                                                        utils::head(object$dates,-1),
                                                                         units="hour"))
 
               if(show){
                   if(type=="both"){
-                      layout(matrix(1:2,1,2))
+                      graphics::layout(matrix(1:2,1,2))
                   }
                   if(type %in% c("both","step"))
-                      hist(steplengths_per_hour * 1.852,
+                      graphics::hist(steplengths_per_hour * 1.852,
                            xlab = "Step length (km/h)",
                            main = NULL,
                            nclass = nclass,
