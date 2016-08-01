@@ -8,7 +8,7 @@
 ##' @param ... Passed to polygons for plotting the bars
 ##' @author Christoffer Moesgaard Albertsen
 ##' @keywords internal
-##' @importFrom grDevices nlcass.Sturges
+##' @importFrom grDevices nclass.Sturges nclass.FD nclass.scott
 ##' @importFrom graphics hist lines text polygon segments
 ##'
 ##' 
@@ -32,7 +32,11 @@
     })
     
     if(breaks == "Sturges"){    
-        nbrk <- grDevices::nclass.Sturges(x %% (2 * pi))
+        nbrk <- grDevices::nclass.Sturges(x)
+    }else if(breaks == "FD"){
+        nbrk <- grDevices::nclass.FD(x)
+    }else if(breaks == "scott"){ 
+        nbrk <- grDevices::nclass.scott(x)       
     }else if(is.numeric(breaks) & length(breaks) == 1){
         nbrk <- breaks
     }else{
