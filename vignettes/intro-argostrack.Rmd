@@ -272,7 +272,7 @@ plot(an2)
 
 ```
 
-The estimated parameters can easily be compared to the parameters used in the simulation
+The estimated parameters can easily be compared to the parameters used in the simulation. Below are the true and estimated variance parameters for the movement model.
 
 ```{r}
 
