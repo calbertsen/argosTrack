@@ -14,7 +14,7 @@ vignette: >
 
 ```{r knitrsetting, echo=FALSE, results='hide',message=FALSE,warning=FALSE}
 
-knitr::opts_chunk$set(echo=FALSE,error=TRUE,message = FALSE,warning=TRUE,
+knitr::opts_chunk$set(echo=TRUE,error=TRUE,message = TRUE,warning=TRUE,
                       dev='png',fig.ext='png',dpi=72,
                       fig.width=8,fig.height=6)
 #setEPS()
@@ -282,3 +282,6 @@ an2$movement$varianceParameters
 2 * sqrt(diag(an2$movement$vcov))
 
 ```
+
+
+# References
