@@ -17,7 +17,7 @@ env:
     - OS=$(uname -s)
 
 brew_packages:
-  - gfortran
+  - gcc
 
 r_check_args: --as-cran
 
