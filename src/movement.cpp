@@ -9,47 +9,67 @@ using namespace density;
 template<class Type>
 Type objective_function<Type>::operator() ()
 {
-
+  //////////
+  // DATA //
+  //////////
+  
+  // Observation related
   DATA_VECTOR(lon);
   DATA_VECTOR(lat);
-  DATA_VECTOR(dtStates);
   DATA_VECTOR(dayOfYear);
-  DATA_IVECTOR(prevState);
-  DATA_VECTOR(stateFrac);
-  DATA_FACTOR(qual); //Integers
   DATA_VECTOR(include);
-  DATA_SCALAR(minDf);
-  DATA_INTEGER(moveModelCode);
-  DATA_INTEGER(modelCode);
-  DATA_INTEGER(nauticalStates);
-  DATA_INTEGER(nauticalObs);
-  DATA_INTEGER(timevary);
+  DATA_FACTOR(qual);
   DATA_IVECTOR(varModelCode);
 
+  // Movement related
+  DATA_VECTOR(dtStates);
+  DATA_INTEGER(moveModelCode);
+  DATA_INTEGER(nauticalStates);
+
+  // Measurement related
+  DATA_SCALAR(minDf);
+  DATA_INTEGER(errorModelCode);
+  DATA_INTEGER(nauticalObs);
   DATA_VECTOR(splineKnots);
 
+  // Related to more than one
+  DATA_IVECTOR(prevState);
+  DATA_VECTOR(stateFrac);
+
+
+  // Residual related  
   DATA_VECTOR_INDICATOR(klon,lon);
   DATA_VECTOR_INDICATOR(klat,lat);
-  
-  PARAMETER_MATRIX(logbeta); //Length 2 (first lat then lon) x number of states
-  PARAMETER_VECTOR(logSdState);
-  PARAMETER_VECTOR(logSdObs); //length 2
-  //DATA_MATRIX(logCorrection); //Dim 2 x number of quality classes (first should be log(1)
-  PARAMETER_MATRIX(logCorrection);
-  PARAMETER_VECTOR(gamma); //Length 2 (first lat then lon)
-  
-  PARAMETER_MATRIX(mu); // Dim 2 x lon.size()
-  PARAMETER_MATRIX(vel); // Dim 2 x lon.size()
 
+
+  ////////////////
+  // PARAMETERS //
+  ////////////////
+
+  // Movement related
+  PARAMETER_VECTOR(movePars); //Length 2 (first lat then lon) x number of states
+  PARAMETER_VECTOR(logSdState);
+
+  // States
+  PARAMETER_MATRIX(mu);
+  PARAMETER_MATRIX(vel);
+
+
+  // Measurement related  
+  PARAMETER_VECTOR(logSdObs);
+  PARAMETER_MATRIX(logCorrection);
   PARAMETER(splineXlogSd);
   PARAMETER_VECTOR(knotPars);
-
-  
   PARAMETER_VECTOR(df);  //Length as number of quality classes
 
-  // Number of data points to include
-    PARAMETER(numdata);
 
+
+
+
+  ///////////////////////////////////////////
+  // Transform to nautical miles / lat/lon //
+  ///////////////////////////////////////////
+  
 
   // Get state coordinates in nautical miles
   vector<Type> x(mu.cols());
@@ -97,14 +117,6 @@ Type objective_function<Type>::operator() ()
     bearings(i) = bearing(x(i-1),y(i-1),x(i),y(i),true);
   }
 
-
-  // Calculate beta values
-  matrix<Type> beta = logbeta.array().exp().matrix();
-  if(moveModelCode == 2){
-    beta.row(2) += beta.row(0);
-    beta.row(3) += beta.row(1);
-  }
-
   // Transform parameters
   vector<Type> varState = exp(Type(2.0)*logSdState);
   matrix<Type> varObs(logCorrection.rows(),logCorrection.cols()+1);
@@ -121,6 +133,11 @@ Type objective_function<Type>::operator() ()
   Type nll = 0.0;
 
 
+
+  ////////////////////////////////
+  // Create covariance matrices //
+  ////////////////////////////////
+  
   //Set up covariance matrix for observations
   // Observational distributions
   vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
@@ -134,7 +151,7 @@ Type objective_function<Type>::operator() ()
   // For geolocation
   // Create spline
   tmbutils::splinefun<Type> logSplLat(splineKnots,knotPars);
-  MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,modelCode);
+  MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,errorModelCode);
 
   // For argos data
   for(int i = 0; i < nll_dist_obs.size(); ++i){
@@ -144,12 +161,22 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     //ModelCode: 0: t; 1: norm
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf,modelCode);
+    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf,errorModelCode);
   }
 
-  // Contribution from first state
+
   
-  // Contributions from states
+  ///////////////////////////////////
+  // Contribution from first state //
+  ///////////////////////////////////
+
+
+
+  
+  ///////////////////////////////
+  // Contributions from states //
+  ///////////////////////////////
+  
   for(int i = 1; i < mu.cols(); ++i){
     switch(moveModelCode){
     case 0: 			// Random walk on lat+lon
@@ -163,8 +190,9 @@ Type objective_function<Type>::operator() ()
 		       (vector<Type>)vel.col(i),
 		       (vector<Type>)vel.col(i-1),
 		       dtStates(i),
-		       (vector<Type>)beta.col(i),
-		       gamma,varState);
+		       exp((vector<Type>)movePars.segment(0,2)),
+		       (vector<Type>)movePars.segment(2,2),
+		       varState);
       break;
     case 2:			// Mixed memory Continuous Time Correlated Random Walk on lat+lon
       nll += nll_mpctcrw((vector<Type>)mu.col(i),
@@ -172,24 +200,25 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)vel.col(i),
 			 (vector<Type>)vel.col(i-1),
 			 dtStates(i),
-			 (vector<Type>)beta.col(i),
-			 gamma,varState);
+			 exp((vector<Type>)movePars.segment(0,4)),
+			 (vector<Type>)movePars.segment(4,4),
+			 varState);
       break;
     case 3:			// Discrete time correlated random walk on lat+lon
       if(i == 1){
 	nll += nll_dtcrw1((vector<Type>)mu.col(i),
 			 (vector<Type>)mu.col(i-1),
-			 Type(2.0)/(Type(1.0)+exp(-logbeta(0,i))) - Type(1.0),
-			 gamma(0),
-			 Type(2.0)/(Type(1.0)+exp(-gamma(1))) - Type(1.0),
+			 Type(1.0)/(Type(1.0)+exp(-movePars(0))),
+			 movePars(1),
+			 Type(2.0)/(Type(1.0)+exp(-movePars(2))) - Type(1.0),
 			 varState);
       }else{
 	nll += nll_dtcrw((vector<Type>)mu.col(i),
 			 (vector<Type>)mu.col(i-1),
 			 (vector<Type>)mu.col(i-2),
-			 Type(2.0)/(Type(1.0)+exp(-logbeta(0,i))) - Type(1.0),
-			 gamma(0),
-			 Type(2.0)/(Type(1.0)+exp(-gamma(1))) - Type(1.0),
+			 Type(1.0)/(Type(1.0)+exp(-movePars(0))),
+			 movePars(1),
+			 Type(2.0)/(Type(1.0)+exp(-movePars(2))) - Type(1.0),
 			 varState);
       }
       break;
@@ -197,25 +226,49 @@ Type objective_function<Type>::operator() ()
       nll += nll_dsb_weibull(stepLengths(i),
 			     bearings(i),
 			     bearings(i-1),
-			     beta(0,i),
-			     varState(0),
-			     varState(1));
+			     exp(movePars(0)),
+			     exp(movePars(1)),
+			     exp(movePars(2)));
       break;
     case 5:		 // Discrete steplength + bearings model
       nll += nll_dsb_halfnorm(stepLengths(i),
 			      bearings(i),
 			      bearings(i-1),
-			      beta(0,i),
+			      exp(movePars(0)),
 			      varState(0));
       break;      
+    case 6:			// Irregularized Discrete time correlated random walk on lat+lon
+      if(i == 1){
+	nll += nll_idtcrw1((vector<Type>)mu.col(i),
+			   (vector<Type>)mu.col(i-1),
+			   dtStates(i),
+			   (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,2)))),
+			   movePars(2), //Type(2.0*M_PI)/(Type(1.0)+exp(-movePars(1))),
+			   Type(2.0)/(Type(1.0)+exp(-movePars(3))) - Type(1.0),
+			   (vector<Type>)movePars.segment(4,2),
+			   varState);
+      }else{
+	nll += nll_idtcrw((vector<Type>)mu.col(i),
+			 (vector<Type>)mu.col(i-1),
+			 (vector<Type>)mu.col(i-2),
+			  dtStates(i),
+			  (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,2)))),
+			  movePars(2), //Type(2.0*M_PI)/(Type(1.0)+exp(-movePars(1))),
+			  Type(2.0)/(Type(1.0)+exp(-movePars(3))) - Type(1.0),
+			  (vector<Type>)movePars.segment(4,2),
+			  varState);
+      }
+      break;
     default:
       error("Movement model not implemented");
       break;
     }
   }
 
-
-  // Contributions from observations
+  /////////////////////////////////////
+  // Contributions from observations //
+  /////////////////////////////////////
+  
   for(int i = 0; i < lon.size(); ++i){
     obs.setZero();
     if(nauticalObs){
@@ -225,8 +278,10 @@ Type objective_function<Type>::operator() ()
 	obs(0) -= y(prevState(i));
 	obs(1) -= x(prevState(i));
       }else{
-	obs(0) -= stateFrac(i) * y(prevState(i)) + (Type(1.0) - stateFrac(i)) * y(prevState(i)+1);
-	obs(1) -= stateFrac(i) * x(prevState(i)) + (Type(1.0) - stateFrac(i)) * x(prevState(i)+1);
+	obs(0) -= stateFrac(i) * y(prevState(i)) +
+	  (Type(1.0) - stateFrac(i)) * y(prevState(i)+1);
+	obs(1) -= stateFrac(i) * x(prevState(i)) +
+	  (Type(1.0) - stateFrac(i)) * x(prevState(i)+1);
       }
     }else{
       obs(0) = lat(i);
@@ -235,8 +290,10 @@ Type objective_function<Type>::operator() ()
 	obs(0) -= slat(prevState(i));
 	obs(1) -= slon(prevState(i));
       }else{
-	obs(0) -= stateFrac(i) * slat(prevState(i)) + (Type(1.0) - stateFrac(i)) * slat(prevState(i)+1);
-	obs(1) -= stateFrac(i) * slon(prevState(i)) + (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
+	obs(0) -= stateFrac(i) * slat(prevState(i)) +
+	  (Type(1.0) - stateFrac(i)) * slat(prevState(i)+1);
+	obs(1) -= stateFrac(i) * slon(prevState(i)) +
+	  (Type(1.0) - stateFrac(i)) * slon(prevState(i)+1);
       }
     }
 
@@ -254,10 +311,19 @@ Type objective_function<Type>::operator() ()
     }
   }
 
+
+  ///////////////////////////////////
+  // Calculate spline for each day //
+  ///////////////////////////////////
+  
   vector<Type> splineSd(366);
   for(int i = 0; i < splineSd.size(); ++i)
     splineSd(i) = exp(logSplLat(i+1));
 
+  ////////////
+  // REPORT //
+  ////////////
+  
   REPORT(x);
   REPORT(y);
   REPORT(slat);
@@ -267,12 +333,15 @@ Type objective_function<Type>::operator() ()
   REPORT(xobs);
   REPORT(yobs);
   REPORT(splineSd);
+
+  //////////////
+  // ADREPORT //
+  //////////////
   
   vector<Type> dfs = exp(df)+minDf;
   ADREPORT(correction);
   ADREPORT(sdObs);
   ADREPORT(dfs);
-  ADREPORT(beta);
   ADREPORT(splineSd);
 
   // ADREPORT(slat);
@@ -281,5 +350,5 @@ Type objective_function<Type>::operator() ()
   
   return nll;
   
-  }
+}
 

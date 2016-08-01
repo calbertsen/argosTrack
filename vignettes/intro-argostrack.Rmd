@@ -3,6 +3,7 @@ title: "Introduction to argosTrack"
 author: "Christoffer Moesgaard Albertsen"
 email: "cmoe@aqua.dtu.dk"
 date: "`r Sys.Date()`"
+bibliography: bib.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to argosTrack}
@@ -10,89 +11,274 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+
+```{r knitrsetting, echo=FALSE, results='hide',message=FALSE,warning=FALSE}
+
+knitr::opts_chunk$set(echo=FALSE,error=TRUE,message = FALSE,warning=TRUE,
+                      dev='png',fig.ext='png',dpi=72,
+                      fig.width=8,fig.height=6)
+#setEPS()
+
+```
+
+
 # Introduction
 
-For each coordinate $c=1,2$ (1: latitude, 2: longitude) the instantaneous velocity of the animal $\nu_{c,i+1}$ at time $i+1$ is described by the Ornstein-Uhlenbeck process: 
-$$
-\nu_{c,i+1}-\gamma_c = e^{-\beta_c\Delta_{i+1}}[\nu_{c,i}-\gamma_c]+\eta_{c,i},
-$$
-where $\eta_{c,i}$ follows a Gaussian distribution with mean zero and variance
-$$
-V\left(\eta_{c,i}\right) = \sigma_c^2(1-e^{-2\beta_c\Delta_i})/(2\beta_c),
-$$
-where $\sigma_c^2$ is a scale parameter.
+The `argosTrack` package is intended to model animal movement data collected by the [Argos system](http://www.argos-system.org) with state-space models. It  was originally constructed for the analyzes in @albertsen2015a, which was based on the Continuous Time Correlated Random Walk (@johnson2008a) movement model. Since then, the package has been extended to include several movement models, and is now based on reference classes. The new reference class based implementation gives a moduled based interface that is (hopefully) easier to use, maintain and extend. The package has three types of modules: Observation, Measurement, Movement and Animal. The Observation class is used to contain the data to be modelled. The Measurement class is used to specify the measurement part of the state-space model, which can be done (almost) independently of the actual observations. The Movement classes implements the process part of the state-space model, and finally the Animal class collects the parts to a full state-space model, which can be fitted.
 
-By integrating over the velocity process one obtains the location process: 
-$$
-\mu_{c,i+1} = \mu_{c,i}+\nu_{c,i}\left(1-e^{-\beta_c\Delta_i}\right)/\beta_c+\zeta_{c,i}.
-$$
-where $\zeta_{c,i}$ follows a Gaussian distribution with zero mean and
+# Included data
 
-$$
-V\left(\zeta_{c,i}\right)=\frac{\sigma_c^2}{\beta_c^2}\left(\Delta_i-2\left(1-e^{-\beta_c\Delta_i}\right)/\beta_c+\left(1-e^{-2\beta_c\Delta_i}\right)/(2\beta_c)\right).
-$$
+The package includes two data sets from @albertsen2015a; a track from a subadult ringed seal and a track from an adult ringed seal. The adult data is accessed by
 
-The joint distribution of $\eta_{c,i}$ and $\zeta_{c,i}$ is a bivariate Gaussian distribution with
-$$
-Cov\left(\eta_{c,i},\zeta_{c,i}\right)= \frac{\sigma_c^2}{2\beta_c^2}\left(1-2e^{-\beta_c\Delta_i}+e^{-2\beta_c\Delta_i}\right).
-$$
+```{r}
 
-
-# Estimating tracks
-
-```{r intro}
 library(argosTrack)
-data(adult_ringed_seal)
-head(adult_ringed_seal)
-```
-Latitude should be degrees north (-90 to 90) and longitude should be degrees east (-180 to 180).
+d0 <- adult_ringed_seal
+head(d0)
 
-Default is to fit with $\beta_1 = \beta_2$ and $\gamma_1=\gamma_2=0$. The default error distribution is a t distribution with 10 degrees of freedom.
-
-```{r fitall, warning=FALSE}
-args <- list(lon = adult_ringed_seal$lon,
-             lat = adult_ringed_seal$lat,
-             dates = as.character(adult_ringed_seal$date),
-             locationclass = adult_ringed_seal$lc,
-             silent=TRUE
-             )
-fitobj<- do.call(argosTrack,args)
-fitobj
 ```
 
-```{r fitsummary}
-summary(fitobj)
+Likewise, the subadult data is accessed by
+
+```{r}
+d <- subadult_ringed_seal
+head(d)
 ```
 
-```{r fitplot1, fig.width = 10, fig.height = 10}
-plot(fitobj)
-```
+We will use the subadult data to illustrate the functionality of the package. For convenience, we remove the 'Z' location class, which is usually considered invalid.
 
-```{r fitplot2, fig.width = 10, fig.height = 10}
-plot(fitobj, bg_style = "map", only_map = TRUE, minArea = 0.1)
+```{r}
+
+d <- subset(d,lc != "Z")
+
 ```
 
 
-## Filtering observations
+# Observation class
 
-```{r swimspeed}
-args2 <- args
-args2$include <- !(args2$locationclass %in% c("B","Z"))
+The first step in analysing the data using `argosTrack` is collecting the observation data in the Observation class. The input required is the longitudes, latitudes, time stamps and Argos location classes of the track data.
+
+```{r}
+
+obs <- Observation(lon = d$lon,
+                   lat = d$lat,
+                   dates = as.POSIXct(d$date),
+                   locationclass = d$lc
+                   )
+obs
+
 ```
 
-```{r fitsecond, warning=FALSE}
-fitobj2<- do.call(argosTrack,args2)
-fitobj2
+A plot of the track, latitudes over time, and longitudes over time can be produced by the `plot` function
+
+```{r, fig.cap = "Default plot of movement track from subadult ringed seal."}
+
+plot(obs)
+
 ```
 
-```{r fitsummarysecond}
-summary(fitobj2)
+Each of the plot components can be produced by the functions `plotMap`, `plotLat`, and `plotLon` respectively. The plot functions can be customized by a list of base graphichs arguments as illustrated with the adult ringed seal data.
+
+```{r, fig.cap = "Map of movement track from adult ringed seal."}
+
+dateNum <- as.numeric(as.POSIXct(d0$date)) - as.numeric(as.POSIXct(d0$date[1]))
+plotMap(Observation(lon = d0$lon,
+                   lat = d0$lat,
+                   dates = as.POSIXct(d0$date),
+                   locationclass = d0$lc
+                   ),args = list(col=as.numeric(d0$lc),
+                                 cex = 3 * dateNum/tail(dateNum,1)
+                                 )
+        )
+
+
+
 ```
 
-```{r fitplot1second, fig.width = 10, fig.height = 10}
-plot(fitobj2)
+
+
+# Measurement class
+
+We now specify the measurement equation of the state-space model using the `Measurement` class. The main argument is `model`, which specifies whether the data should be considered normally distributed (`"n"`) or t-distributed (`"t"`). In this example, we model the measurements by a normal distribution. Another important argument is `nauticalObs`, which specifies whether the observations should be transformed to nautical miles instead of latitudes and longitudes. The default (`FALSE`) is to model the latitudes and longitudes directly.
+
+```{r}
+
+meas <- Measurement(model="n")
+meas
+
 ```
 
-```{r fitplot2second, fig.width = 10, fig.height = 10}
-plot(fitobj2, bg_style = "map", only_map = TRUE, minArea = 0.1)
+# Movement class
+
+
+```{r, echo = FALSE}
+
+allMoveNames <- names(getClass("Movement")@subclasses)
+
+```
+
+The movement model is specified by `Movement` classes. The `Movement` class does not itself implement a movement model, and can not be used directly. Instead, each specific movement model in the package has its own class, which inherits the `Movement` class. Currently, the following classes implements movement models: `r paste(allMoveNames[allMoveNames %in% ls("package:argosTrack")],collapse = ", ")`. Information on each model can be seen in the documentation.
+
+In this example, we use the `RW` class, which implements a random walk model. The class requires the time stamps at which the true position of the animal should be estimated; in our case, this is every (unique) time stamp of the data. By default the time steps are calculated in hours. This can be changed by the `timeunit` argument.
+
+```{r}
+
+mov <- RW(unique(as.POSIXct(d$date)))
+mov
+
+```
+
+Like the observations, the `Movement` classes can be plotted.
+
+```{r, fig.cap = "Default plot of a non-fitted movement class."}
+
+plot(mov)
+
+```
+
+Since we have not yet fitted the movement model to data, the plot currently shows the initial values.
+
+# Animal class
+
+To collect the parts, the `Animal` class is used. The class requires an `Observation`, `Movement`, and `Measurement` model. Further, it allows us to give an identifier to the animal.
+
+```{r}
+
+anim <- Animal(obs,mov,meas, as.character(d$id[1]))
+anim
+
+```
+
+Using the `plot` function shows a combination of the data from the `Observation` class and the `Movement` class.
+
+```{r, fig.cap = "Default plot of a non-fitted animal class."}
+
+plot(anim)
+
+```
+
+
+
+# Maximum likelihood estimation
+
+Maximum likelihood estimation of the model using the Laplace approximation can be done with the `fitTrack` function; a wrapper for a combination of the `TMB` package and `nlminb`. The `silent` argument can be used to reduce the output written to the terminal during optimization. Depending on the movement model, further arguments to combine or fix parameters can be given. More information can be seen in the documentation for each movement model.
+
+```{r}
+
+fitTrack(anim, silent=TRUE)
+
+```
+
+After estimating, the `Animal` object has been updated with the results.
+
+```{r}
+
+anim
+
+```
+
+This is also evident when plotting the object.
+
+```{r, fig.cap = "Default plot of a fitted animal class."}
+
+plot(anim)
+
+```
+
+Not only the `Animal` class, but also the `Measurement` and `Movement` class are updated.
+
+```{r}
+
+mov
+
+```
+
+Because the random walk model does not have any movement parameters, this can not be seen when printing, but if we plot the object, the estimated locations are changed.
+
+```{r, fig.cap = "Default plot of a fitted movement class."}
+
+plot(mov,sd=FALSE)
+
+```
+
+
+# Simulating data
+
+
+To simulate from the state-space model (or any part of it), the `simTrack` function can be used. The following code simulates observations. The first argument is a `Measurement` class, specifying the model to simulate from; the second argument is the number of replications, while the third argument is an `Observation` class, which specifies the time points and location classes to use. The parameters used is the result from `fitTrack`. If `fitTrack` has not yet been used on the object, the initial parameters are used.
+
+```{r, fig.cap = "Plot of simulated observations"}
+
+set.seed(123)
+sobs <- simTrack(meas,1,obs)
+plot(t(sobs[,,1]), pch = 16, col= rgb(0,0,0,0.3), xlab = "x", ylab = "y")
+
+```
+
+By plotting the simulated observations seperately for each location class, we clearly see how the variance increases with the location class.
+
+```{r, fig.cap = "Plot of simulated observations per location class"}
+
+layout(matrix(1:6,3))
+sapply(2:7,function(i)
+    plot(t(sobs[,as.numeric(obs$qual)==i,1]),
+         pch = 16,
+         xlab = "x", ylab = "y", main = levels(obs$qual)[i],
+         col= rgb(0,0,0,0.3),
+         ylim = range(sobs[2,,1]),
+         xlim = range(sobs[1,,1]))
+    )
+
+```
+
+Likewise, the function can be used on a `Movement` class. The first argument is the 'Movement' class to simulate from, the second argument is the number of replications, and the third argument is the initial position. If an initial position is not given, (0,0) is used.
+
+```{r, fig.cap = "Plot of simulated movement"}
+
+set.seed(456)
+smov <- simTrack(mov,1, c(0,0))
+plot(t(smov[,,1]), xlab = "x", ylab = "y")
+
+```
+
+If the `simTrack` function is used on an `Animal` object, both movement and observations are simulated according to the full state-space model. Further, a new `Animal` object is returned. Note, that only the observations are changed from the object used in the simulation.
+
+```{r}
+
+set.seed(789)
+sa <- simTrack(anim,1)
+## Save the new Animal object as an2
+an2 <- sa[3,1]$Animal
+an2
+plot(an2)
+
+```
+
+The new `Animal` object can be used directly in `fitTrack` to update the parameter values and estimated locations.
+
+```{r}
+
+fitTrack(an2, silent = TRUE)
+
+```
+
+Now, the new object is updated
+
+```{r, fig.cap = "Plot of estimated locations for the simulation"}
+
+an2
+
+plot(an2)
+
+```
+
+The estimated parameters can easily be compared to the parameters used in the simulation
+
+```{r}
+
+anim$movement$varianceParameters
+an2$movement$varianceParameters
+## vcov is the covariance of both movement and variance parameters
+2 * sqrt(diag(an2$movement$vcov))
+
 ```

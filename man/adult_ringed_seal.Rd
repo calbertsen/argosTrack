@@ -22,5 +22,8 @@ adult_ringed_seal
 \description{
 A dataset containing tracking data from the Argos system for an adult ringed seal (Pusa hispida) released 10-30-2011 near Sanikiluaq, Nunavut, Canada.
 }
+\references{
+Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
+}
 \keyword{datasets}
 

@@ -71,4 +71,17 @@ Type bearing(Type x0, Type y0, Type x1, Type y1, bool nautical = true){
   return atan3(dx(1),dx(0));
 }
 
+
+extern "C" {
+
+  SEXP stepLength(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical){
+    return asSEXP(stepLength(asDouble(x0),asDouble(y0),asDouble(x1),asDouble(y1),asBool(nautical)));
+  }
+
+  SEXP bearing(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical){
+    return asSEXP(bearing(asDouble(x0),asDouble(y0),asDouble(x1),asDouble(y1),asBool(nautical)));
+  }
+}
+
+
 #endif

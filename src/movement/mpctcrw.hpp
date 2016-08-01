@@ -9,6 +9,8 @@ Type nll_mpctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<
   vector<Type> state(6);
   matrix<Type> cov(6,6);
   cov.setZero();
+  beta(2) += beta(0);
+  beta(3) += beta(1);
 
   state(0) = mut(0)-(mutm(0)+veltm(0)*(1.0-exp(-beta(0)*dt))/beta(0)+veltm(2)*(1.0-exp(-beta(2)*dt))/beta(2));
   state(1) = velt(0) - (gamma(0)+exp(-beta(0)*dt)*(veltm(0)-gamma(0)));

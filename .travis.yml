@@ -1,4 +1,12 @@
-language: c
+language: r
+
+sudo: required
+cache: packages
+
+r:
+  - oldrel
+  - release
+  - devel
 
 os:
   - linux
@@ -6,24 +14,27 @@ os:
 
 env:
   global:
-    - R_CHECK_ARGS="--as-cran --timings --no-manual"
-    - R_BUILD_ARGS="--no-manual"
-    - _R_CHECK_TIMINGS_="0"
+    - OS=$(uname -s)
 
-sudo: required
+r_check_args: --as-cran
 
-before_install:
-  - if test ${TRAVIS_OS_NAME} = osx; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; fi
-  - if test ${TRAVIS_OS_NAME} = osx; then sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
+r_packages:
+  - RcppEigen
+  - TMB
+  - Matrix
+  - knitr
+  - rmarkdown
 
-install:
-  - ./travis-tool.sh install_r TMB
-  - ./travis-tool.sh install_deps
 
-script: ./travis-tool.sh run_tests
-
-on_failure:
+after_failure:
+  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
+  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
+  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
+  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
   - ./travis-tool.sh dump_logs
+
+after_success:
+  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
+  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
+  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
+  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi

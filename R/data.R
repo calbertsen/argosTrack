@@ -13,6 +13,7 @@
 #'   
 #' }
 #' @source Fisheries and Oceans Canada
+#' @references Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
 "adult_ringed_seal"
 
 #' Track data from the adult ringed seal with tag id 43847.
@@ -27,18 +28,5 @@
 #'   
 #' }
 #' @source Fisheries and Oceans Canada
+#' @references Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
 "subadult_ringed_seal"
-
-
-#' World shorelines in high resolution
-#'
-#' @format A list of 145101 matrices each defining the longitude and latitude of a shoreline polygon. The polygons define the boundary between land and ocean, except Antarctica, and the boundary between Antarctica grounding-line and ocean. 
-#' The longitudes are between -180 and 180 degrees East, while the latitudes are between -90 and 90 degrees North.
-#' @source A Global Self-consistent, Hierarchical, High-resolution Geography Database \url{http://www.soest.hawaii.edu/pwessel/gshhg/index.html}
-"worldShorelines"
-
-#' #' Area of world shoreline polygons in high resolution
-#'
-#' @format A vector of length 145101 with areas of the World shoreline data polygons in the same order.
-#' @source A Global Self-consistent, Hierarchical, High-resolution Geography Database \url{http://www.soest.hawaii.edu/pwessel/gshhg/index.html}
-"worldShorelinesArea"

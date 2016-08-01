@@ -2,9 +2,10 @@
 #include <R.h>
 #include <Rmath.h>
 #include <Rinternals.h>
+//#include "convenience/convert.hpp"
 
-//#include "common.hpp"
 using namespace Eigen;
+
 
 SEXP asSEXP(double x){
   SEXP y = PROTECT(allocVector(REALSXP,1));
@@ -64,17 +65,12 @@ MatrixXd asMatrix(SEXP x)
   return y;
 }
 
-double asDouble(SEXP x){
-  if(!(isNumeric(x) && length(x)==1))error("Element must be a numeric of length 1");
-  return REAL(x)[0];
-}
-
 VectorXd asVector(SEXP x) {
 
   if(!isNumeric(x))error("Element must be a numeric vector");
 
   int n = length(x);
-  Eigen::VectorXd y(n);
+  VectorXd y(n);
 
   for(int i = 0; i < n; ++i)
     y(i) = REAL(x)[i];
@@ -107,7 +103,6 @@ VectorXd cumsum(VectorXd x){
   return y;
 }
 
-// Sample from multivariate normal
 
 MatrixXd rmvnorm(int n,VectorXd mu, MatrixXd sigma){
   //if(!(mu.size() == sigma.cols())) 
@@ -261,7 +256,7 @@ MatrixXd rmvt(int n,VectorXd mu, MatrixXd sigma, double df){
   
   MatrixXd X = (L*Y).transpose();
   for(int i = 0; i < X.rows(); ++i){
-    double W = df / rchisq(df);
+    double W = df / Rf_rchisq(df);
     X.row(i) *= sqrt(W);
     X.row(i) += mu;
   }
@@ -273,7 +268,7 @@ extern "C" {
     int nn = asInteger(n);
     VectorXd loc = asVector(mu);
     MatrixXd sig = asMatrix(sigma);
-    double dff = asDouble(df);
+    double dff = REAL(df)[0];
     MatrixXd X = rmvt(nn,loc,sig,dff);
     return asSEXP(X);
   }
