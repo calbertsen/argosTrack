@@ -16,6 +16,9 @@ env:
   global:
     - OS=$(uname -s)
 
+brew_packages:
+  - gfortran
+
 r_check_args: --as-cran
 
 r_packages:
