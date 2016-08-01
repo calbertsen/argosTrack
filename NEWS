@@ -1,3 +1,16 @@
+
+
+# Version 1.0.0
+- Added movement models: Discrete Time Correlated Random Walk (dtcrw), Discrete Step lenght and Bearings model (dsb)
+- Removed movement model mpctcrw
+- Possibility of extracting and plotting step lengths and turning angles between predicted states for all models
+- Support for modelling on a scale of either nautical miles or latitude/longitude for both states and observations.
+- Removed bootstrap functionality
+- defuncted argosTrack function
+- Changed to reference classes: Animal, Observation, Measurement, Movement.
+- Added functions to be called on the above: plot, plotMap, plotLon, plotLat, simTrack, fitTrack.
+- This version is not backwards compatible with previous versions.
+
 # Version 0.1.1
 - Fixed error caused by TMB no longer exporting summary.sdreport
 
