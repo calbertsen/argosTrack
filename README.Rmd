@@ -1,0 +1,26 @@
+# argosTrack: Fit Movement Models to Argos Data for Marine Animals
+
+## Installing
+
+```{r, echo = FALSE, results='hide'}
+
+a<-available.packages("https://cran.rstudio.com/contrib/main")
+
+```
+
+
+<!-- covafillr version can be installed from CRAN with -->
+```{r, echo = FALSE, eval=FALSE}
+
+install.packages("covafillr")
+
+```
+
+The development version of argosTrack can be installed with
+
+```{r, eval=FALSE}
+
+devtools::install_github("calbertsen/covafillr")
+
+```
+

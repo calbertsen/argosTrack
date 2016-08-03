@@ -1,14 +1,12 @@
-# argosTrack
+argosTrack: Fit Movement Models to Argos Data for Marine Animals
+================================================================
 
-R package for fitting movement models to Argos data
+Installing
+----------
 
-## Installing the package
+<!-- covafillr version can be installed from CRAN with -->
+The development version of argosTrack can be installed with
 
-The package requires [`TMB`](http://www.tmb-project.org) and `mvtnorm` to be installed.
-
-To install the package from GitHub use
-
-```
-library(devtools)
-install_github("calbertsen/argosTrack")
+``` r
+devtools::install_github("calbertsen/covafillr")
 ```
