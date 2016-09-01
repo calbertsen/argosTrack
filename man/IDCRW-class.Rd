@@ -33,7 +33,7 @@ mov <- argosTrack:::IDCRW(unique(as.POSIXct(d$date)))
 Albertsen, C.M. (2016) Personal communication.
 }
 \seealso{
-\code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here)
+\code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 
 Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{CTCRW-class}}; \code{\link{DCRW}},
@@ -42,7 +42,8 @@ Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{DSBW-class}}; \code{\link{MPCTCRW}},
   \code{\link{MPCTCRW-class}}; \code{\link{Movement}},
   \code{\link{Movement-class}}; \code{\link{OUL}},
-  \code{\link{OUL-class}}; \code{\link{RW}},
+  \code{\link{OUL-class}}; \code{\link{OUV}},
+  \code{\link{OUV-class}}; \code{\link{RW}},
   \code{\link{RW-class}}
 }
 \keyword{internal}

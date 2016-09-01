@@ -35,6 +35,7 @@ Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},
   \code{\link{MPCTCRW-class}}; \code{\link{Movement}},
   \code{\link{Movement-class}}; \code{\link{OUL}},
-  \code{\link{OUL-class}}
+  \code{\link{OUL-class}}; \code{\link{OUV}},
+  \code{\link{OUV-class}}
 }
 

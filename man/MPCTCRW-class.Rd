@@ -32,7 +32,8 @@ Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{Movement}},
   \code{\link{Movement-class}}; \code{\link{OUL}},
-  \code{\link{OUL-class}}; \code{\link{RW}},
+  \code{\link{OUL-class}}; \code{\link{OUV}},
+  \code{\link{OUV-class}}; \code{\link{RW}},
   \code{\link{RW-class}}
 }
 \keyword{internal}

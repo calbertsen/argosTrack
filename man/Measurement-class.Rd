@@ -58,7 +58,7 @@ If the time steps of the state process does not correspond to the observation ti
 
 \item{\code{simulate(observation)}}{Function to simulate measurement data. 'observation' is an Observation reference class object, containing the time points and Argos location classes for the simulation. A matrix containing the measurement data is returned.}
 
-\item{\code{updateFromFit(parList, hessian)}}{Function to save the result from nlminb.}
+\item{\code{updateFromFit(parList, hessian, reportSpline)}}{Function to save the result from nlminb.}
 }}
 \note{
 The reference class methods are not intended to be used by the user. Please use appropriate functions such as \code{\link{simTrack}}.

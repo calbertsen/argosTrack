@@ -10,7 +10,7 @@
 #' @family "Movement models"
 #' 
 #' @references
-#' Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayesian inference for animal movement in continuous time. Methods Ecol Evol, 7: 184–195. doi:10.1111/2041-210X.12460
+#' Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayesian inference for animal movement in continuous time. Methods Ecol Evol, 7: 184-195. doi:10.1111/2041-210X.12460
 #'
 #' @examples
 #' d <- subadult_ringed_seal

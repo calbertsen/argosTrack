@@ -15,7 +15,7 @@ where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pma
 \describe{
 \item{\code{getTMBmap(...)}}{Function to return a map list for TMB::MakeADFun.}
 
-\item{\code{initialize(dates, pars = numeric(6), varPars = numeric(2),
+\item{\code{initialize(dates, pars = c(1, 0, 0, 1, 0, 0), varPars = numeric(2),
   nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \eqn{B_{1,1}}, \eqn{B_{2,1}}, \eqn{B_{1,2}}, \eqn{B_{2,2}}, \eqn{\gamma_{lat}}, \eqn{\gamma_{lon}}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{lat})}, \eqn{log(\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
 
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
@@ -25,7 +25,7 @@ d <- subadult_ringed_seal
 mov <- argosTrack:::OUL(unique(as.POSIXct(d$date)))
 }
 \references{
-Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayesian inference for animal movement in continuous time. Methods Ecol Evol, 7: 184–195. doi:10.1111/2041-210X.12460
+Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayesian inference for animal movement in continuous time. Methods Ecol Evol, 7: 184-195. doi:10.1111/2041-210X.12460
 }
 \seealso{
 \code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here)
@@ -37,7 +37,8 @@ Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},
   \code{\link{MPCTCRW-class}}; \code{\link{Movement}},
-  \code{\link{Movement-class}}; \code{\link{RW}},
+  \code{\link{Movement-class}}; \code{\link{OUV}},
+  \code{\link{OUV-class}}; \code{\link{RW}},
   \code{\link{RW-class}}
 }
 \keyword{internal}
