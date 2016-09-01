@@ -1,10 +1,10 @@
- 
-#ifndef _IDTCRW_
-#define _IDTCRW_
 
-// Irregular Discrete Time Correlated Random Walk
+#ifndef _OUV_
+#define _OUV_
+
+// Ornstein-Uhlenbeck Velocity model
 template<class Type>
-Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, vector<Type> gamma, Type phi, Type rho, vector<Type> mupar, vector<Type> varState){
+Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, vector<Type> gamma, Type rho, vector<Type> mupar, vector<Type> varState){
 
 
   matrix<Type> cov(2,2);
@@ -15,10 +15,10 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
 
   matrix<Type> Gth(2,2);
   Gth.setZero();
-  Gth(0,0) = -log(gamma(0));
-  Gth(1,1) = -log(gamma(1));
-  Gth(0,1) = phi;
-  Gth(1,0) = -phi;
+  Gth(0,0) = gamma(0);
+  Gth(1,1) = gamma(3);
+  Gth(0,1) = gamma(2);
+  Gth(1,0) = gamma(1);
 
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
   vector<Type> state = mut - (mutm + mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()));
@@ -36,7 +36,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
 
 // For time t == 1
 template<class Type>
-Type nll_idtcrw1(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> gamma, Type phi, Type rho, vector<Type> mupar, vector<Type> varState){
+Type nll_ouv1(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> gamma, Type rho, vector<Type> mupar, vector<Type> varState){
 
 
   matrix<Type> cov(2,2);
@@ -47,17 +47,16 @@ Type nll_idtcrw1(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> gamm
 
   matrix<Type> Gth(2,2);
   Gth.setZero();
-  Gth(0,0) = -log(gamma(0));
-  Gth(1,1) = -log(gamma(1));
-  Gth(0,1) = phi;
-  Gth(1,0) = -phi;
+  Gth(0,0) = gamma(0);
+  Gth(1,1) = gamma(3);
+  Gth(0,1) = gamma(2);
+  Gth(1,0) = gamma(1);
 
   matrix<Type> Gks = kroneckersum(Gth,Gth);
   
   vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);
-
-
+ 
 
   vector<Type> state(2);
   state(0) = mut(0) - mutm(0) + mupar(0);

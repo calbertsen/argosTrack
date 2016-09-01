@@ -259,6 +259,34 @@ Type objective_function<Type>::operator() ()
 			  varState);
       }
       break;
+    case 7: 			// Ornstein-Uhlenbeck Location
+      nll += nll_oul((vector<Type>)mu.col(i),
+		       (vector<Type>)mu.col(i-1),
+		       dtStates(i),
+		       (vector<Type>)movePars.segment(0,4),
+		       (vector<Type>)movePars.segment(4,2),
+		       varState);
+      break;
+    case 8:			// Ornstein-Uhlenbeck Velocity
+      if(i == 1){
+	nll += nll_ouv1((vector<Type>)mu.col(i),
+			   (vector<Type>)mu.col(i-1),
+			   dtStates(i),
+			   (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
+			   Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
+			   (vector<Type>)movePars.segment(5,2),
+			   varState);
+      }else{
+	nll += nll_ouv((vector<Type>)mu.col(i),
+			 (vector<Type>)mu.col(i-1),
+			 (vector<Type>)mu.col(i-2),
+			  dtStates(i),
+			  (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
+			  Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
+			  (vector<Type>)movePars.segment(5,2),
+			  varState);
+      }
+      break;
     default:
       error("Movement model not implemented");
       break;

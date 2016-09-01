@@ -112,7 +112,7 @@ Observation <- setRefClass("Observation",
                                        stop("Location classes must be: GPS, 3, 2, 1, 0, A, B, or Z")
                                    }
                                    if(all(is.na(qualIn))){
-                                       qualIn <- factor(rep("3",length(locclassfactor)))
+                                       qualIn <- factor(rep("3",length(locationclass)))
                                    }
 
                                    
@@ -146,6 +146,8 @@ Observation <- setRefClass("Observation",
                       getTMBmap = function(...){
                           "Function to return a map list for TMB::MakeADFun."
                           map <- list()
+                          if(all(varModelCode %in% c(1,2)))
+                              map$logSdObs <- factor(c(NA,NA)) ## Should probably be in Measurement class??
                           return(map) 
                       },
                       show = function(){

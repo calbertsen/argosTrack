@@ -43,7 +43,8 @@ Other X.Movement.models.: \code{\link{CTCRW}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},
-  \code{\link{MPCTCRW-class}}; \code{\link{RW}},
+  \code{\link{MPCTCRW-class}}; \code{\link{OUL}},
+  \code{\link{OUL-class}}; \code{\link{RW}},
   \code{\link{RW-class}}
 }
 

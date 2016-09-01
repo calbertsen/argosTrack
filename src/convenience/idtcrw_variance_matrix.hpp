@@ -14,22 +14,19 @@ vector<Type> idtcrwVarMat(Type dt , vector<Type> gamma, Type phi, Type rho, vect
   cov(0,1) = rho * sqrt(varState(0) * varState(1));
 
   matrix<Type> Gth(2,2);
-  Gth << -log(gamma(0)), phi, -phi, -log(gamma(1));
+  Gth.setZero();
+  Gth(0,0) = -log(gamma(0));
+  Gth(1,1) = -log(gamma(1));
+  Gth(0,1) = phi;
+  Gth(1,0) = -phi;
   matrix<Type> Gks = kroneckersum(Gth,Gth);
-  matrix<Type> I(Gks.cols(),Gks.cols());
-  I.setIdentity();
-  // tmbutils::matexp<Type,4> meGks(Gks);
-  matrix<Type> meGks = expm((matrix<Type>)(-Gks * dt));
-  matrix<Type> covVec(4,1);
-  covVec = cov.vec();
-  
-  
-  // vector<Type> var = ((matrix<Type>)Gks.inverse()) * (matrix<Type>)((I - meGks(-dt)) * covVec);
 
-   vector<Type> var = ((matrix<Type>)Gks.inverse()) * (matrix<Type>)((I - meGks) * covVec);
+  vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
+  matrix<Type> varMat = asMatrix(varVec,2,2);
+  matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
+  matrix<Type> var = varMat - (matrix<Type>)(meGth * (matrix<Type>)(varMat * (matrix<Type>)meGth.transpose()));
 
-
-  return var;
+  return var.vec();
 }
 
 

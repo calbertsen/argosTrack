@@ -63,11 +63,11 @@ setMethod("fitTrack", "Animal",
                                    par.fixed = opt$par,
                                    hessian.fixed = opt$hessian)
               sdParList <- obj$env$parList(par = summary(sdr,c("fixed","random"))[,2])
-
+              ssdr <- summary(sdr)
               ## Update Movement
               object$movement$updateFromFit(parList,opt$hessian,sdParList)
               ## Update Measurement
-              object$measurement$updateFromFit(parList,opt$hessian)
+              object$measurement$updateFromFit(parList,opt$hessian,ssdr[rownames(ssdr)=="splineSd",])
               ## Update Animal
               object$updateFromFit(opt)
               class(opt) <- "fittedTrack"

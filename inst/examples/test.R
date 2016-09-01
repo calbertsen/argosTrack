@@ -19,7 +19,7 @@ mov <- RW(unique(obs$dates))
 mov1 <- DTCRW(seq(min(obs$dates),
                   max(obs$dates),
                   "day"),timeunit="day")
-mov2 <- IDTCRW(unique(obs$dates),
+mov2 <- argosTrack:::IDCRW(unique(obs$dates),
                timeunit = "hour")
 mov3 <- CTCRW(unique(obs$dates),
                timeunit = "hour")
@@ -30,7 +30,10 @@ mov4 <- DSBHN(seq(min(obs$dates),
 mov5 <- DSBW(seq(min(obs$dates),
                   max(obs$dates),
                   len=200),
-              timeunit="auto")
+             timeunit="auto")
+
+mov6 <- argosTrack:::OUL(unique(obs$dates),
+                         timeunit = "hour")
 
 xx <- mov$simulate()
 xx1 <- mov1$simulate()
@@ -38,6 +41,7 @@ xx2 <- mov2$simulate()
 xx3 <- mov3$simulate()
 xx4 <- mov4$simulate()
 xx5 <- mov5$simulate()
+xx6 <- mov6$simulate()
 
 anim <- Animal(name = "0",
                observation = obs,
@@ -53,7 +57,7 @@ anim2 <- Animal(name = "2",
                measurement = Measurement(model="n"))
 anim2t <- Animal(name = "2t",
                observation = obs,
-               movement = IDTCRW(unique(obs$dates),
+               movement = IDCRW(unique(obs$dates),
                                  timeunit = "hour"),
                measurement = Measurement(model="t"))
 anim3 <- Animal(name = "3",
@@ -68,6 +72,10 @@ anim5 <- Animal(name = "5",
                observation = obs,
                movement = mov5,
                measurement = Measurement(model="n"))
+anim6 <- Animal(name = "6",
+               observation = obs,
+               movement = mov6,
+               measurement = Measurement(model="n"))
 
 fitTrack(anim)
 fitTrack(anim1)
@@ -76,6 +84,7 @@ fitTrack(anim2t)
 fitTrack(anim3)
 fitTrack(anim4)
 fitTrack(anim5)
+fitTrack(anim6, symdecay = TRUE, independentdecay = TRUE, equaldecay = TRUE, equaldrift = TRUE)
 
 anim2
 fitTrack(anim2,equaldrift=TRUE)

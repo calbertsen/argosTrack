@@ -1,13 +1,11 @@
-#' A Reference Class for fitting an Irregularized first Difference Correlated Random Walk model.
+#' A Reference Class for fitting an Ornstein-Uhlenbeck Velocity model.
 #'
-#' The reference class implements an Irregularized first Difference Correlated Random Walk (Albertsen 2016). The velocity is modelled by the (bivariate) stochastic differential equation
-#' \deqn{dV_t = -\pmatrix{ -\log\gamma_1 & \phi \cr -\phi & -\log\gamma_2 } (V_t-\mu) d_t + S dB_t,}
-#' or for convenience
-#' \deqn{dV_t = - \Theta (V_t-\mu) d_t + S dB_t.}
+#' The reference class implements an Ornstein-Uhlenbeck Velocity. The velocity is modelled by the (bivariate) stochastic differential equation
+#' \deqn{dV_t = -\Theta (V_t-\mu) d_t + S dB_t,}
 #' Since the locations are know from the velocity by \eqn{X_{t} = \sum_{i=0}^{t} V_i}, the increments are known as
 #' \deqn{X_{t_n} - X_{t_{n-1}} = V_{t_n}.}
 #' Hence,
-#' \deqn{X_{t_n} = X_{t_{n-1}} + \mu \pmatrix{ \cos ((t_n-t_{n-1})\phi) & -\sin ((t_n-t_{n-1})\phi) \cr \sin ((t_n-t_{n-1})\phi) & \cos ((t_n-t_{n-1})\phi) } \pmatrix{ \gamma_1^{t_n-t_{n-1}} & 0 \cr 0 & \gamma_2^{t_n-t_{n-1}} } (X_{t_{n-1}} - X_{t_{n-2}} - \mu)}
+#' \deqn{X_{t_n} = X_{t_{n-1}} + \mu + \Theta (X_{t_{n-1}} - X_{t_{n-2}} - \mu)}
 #'
 #' 
 #' @seealso \code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
@@ -19,39 +17,19 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::IDCRW(unique(as.POSIXct(d$date)))
+#' mov <- argosTrack:::OUV(unique(as.POSIXct(d$date)))
 #' 
 #' @keywords internal
-IDCRW <- setRefClass("IDCRW",
+OUV <- setRefClass("OUV",
                   contains = "Movement",
                   methods = list(
-                      copy = function (shallow = FALSE) 
-                      {
-                          def <- .refClassDef
-                          value <- new(def,
-                                       dates = .self$dates)
-                          ## The rest is from methods::
-                          vEnv <- as.environment(value)
-                          selfEnv <- as.environment(.self)
-                          for (field in names(def@fieldClasses)) {
-                              if (shallow) 
-                                  assign(field, get(field, envir = selfEnv), envir = vEnv)
-                              else {
-                                  current <- get(field, envir = selfEnv)
-                                  if (is(current, "envRefClass")) 
-                                      current <- current$copy(FALSE)
-                                  assign(field, current, envir = vEnv)
-                              }
-                          }
-                          value
-                      },
                       initialize = function(dates,
-                                            pars = numeric(6),
+                                            pars = c(1,0,0,1,0,0,0),
                                             varPars = numeric(2),
                                             nauticalStates = FALSE,
                                             timeunit = "hours"
                                             ){
-                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{logit_{(0,1)}(\\gamma_{lat})}, \\eqn{logit_{(0,1)}(gamma_{lon})}, \\eqn{\\phi}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
+                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{\\Theta_{0,0}}, \\eqn{\\Theta_{1,0}},\\eqn{\\Theta_{0,1}},\\eqn{\\Theta_{1,1}}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
 ###############
 ## Do checks ##
 ###############
@@ -62,8 +40,8 @@ IDCRW <- setRefClass("IDCRW",
                                                      units = timeunit))
                           if(any(dt0 <= 0))
                               stop("Time steps must be positive.")
-                          if(!(length(pars)==6 && is.numvec(pars)))
-                              stop("pars must be a numeric vector of length 6.")
+                          if(!(length(pars)==7 && is.numvec(pars)))
+                              stop("pars must be a numeric vector of length 7.")
                           if(!(length(varPars)==2 && is.numvec(varPars)))
                               stop("varPars must be a numeric vector of length 2.")
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
@@ -77,7 +55,7 @@ IDCRW <- setRefClass("IDCRW",
 ## initFields ##
 ################
                           
-                          initFields(model = "Irregularized Discrete Time Correlated Random Walk (IDTCRW)",
+                          initFields(model = "Ornstein-Uhlenbeck Velocity (OUV)",
                                      dates = dates,
                                      parameters = pars,
                                      varianceParameters = varPars,
@@ -89,7 +67,7 @@ IDCRW <- setRefClass("IDCRW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 6, parnames = c("logit[0,1](gamma_1)","logit[0,1](gamma_2)","phi","logit[-1,1](rho)","mu_1","mu_2"))
+                                     options = list(moveModelCode = 8, parnames = c("Theta_{11}","Theta_{21}","Theta_{12}","Theta_{22}","logit[-1,1](rho)","mu_1","mu_2"))
                                      )
 
 
@@ -108,7 +86,7 @@ IDCRW <- setRefClass("IDCRW",
                                          rho * exp(sum(.self$varianceParameters)),
                                          exp(2*.self$varianceParameters[2])),2,2)
 
-                          Gth <- matrix(c(-log(gamma[1]),-phi,phi,-log(gamma[2])),2,2)
+                          Gth <- matrix(c(-log(gamma),-phi,phi,-log(gamma)),2,2)
                          
                           var <- function(dt){
                               ## var <- matrix(NA,2,2)
@@ -150,27 +128,38 @@ IDCRW <- setRefClass("IDCRW",
                           
                           map <- callSuper(...)
                           args <- list(...)
-                          mpar <- 1:6
+                          mpar <- 1:7
                           doit <- FALSE
 
+                          if("symdecay" %in% names(args))
+                              if(args$symdecay){
+                                  mpar[2:3] <- 2;
+                                  doit <- TRUE
+                              }
+                          if("diagdecay" %in% names(args))
+                              if(args$diagdecay){
+                                  mpar[2:3] <- NA;
+                                  doit <- TRUE
+                              }
                           if("equaldecay" %in% names(args))  ## gamma             
                               if(args$equaldecay){
-                                  mpar[1:2] <- 1;
+                                  mpar[c(1,4)] <- 1;
                                   doit <- TRUE
                               }
                           if("equaldrift" %in% names(args)) ## mu
                               if(args$equaldrift){
-                                  mpar[5:6] <- 5;
+                                  mpar[6:7] <- 6;
                                   doit <- TRUE
                               }
                           if("fixdrift" %in% names(args)) ## mu
                               if(args$fixdrift){
-                                  mpar[5:6] <- NA;
+                                  mpar[6:7] <- NA;
                                   doit <- TRUE
                               }
 
+
                           ## Always equal decay
-                          doit <- TRUE
+                          #doit <- TRUE
 
                           if(doit)
                               map$movePars <- factor(mpar)

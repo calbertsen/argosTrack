@@ -50,7 +50,7 @@ Measurement <- setRefClass("Measurement",
                                       df = "numeric",
                                       minDf = "numeric",
                                       nauticalObs = "logical",
-                                      reportSpline = "numeric"
+                                      reportSpline = "matrix"
                                       ),
                            methods = list(
 
@@ -121,7 +121,7 @@ Measurement <- setRefClass("Measurement",
                                               df = df,
                                               minDf = minDf,
                                               nauticalObs = nauticalObs,
-                                              reportSpline = numeric(366) * NA
+                                              reportSpline = matrix(NA,nrow=366,ncol=2)
                                               )
 
 
@@ -185,7 +185,7 @@ Measurement <- setRefClass("Measurement",
                                        map$knotPars <- factor(rep(NA,length(.self$knotPars)))
                                    }else{
                                        map$knotPars <- factor(c(1,
-                                                                2:(length(parameters$knotPars)-1),
+                                                                2:(length(.self$knotPars)-1),
                                                                 1))
                                    }
 
@@ -203,7 +203,8 @@ Measurement <- setRefClass("Measurement",
                                    return(map)
                                },
                                updateFromFit = function(parList,
-                                                        hessian){
+                                                        hessian,
+                                                        reportSpline){
                                    "Function to save the result from nlminb."
                                    logSdObs <<- parList$logSdObs
                                    ## corObs <<- parList$corObs
@@ -215,6 +216,8 @@ Measurement <- setRefClass("Measurement",
                                    vcovTmp <- solve(hessian)
                                    indx <- which(rownames(vcovTmp) %in% c("logSdObs","logCorrection","splineXlogSd","knotPars","df"))
                                    vcov <<- vcovTmp[indx,indx]
+
+                                   reportSpline <<- reportSpline
 
                                },
                               simulate = function(observation){

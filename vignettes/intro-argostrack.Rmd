@@ -217,7 +217,7 @@ plot(t(sobs[,,1]), pch = 16, col= rgb(0,0,0,0.3), xlab = "x", ylab = "y")
 
 By plotting the simulated observations seperately for each location class, we clearly see how the variance increases with the location class.
 
-```{r, fig.cap = "Plot of simulated observations per location class"}
+```{r, fig.cap = "Plot of simulated observations per location class", results='hide'}
 
 layout(matrix(1:6,3))
 sapply(2:7,function(i)

@@ -83,22 +83,22 @@ MPCTCRW <- setRefClass("MPCTCRW",
 
                               ## Create covariance matrix
                               cov <- matrix(0,6,6)
-                              cov[1,1] <- varState[1]/beta[1]^2.0*(dt[i]-2.0*(1.0-exp(-beta[1]*dt[i]))/beta[1]+(1.0-exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1])) + varState[3]/beta[3]^2.0*(dt[i]-2.0*(1.0-exp(-beta[3]*dt[i]))/beta[3]+(1.0-exp(-2.0*beta[3]*dt[i]))/(2.0*beta[3]))
+                              cov[1,1] <- 0.001 #varState[1]/beta[1]^2.0*(dt[i]-2.0*(1.0-exp(-beta[1]*dt[i]))/beta[1]+(1.0-exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1])) + varState[3]/beta[3]^2.0*(dt[i]-2.0*(1.0-exp(-beta[3]*dt[i]))/beta[3]+(1.0-exp(-2.0*beta[3]*dt[i]))/(2.0*beta[3]))
                               cov[2,2] <- varState[1]*(1.0-exp(-2.0*beta[1]*dt[i]))/(2*beta[1])
                               cov[3,3] <- varState[3]*(1.0-exp(-2.0*beta[3]*dt[i]))/(2*beta[3])
-                              cov[2,1] <- varState[1]*(1.0-2.0*exp(-beta[1]*dt[i])+exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1]^2.0)
+                              cov[2,1] <- 0 #varState[1]*(1.0-2.0*exp(-beta[1]*dt[i])+exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1]^2.0)
                               cov[1,2] <- cov[2,1]
-                              cov[3,1] <- varState[3]*(1.0-2.0*exp(-beta[3]*dt[i])+exp(-2.0*beta[3]*dt[i]))/(2.0*beta[3]^2.0)
+                              cov[3,1] <- 0 #varState[3]*(1.0-2.0*exp(-beta[3]*dt[i])+exp(-2.0*beta[3]*dt[i]))/(2.0*beta[3]^2.0)
                               cov[1,3] <- cov[3,1]
                               cov[3,2] <- 0.0
                               cov[2,3] <- cov[3,2]
                               
-                              cov[4,4] <- varState[2]/beta[2]^2.0*(dt[i]-2.0*(1.0-exp(-beta[2]*dt[i]))/beta[2]+(1.0-exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2])) + varState[4]/beta[4]^2.0*(dt[i]-2.0*(1.0-exp(-beta[4]*dt[i]))/beta[4]+(1.0-exp(-2.0*beta[4]*dt[i]))/(2.0*beta[4]))
+                              cov[4,4] <- 0.001 #varState[2]/beta[2]^2.0*(dt[i]-2.0*(1.0-exp(-beta[2]*dt[i]))/beta[2]+(1.0-exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2])) + varState[4]/beta[4]^2.0*(dt[i]-2.0*(1.0-exp(-beta[4]*dt[i]))/beta[4]+(1.0-exp(-2.0*beta[4]*dt[i]))/(2.0*beta[4]))
                               cov[5,5] <- varState[2]*(1.0-exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2])
                               cov[6,6] <- varState[4]*(1.0-exp(-2.0*beta[4]*dt[i]))/(2.0*beta[4])
-                              cov[4,5] <- varState[2]*(1.0-2.0*exp(-beta[2]*dt[i])+exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2]^2.0)
+                              cov[4,5] <- 0 #varState[2]*(1.0-2.0*exp(-beta[2]*dt[i])+exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2]^2.0)
                               cov[5,4] <- cov[4,5]
-                              cov[4,6] <- varState[4]*(1.0-2.0*exp(-beta[4]*dt[i])+exp(-2.0*beta[4]*dt[i]))/(2.0*beta[4]^2.0)
+                              cov[4,6] <- 0 #varState[4]*(1.0-2.0*exp(-beta[4]*dt[i])+exp(-2.0*beta[4]*dt[i]))/(2.0*beta[4]^2.0)
                               cov[6,4] <- cov[4,6]
                               cov[5,6] <- 0.0
                               cov[6,5] <- cov[5,6]
