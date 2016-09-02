@@ -10,5 +10,5 @@ The `argosTrack` package requires [`TMB`](https://github.com/kaskr/adcomp) to be
 The development version of argosTrack can be installed with
 
 ``` r
-devtools::install_github("calbertsen/covafillr")
+devtools::install_github("calbertsen/argosTrack")
 ```
