@@ -23,7 +23,7 @@ Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, v
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
   vector<Type> state = mut - (mutm + mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()));
 
-  matrix<Type> Gks = kroneckersum(Gth,Gth);
+  matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
   vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);
@@ -52,7 +52,7 @@ Type nll_ouv1(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> gamma, 
   Gth(0,1) = gamma(2);
   Gth(1,0) = gamma(1);
 
-  matrix<Type> Gks = kroneckersum(Gth,Gth);
+  matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
   vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);

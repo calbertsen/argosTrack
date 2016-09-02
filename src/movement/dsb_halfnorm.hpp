@@ -7,9 +7,9 @@
 template<class Type>
 Type nll_dsb_halfnorm(Type st, Type phit, Type phitm, Type rho, Type sd){
 
-  Type res = -dhalfnorm(st, sd, true);
+  Type res = -densities::dhalfnorm(st, sd, true);
   // rho must be positive
-  res -= dwcauchy(phit,phitm,rho,true);
+  res -= densities::dwcauchy(phit,phitm,rho,true);
   // res -= dvonmises(phit,phitm,rho,true);
   res -= log(st);
   

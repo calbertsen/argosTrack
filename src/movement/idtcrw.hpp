@@ -23,7 +23,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
   vector<Type> state = mut - (mutm + mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()));
 
-  matrix<Type> Gks = kroneckersum(Gth,Gth);
+  matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
   vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);
@@ -52,7 +52,7 @@ Type nll_idtcrw1(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> gamm
   Gth(0,1) = phi;
   Gth(1,0) = -phi;
 
-  matrix<Type> Gks = kroneckersum(Gth,Gth);
+  matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
   vector<Type> varVec = (matrix<Type>)Gks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);

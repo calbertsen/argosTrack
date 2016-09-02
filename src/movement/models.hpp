@@ -1,4 +1,8 @@
 
+namespace argosTrack {
+
+  namespace movement {
+
 #include "ctcrw.hpp"
 #include "mpctcrw.hpp"
 #include "rw.hpp"
@@ -9,3 +13,5 @@
 #include "oul.hpp"
 #include "ouv.hpp"
 
+  }
+}

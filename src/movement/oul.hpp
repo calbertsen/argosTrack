@@ -31,7 +31,7 @@ Type nll_oul(vector<Type> mut, vector<Type> mutm, Type dt, vector<Type> beta, ve
 
   state = mut - (gamma + (vector<Type>)(meb * (mutm - gamma).matrix()));
 
-  matrix<Type> Bks = kroneckersum(B,B);
+  matrix<Type> Bks = convenience::kroneckersum(B,B);
   
   vector<Type> varVec = (matrix<Type>)Bks.inverse() * cov.vec().matrix();
   matrix<Type> varMat = asMatrix(varVec,2,2);

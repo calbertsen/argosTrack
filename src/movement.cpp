@@ -5,6 +5,7 @@
 
 using namespace density;
 
+using namespace argosTrack;
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -80,7 +81,7 @@ Type objective_function<Type>::operator() ()
 
   if(nauticalStates){
     for(int i = 0; i < x.size(); ++i){
-      vector<Type> tmp = n2ll(mu(1,i), mu(0,i));
+      vector<Type> tmp = convenience::n2ll(mu(1,i), mu(0,i));
       x(i) = mu(1,i);
       y(i) = mu(0,i);
       slon(i) = tmp(0);
@@ -88,7 +89,7 @@ Type objective_function<Type>::operator() ()
     }
   }else{
     for(int i = 0; i < x.size(); ++i){
-      vector<Type> tmp = ll2n(mu(1,i), mu(0,i));
+      vector<Type> tmp = convenience::ll2n(mu(1,i), mu(0,i));
       x(i) = tmp(0);
       y(i) = tmp(1);
       slon(i) = mu(1,i);
@@ -101,7 +102,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> yobs(lat.size());
 
   for(int i = 0; i < xobs.size(); ++i){
-    vector<Type> tmp = ll2n(lon(i), lat(i));
+    vector<Type> tmp = convenience::ll2n(lon(i), lat(i));
     xobs(i) = tmp(0);
     yobs(i) = tmp(1);
   }
@@ -113,8 +114,8 @@ Type objective_function<Type>::operator() ()
   bearings.setZero();
 
   for(int i = 1; i < stepLengths.size(); ++i){
-    stepLengths(i) = stepLength(x(i-1),y(i-1),x(i),y(i),true);
-    bearings(i) = bearing(x(i-1),y(i-1),x(i),y(i),true);
+    stepLengths(i) = convenience::stepLength(x(i-1),y(i-1),x(i),y(i),true);
+    bearings(i) = convenience::bearing(x(i-1),y(i-1),x(i),y(i),true);
   }
 
   // Transform parameters
@@ -140,18 +141,18 @@ Type objective_function<Type>::operator() ()
   
   //Set up covariance matrix for observations
   // Observational distributions
-  vector<MVT_tt<Type> > nll_dist_obs(varObs.cols());
+  vector<densities::MVT_tt<Type> > nll_dist_obs(varObs.cols());
   matrix<Type> covObs(2,2);
   vector<Type> obs(2);
 
   // for known positions
   matrix<Type> covKnown(2,2);
   covKnown.setZero(); covKnown(0,0) = Type(0.00001); covKnown(1,1) = Type(0.00001);
-  MVT_tt<Type> nll_dist_known(covKnown,Type(10000.0), 1); // Normal distribution
+  densities::MVT_tt<Type> nll_dist_known(covKnown,Type(10000.0), 1); // Normal distribution
   // For geolocation
   // Create spline
   tmbutils::splinefun<Type> logSplLat(splineKnots,knotPars);
-  MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,errorModelCode);
+  densities::MVT_tt<Type> nll_dist_geoloc(covObs,exp(df(0))+minDf,errorModelCode);
 
   // For argos data
   for(int i = 0; i < nll_dist_obs.size(); ++i){
@@ -161,7 +162,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
     //ModelCode: 0: t; 1: norm
-    nll_dist_obs(i) = MVT_tt<Type>(covObs,exp(df(i))+minDf,errorModelCode);
+    nll_dist_obs(i) = densities::MVT_tt<Type>(covObs,exp(df(i))+minDf,errorModelCode);
   }
 
 
@@ -176,6 +177,8 @@ Type objective_function<Type>::operator() ()
   ///////////////////////////////
   // Contributions from states //
   ///////////////////////////////
+
+  using namespace movement;
   
   for(int i = 1; i < mu.cols(); ++i){
     switch(moveModelCode){
@@ -333,7 +336,7 @@ Type objective_function<Type>::operator() ()
       nll += nll_dist_known(obs)*include(i)*klon(i)*klat(i);
       break;
     case 2:			// Geolocation data
-      nll_dist_geoloc.setSigma(geolocVarMat(exp(splineXlogSd), dayOfYear(i), logSplLat));
+      nll_dist_geoloc.setSigma(convenience::geolocVarMat(exp(splineXlogSd), dayOfYear(i), logSplLat));
       nll += nll_dist_geoloc(obs)*include(i)*klon(i)*klat(i);
       break;
     }
