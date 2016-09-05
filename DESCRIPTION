@@ -1,8 +1,8 @@
 Package: argosTrack
 Type: Package
 Title: Fit Movement Models to Argos Data for Marine Animals
-Version: 1.0.0-999
-Date: 2016-08-01
+Version: 1.0.1
+Date: 2016-09-05
 Author: Christoffer Moesgaard Albertsen
 Maintainer: Christoffer Moesgaard Albertsen <cmoe@aqua.dtu.dk>
 Description: Fits various state-space animal movement models to Argos data. Models are fitted by maximum likelihood with the Laplace approximation via 'TMB' and 'nlminb'. Functionality to visualize and simulate the models is available.
@@ -11,7 +11,7 @@ License: GPL-2
 BugReports: https://github.com/calbertsen/argosTrack/issues
 LazyData: true
 Imports:
-    TMB, stats, methods
+    TMB, stats, methods, grDevices, graphics
 LinkingTo: TMB, RcppEigen
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
