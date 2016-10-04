@@ -5,11 +5,10 @@
 ##' @param object The object to be fitted
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @seealso \code{\link{fitTrack,Animal-method}}
-##' @importFrom methods setGeneric standardGerenric
 #' @export
 setGeneric("fitTrack",
   function(object, ...)
-    metohds::standardGeneric("fitTrack")
+    standardGeneric("fitTrack")
   )
 
 
