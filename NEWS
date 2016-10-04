@@ -1,7 +1,18 @@
 
+# Version x.y.z
+- Added inner.control to fitTrack to control Newton optimization of random effects
+- Added symmetric hyperbolic (sh) as possible measurement error model
+- The Measurement class can now simulate from all 3 models (n,t,sh)
+
+# Version 1.0.1
+- Added namespaces to c++ code to avoid multiple definitions from TMB.
+- Added imports from grDevices, graphics and utils.
+- Small bug fixes for special cases in Measurement and Observation class
+- Now possible to use several break methods from grDevices (Sturges, FD, scott) in roseplot
+- New examples
 
 # Version 1.0.0
-- Added movement models: Discrete Time Correlated Random Walk (dtcrw), Discrete Step lenght and Bearings model (dsb)
+- Added movement models: Discrete Time Correlated Random Walk (dcrw), Discrete Step lenght and Bearings model (dsb)
 - Removed movement model mpctcrw
 - Possibility of extracting and plotting step lengths and turning angles between predicted states for all models
 - Support for modelling on a scale of either nautical miles or latitude/longitude for both states and observations.

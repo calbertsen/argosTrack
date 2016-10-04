@@ -20,9 +20,10 @@ setGeneric("fitTrack",
 ##' @param silent Disable all tracing information?
 ##' @param fixcorrection Should the ratio between measurement errors be fixed?
 ##' @param nlminb.control List of control arguments passed to 'nlminb'
+##' @param inner.control List of control arguments passed to 'TMB::newton'
 ##' @param ... Additional arguments passed to object$getTMBmap
 ##' @return The result returned from 'nlminb' is returned invisibly.
-##' @seealso \link[TMB]{MakeADFun} \link[stats]{nlminb}
+##' @seealso \link[TMB]{MakeADFun} \link[TMB]{newton} \link[stats]{nlminb}
 ##' @note The function changes 'object'.
 ##' @author Christoffer Moesgaard Albertsen
 ##'  @seealso \code{\link{fitTrack}}
@@ -33,6 +34,7 @@ setMethod("fitTrack", "Animal",
                    silent = FALSE,
                    fixcorrection = FALSE,
                    nlminb.control = list(),
+                   inner.control = list(maxit = 30),
                    ...){
               requireNamespace("TMB",quietly=TRUE)
               method <- match.arg(method)
@@ -50,6 +52,7 @@ setMethod("fitTrack", "Animal",
                                     map = map,
                                     random = c("mu","vel"),
                                     DLL = "argosTrack",
+                                    inner.control = inner.control,
                                     checkParameterOrder=FALSE,
                                     silent = silent)
 

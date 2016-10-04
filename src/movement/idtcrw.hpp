@@ -21,7 +21,8 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
   Gth(1,0) = -phi;
 
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
-  vector<Type> state = mut - (mutm + mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()));
+  // Needs the real integral
+  vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix())));
 
   matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
@@ -29,7 +30,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
   matrix<Type> varMat = asMatrix(varVec,2,2);
   
   
-  matrix<Type> var = varMat - (matrix<Type>)(meGth * (matrix<Type>)(varMat * (matrix<Type>)meGth.transpose()));
+  matrix<Type> var = dt*dt*(varMat - (matrix<Type>)(meGth * (matrix<Type>)(varMat * (matrix<Type>)meGth.transpose())));
   
   return density::MVNORM<Type>(var)(state);
 }

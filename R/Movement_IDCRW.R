@@ -117,18 +117,19 @@ IDCRW <- setRefClass("IDCRW",
                               ## var[2,1] <- var[1,2]
                               ## var[2,2] <- abs((1/2)*(cov[1,1]*cos(phi*dt)*sin(phi*dt)+cov[2,2]*cos(phi*dt)*sin(phi*dt)-cov[1,1]*phi*dt+cov[2,2]*phi*dt)/phi)
                               ## var
-                              .Call("idtcrwVarMat",dt=dt,
-                                    gamma=gamma,
-                                    phi=phi,
-                                    rho=rho,
-                                    varState=diag(cov),
-                                    PACKAGE = "argosTrack")
+                              dt*dt*.Call("idtcrwVarMat",dt=dt,
+                                          gamma=gamma,
+                                          phi=phi,
+                                          rho=rho,
+                                          varState=diag(cov),
+                                          PACKAGE = "argosTrack")
                           }
                           
                           state <- function(Xm,Xmm,dt){
                               meGth <- Matrix::expm(-Gth*dt)
                               ##Xm + gamma * as.vector(meGth %*% (Xm-Xmm))
-                              Xm + mupar + as.vector(meGth %*% (Xm-Xmm - mupar))
+                              ## Need to calculate real integral of V
+                              Xm + dt * (mupar + as.vector(meGth %*% (Xm-Xmm - mupar)))
                           }
                           
                           X <- matrix(NA,2,length(.self$dates))

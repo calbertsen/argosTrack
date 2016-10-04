@@ -143,6 +143,9 @@ Type objective_function<Type>::operator() ()
   // Observational distributions
   vector<densities::MVT_tt<Type> > nll_dist_obs(varObs.cols());
   matrix<Type> covObs(2,2);
+  covObs.setZero();
+  covObs(0,0) = 1.0;
+  covObs(1,1) = 1.0;
   vector<Type> obs(2);
 
   // for known positions
@@ -161,7 +164,7 @@ Type objective_function<Type>::operator() ()
     covObs(1,1) = varObs(1,i);
     covObs(1,0) = 0.0; 
     covObs(0,1) = covObs(1,0);
-    //ModelCode: 0: t; 1: norm
+    //ModelCode: 0: t; 1: norm; 2: symmetric hyperbolic
     nll_dist_obs(i) = densities::MVT_tt<Type>(covObs,exp(df(i))+minDf,errorModelCode);
   }
 

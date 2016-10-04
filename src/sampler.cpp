@@ -2,6 +2,7 @@
 #include <R.h>
 #include <Rmath.h>
 #include <Rinternals.h>
+#include <iostream>
 //#include "convenience/convert.hpp"
 
 using namespace Eigen;
@@ -273,3 +274,129 @@ extern "C" {
     return asSEXP(X);
   }
 }
+
+
+double phiFun(double x, double alpha, double lambda){
+  return - alpha * ( cosh(x) - 1.0 ) - lambda * ( exp(x) - x - 1.0);
+}
+double phiFunDif(double x, double alpha, double lambda){
+  return - alpha * sinh(x) - lambda * ( exp(x) - 1.0);
+}
+
+double chiFun(double x, double s, double t, double smark, double tmark, double eta, double zeta, double theta, double ksi){
+ 
+  double res = 0.0;
+
+  if(x > tmark){
+    res = exp(-eta - zeta * (x-t));
+  }else if( -smark > x){
+    exp(-theta + ksi * (x+s));
+  }else{
+    res = 1.0;
+  }
+  return res;
+}
+
+VectorXd rgig(int n,double lambda, double a, double b){
+
+  
+  /* Christoffer Moesgaard Albertsen 2016
+     Implementation of the method proposed in
+     Devroye (2014) Random variate generation for the generalized inverse Gaussian distribution. Stat Comput 24, 239-246. DOI: 1.1007/s11222-012-9367-z
+  */
+  
+  double omega = 2.0 * sqrt(b/a);
+  double alpha = sqrt(omega*omega + lambda*lambda) - lambda;
+
+  double mPHI_1 = -phiFun(1.0,alpha,lambda);
+  double mPHI_m1 = -phiFun(-1.0,alpha,lambda);
+
+  double t,s;
+
+  // Calculate t
+  if(mPHI_1 < 0.5){
+    t = log(4.0 / (alpha + 2.0 * lambda));
+  }else if(mPHI_1 > 2.0){
+    t = sqrt(2.0 / (alpha + lambda));
+  }else{
+    t = 1.0;
+  }
+
+  // Calculate s
+  if(mPHI_m1 < 0.5){
+    double tmp = log(1.0 + 1.0/alpha + sqrt(1.0/(alpha*alpha) + 2.0 / alpha));
+    if(1.0/lambda < tmp){
+      s = 1.0 / lambda;
+    }else{
+      s = tmp;
+    }
+  }else if(mPHI_m1 > 2.0){
+    s = sqrt(4.0 / (alpha * cosh(1.0) + lambda));
+  }else{
+    s = 1.0;
+  }
+
+  double eta = -phiFun(t,alpha,lambda);
+  double zeta = -phiFunDif(t,alpha,lambda);
+  double theta = -phiFun(-s,alpha,lambda);
+  double ksi = -phiFunDif(-s,alpha,lambda);
+  double p = 1.0 / ksi;
+  double r = 1.0 / zeta;
+
+  double tmark = t - r * eta;
+  double smark = s - p * theta;
+  double q = tmark + smark;
+
+  // Generate variables
+
+  VectorXd res(n);
+  GetRNGstate();
+
+  for(int i = 0; i < n; ++i){
+    double U,V,W,X;
+    bool cond = true;
+    
+    do {
+      U = unif_rand();
+      V = unif_rand();
+      W = unif_rand();
+      std::cout << U << "  " << V << "  " << W;
+
+      if( U < q/(p+q+r)){
+	X = -smark + q*V;
+      }else if(U < (q+r)/(p+q+r)){
+	X = tmark - r * log(V);
+      }else{
+	X = -smark + p * log(V);
+      }
+      cond = exp(phiFun(X,alpha,lambda)) < W * (chiFun(X,s,t,smark,tmark,eta,zeta,theta,ksi));
+      std::cout << "  " << cond << "\n";
+    }while(cond); 
+    res(i) = sqrt(b/a) * (lambda/omega + sqrt(1.0 + lambda*lambda/(omega*omega))) * exp(X);
+  }
+  PutRNGstate();
+
+  return res;
+}
+
+
+extern "C" {
+  SEXP rgig(SEXP n,SEXP lambda, SEXP a, SEXP b){
+    int nn = asInteger(n);
+    double ll = REAL(lambda)[0];
+    double aa = REAL(a)[0];
+    double bb = REAL(b)[0];
+    VectorXd X = rgig(nn,ll,aa,bb);
+    return asSEXP(X);
+  }
+}
+
+
+
+/*
+library(argosTrack)
+ff <- function(x,p,a,b) (a/b)^(p/2)/(2*besselK(sqrt(a*b),p))*x^(p-1)*exp(-0.5*(a*x+b/x))
+p<-1.5;a<-1;b<-5;x<-.Call("rgig",n=10000L,lambda=p,a=a,b=b);hist(x,prob=TRUE);
+lines(x0<-seq(min(x),max(x),len=1000),ff(x0,p,a,b),col="red")
+
+ */

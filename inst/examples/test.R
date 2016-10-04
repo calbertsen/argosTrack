@@ -10,13 +10,31 @@ obs <- Observation(lon = d$lon,
                    dates = as.POSIXct(d$date),
                    locationclass = d$lc
                    )
+
 meas <- Measurement(model="n")
+meas2 <- Measurement(model="sh")
+meas3 <- Measurement(model="t")
+
+Yn <- meas$simulate(obs)
+Ysh <- meas2$simulate(obs)
+Yt <- meas3$simulate(obs)
+
+
+indx <- which(obs$qual == "B")
+
+par(mfrow=c(3,2))
+hist(Yn[1,indx],nclass=35,prob=TRUE)
+hist(Yn[2,indx],nclass=35,prob=TRUE)
+hist(Ysh[1,indx],nclass=35,prob=TRUE)
+hist(Ysh[2,indx],nclass=35,prob=TRUE)
+hist(Yt[1,indx],nclass=35,prob=TRUE)
+hist(Yt[2,indx],nclass=35,prob=TRUE)
 
 
 ## Different movementmodels
 
 mov <- RW(unique(obs$dates))
-mov1 <- DTCRW(seq(min(obs$dates),
+mov1 <- DCRW(seq(min(obs$dates),
                   max(obs$dates),
                   "day"),timeunit="day")
 mov2 <- argosTrack:::IDCRW(unique(obs$dates),
@@ -35,13 +53,13 @@ mov5 <- DSBW(seq(min(obs$dates),
 mov6 <- argosTrack:::OUL(unique(obs$dates),
                          timeunit = "hour")
 
-xx <- mov$simulate()
-xx1 <- mov1$simulate()
-xx2 <- mov2$simulate()
-xx3 <- mov3$simulate()
-xx4 <- mov4$simulate()
-xx5 <- mov5$simulate()
-xx6 <- mov6$simulate()
+## xx <- mov$simulate()
+## xx1 <- mov1$simulate()
+## xx2 <- mov2$simulate()
+## xx3 <- mov3$simulate()
+## xx4 <- mov4$simulate()
+## xx5 <- mov5$simulate()
+## xx6 <- mov6$simulate()
 
 anim <- Animal(name = "0",
                observation = obs,
@@ -54,10 +72,10 @@ anim1 <- Animal(name = "1",
 anim2 <- Animal(name = "2",
                observation = obs,
                movement = mov2,
-               measurement = Measurement(model="n"))
+               measurement = Measurement(model="sh"))
 anim2t <- Animal(name = "2t",
                observation = obs,
-               movement = IDCRW(unique(obs$dates),
+               movement = argosTrack:::IDCRW(unique(obs$dates),
                                  timeunit = "hour"),
                measurement = Measurement(model="t"))
 anim3 <- Animal(name = "3",
@@ -79,16 +97,13 @@ anim6 <- Animal(name = "6",
 
 fitTrack(anim)
 fitTrack(anim1)
-fitTrack(anim2)
-fitTrack(anim2t)
+fitTrack(anim2, fixdrift = TRUE, equaldecay = FALSE, fixcorrection = TRUE)
+fitTrack(anim2t, fixdrift = TRUE, equaldecay = TRUE, fixcorrection = TRUE)
 fitTrack(anim3)
 fitTrack(anim4)
 fitTrack(anim5)
-fitTrack(anim6, symdecay = TRUE, independentdecay = TRUE, equaldecay = TRUE, equaldrift = TRUE)
+fitTrack(anim6, symdecay = TRUE, independentdecay = FALSE, equaldecay = TRUE)
 
-anim2
-fitTrack(anim2,equaldrift=TRUE)
-anim2
 
 anim
 anim1
@@ -118,22 +133,7 @@ X <- mov$simulate()
 Y <- meas$simulate(obs)
 Z <- anim$simulate()
 
-plot(Z4$Animal)
-
 dev.new()
-plot(Z2$Animal$observation$lon,
-     Z2$Animal$observation$lat)
-
-lines(t(Z2$Animal$movement$mu[2:1,]),col="red")
-
-
-
-Z4 <- anim4$simulate(newObject = TRUE)
-fitTrack(Z4$Animal)
-plot(Z4$Animal)
-
-cov2cor(solve(anim5$optim$hessian))
-
-
+plot(t(Z$Y)); lines(t(Z$X),col="red")
 
 

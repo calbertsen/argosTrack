@@ -85,3 +85,30 @@ rwcauchy <- function(n, mu, gamma){
     X <- replicate(n,((stats::rt(1,1) * gamma + mu)) %% (2 * pi))
     return(X)
 }
+
+
+
+dgig <- function(x, a = 1, b = 1, lambda = 1){
+    return( 0.5 * (a / b) ^ (0.5 * lambda) / besselK(sqrt(a*b),lambda) * x ^ (lambda - 1) * exp( - 0.5 * (a * x + b / x) ) * (x>0) )
+}
+
+pgig <- Vectorize(function(q, a = 1, b = 1, lambda = 1){
+    integrate(dgig,0,q, a = a, b = b, lambda = lambda)$value
+})
+
+qgig <- Vectorize(function(p, a = 1, b = 1, lambda = 1){
+    uniroot(function(x)pgig(x)-p,interval=c(0,1e4))$root
+})
+
+
+rgig <- function(n, a = 1, b = 1, p = 1){
+    U <- runif(n)
+    qgig(U)
+}
+
+
+rmvsh <- function(n, mu, sigma, alpha){
+    u <- rgig(n, alpha ^ 2, 1, 0.5 * (ncol(sigma)+1))
+    X <- sapply(u,function(u0) rmvnorm(1, mu, u0*sigma))
+    return(X)
+}

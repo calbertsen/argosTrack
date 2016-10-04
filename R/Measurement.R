@@ -1,6 +1,6 @@
 #' A Reference Class for specifying a measurement model.
 #'
-#' @field model Either "n" for Gaussian measurements or "t" for multivariate t-distributed measurements
+#' @field model Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (see Details).
 #' @field logSdObs  Vector of scale parameters \eqn{\tau} (See Details)
 #' @field corObs Correlation parameter between coordiantes (not implemented yet)
 #' @field logCorrection Matrix of scale matrix ratios \eqn{R} (See Details) 
@@ -13,11 +13,18 @@
 #' @field reportSpline Not used for Argos data
 #'
 #' @references Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
+#' \cr\cr Barndorff-Nielsen, O. (1977) Exponentially decreasing distributions for the logarithm of particle size. Proc. R. Soc. Lond. A. 353, 401-419.
+#' \cr\cr Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling of animal movement data. Ecology 86, 2874-2880.
+#' \cr\cr Lange, K., Roderick J. A. Little, & Jeremy M. G. Taylor. (1989). Robust Statistical Modeling Using the t Distribution. Journal of the American Statistical Association, 84(408), 881-896.
 #' 
-#' @details The reference class describes the measurement part of the state-space model for the movement data:
-#' \deqn{Y_t = X_t + \epsilon_t.}
-#' Here ,\eqn{Y_t} is the observation, \eqn{X_t} is the state process at the corresponding time and \eqn{epsilon_t} is random noise (either Gaussian or multivariate t) with scale matrix \eqn{diag(\tau_2 R_{a(t),2},\tau_2 R_{a(t),2})}, where \eqn{a(t)} is the argos location class of the observation.
-#' If the time steps of the state process does not correspond to the observation time stamps (e.g. for a discrete time movement model), a linear interpolation between the last state before and the first state after the observation is used as \eqn{X_t}.
+#' @details Following Albertsen et al. (2015), the reference class describes the measurement part of the state-space model for the movement data:
+#' \deqn{Y_t - X_t \sim \epsilon_t.}
+#' Here ,\eqn{Y_t} is the observation, \eqn{X_t} is the state process at the corresponding time and \eqn{epsilon_t} is random noise (either Gaussian, t or symmetric hyperbolic) with scale matrix \eqn{diag(\tau_2 R_{a(t),2},\tau_2 R_{a(t),2})}, where \eqn{a(t)} is the argos location class of the observation.
+#' If the time steps of the state process does not correspond to the observation time stamps (e.g. for a discrete time movement model), a linear interpolation between the last state before and the first state after the observation is used as \eqn{X_t} (as Jonsen et al. 2005).
+#'
+#' The symmetric hyperbolic distribution is a special case of the distribution introduced by Barndorff-Nielsen (1977). The un-normalized density is
+#' \deqn{ f(x;\theta,\mu,\Sigma) = exp( - \sqrt{\theta + \theta (x-\mu)\Sigma^{-1} (x-\mu)^T})}
+#' where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \eqn{\mu} is a vector of location parameters, and \eqn{\Sigma} is a positive definite scale matrix.
 #' 
 #' @seealso \code{\link{Movement}}, \code{\link{Observation}}, \code{\link{Measurement}}
 #'
@@ -54,7 +61,7 @@ Measurement <- setRefClass("Measurement",
                                       ),
                            methods = list(
 
-                               initialize = function(model = c("n","t"),
+                               initialize = function(model = c("n","t","sh"),
                                                      logSdObs = c(0,0),
                                                      corObs = 0,
                                                      logCorrection = matrix(
@@ -107,6 +114,11 @@ Measurement <- setRefClass("Measurement",
                               stop("nauticalObs must be logical.")
                                    
 
+                                   if(missing(minDf) & modelIn == "sh"){
+                                       minDfIn <- 0.0
+                                   }else{
+                                       minDfIn <- minDf
+                                   }
 ################
 ## initFields ##
 ################
@@ -119,7 +131,7 @@ Measurement <- setRefClass("Measurement",
                                               splineXlogSd = splineXlogSd,
                                               knotPars = knotPars,
                                               df = df,
-                                              minDf = minDf,
+                                              minDf = minDfIn,
                                               nauticalObs = nauticalObs,
                                               reportSpline = matrix(NA,nrow=366,ncol=2)
                                               )
@@ -130,7 +142,7 @@ Measurement <- setRefClass("Measurement",
                                   "Function to return a data list for TMB::MakeADFun. Intended to be called from an Animal reference class object."
                                    nKnots <- length(.self$knotPars)
                                    dat <- list(minDf = .self$minDf,
-                                               errorModelCode = as.numeric(factor(.self$model,levels = c('t','n')))-1,
+                                               errorModelCode = as.numeric(factor(.self$model,levels = c('t','n','sh')))-1,
                                                nauticalObs = as.numeric(.self$nauticalObs),
                                                splineKnots = c(0,
                                                                quantile(dayOfYearSpline,
@@ -231,6 +243,8 @@ Measurement <- setRefClass("Measurement",
                                    varObs <- matrix(NA,
                                                     nrow = dim(.self$logCorrection)[1],
                                                     ncol = dim(.self$logCorrection)[2] + 1)
+                                  dfObs <- .self$minDf + exp(.self$df)
+                                  
                                    for(i in 1:dim(varObs)[1]){
                                        varObs[i,0] <- exp(2 * .self$logSdObs[i])
                                        for(j in 2:dim(varObs)[2])
@@ -243,18 +257,36 @@ Measurement <- setRefClass("Measurement",
                                    ## 1: Known
                                    ## 2: spline
                                    indx <- which(observation$varModelCode == 0)
-                                   for(i in 1:nlevels(observation$qual)){
-                                       indx2 <- which(as.numeric(observation$qual[indx])==i)
-                                       
-                                       if(length(indx2) > 0)
-                                           Y[,indx2] <- t(rmvnorm(length(indx2),
+                                  for(i in 1:nlevels(observation$qual)){
+                                      indx2 <- which(as.numeric(observation$qual[indx])==i)
+                                      if(model == "t"){
+                                          if(length(indx2) > 0)
+                                              Y[,indx2] <- t(rmvt(length(indx2),
                                                                   mu = c(0,0),
-                                                                  sigma = diag(varObs[,i])))
+                                                                  sigma = diag(varObs[,i]),
+                                                                  df = dfObs[i]
+                                                                  ))
+
+                                      }else if(model == "sh"){
+                                          if(length(indx2) > 0)
+                                              Y[,indx2] <- t(rmvsh(length(indx2),
+                                                                   mu = c(0,0),
+                                                                   sigma = diag(varObs[,i]),
+                                                                   alpha = dfObs[i]
+                                                                   ))
+                                      }else{
+                                          if(length(indx2) > 0)
+                                              Y[,indx2] <- t(rmvnorm(length(indx2),
+                                                                     mu = c(0,0),
+                                                                     sigma = diag(varObs[,i])))
+                                      }
+                                       ## Implement t and sh
+                                       
                                    }
                                    indx <- which(observation$varModelCode == 1)
                                    Y[,indx] <- 0
                                    indx <- which(observation$varModelCode == 2)
-                                   for(i in indx){
+                                  for(i in indx){                                   
                                        Y[,i] <- t(rmvnorm(1,
                                                           mu = c(0,0),
                                                           sigma = diag(c(exp(2*.self$splineXlogSd), .self$reportSpline[observation$dayOfYear[i]]^2))))
