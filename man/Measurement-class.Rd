@@ -9,15 +9,19 @@
 A Reference Class for specifying a measurement model.
 }
 \details{
-The reference class describes the measurement part of the state-space model for the movement data:
-\deqn{Y_t = X_t + \epsilon_t.}
-Here ,\eqn{Y_t} is the observation, \eqn{X_t} is the state process at the corresponding time and \eqn{epsilon_t} is random noise (either Gaussian or multivariate t) with scale matrix \eqn{diag(\tau_2 R_{a(t),2},\tau_2 R_{a(t),2})}, where \eqn{a(t)} is the argos location class of the observation.
-If the time steps of the state process does not correspond to the observation time stamps (e.g. for a discrete time movement model), a linear interpolation between the last state before and the first state after the observation is used as \eqn{X_t}.
+Following Albertsen et al. (2015), the reference class describes the measurement part of the state-space model for the movement data:
+\deqn{Y_t - X_t \sim \epsilon_t.}
+Here ,\eqn{Y_t} is the observation, \eqn{X_t} is the state process at the corresponding time and \eqn{epsilon_t} is random noise (either Gaussian, t or symmetric hyperbolic) with scale matrix \eqn{diag(\tau_2 R_{a(t),2},\tau_2 R_{a(t),2})}, where \eqn{a(t)} is the argos location class of the observation.
+If the time steps of the state process does not correspond to the observation time stamps (e.g. for a discrete time movement model), a linear interpolation between the last state before and the first state after the observation is used as \eqn{X_t} (as Jonsen et al. 2005).
+
+The symmetric hyperbolic distribution is a special case of the distribution introduced by Barndorff-Nielsen (1977). The un-normalized density is
+\deqn{ f(x;\theta,\mu,\Sigma) = exp( - \sqrt{\theta + \theta (x-\mu)\Sigma^{-1} (x-\mu)^T})}
+where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \eqn{\mu} is a vector of location parameters, and \eqn{\Sigma} is a positive definite scale matrix.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{model}}{Either "n" for Gaussian measurements or "t" for multivariate t-distributed measurements}
+\item{\code{model}}{Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (see Details).}
 
 \item{\code{logSdObs}}{Vector of scale parameters \eqn{\tau} (See Details)}
 
@@ -50,7 +54,7 @@ If the time steps of the state process does not correspond to the observation ti
 
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 
-\item{\code{initialize(model = c("n", "t"), logSdObs = c(0, 0), corObs = 0,
+\item{\code{initialize(model = c("n", "t", "sh"), logSdObs = c(0, 0), corObs = 0,
   logCorrection = matrix(c(0.6507, 0.8231, 2.3432, 2.0532, 3.8514, 2.9602,
   3.828, 3.0463, 4.4417, 3.6951, 5.5714, 5.5149, 8, 8), 2, 7),
   splineXlogSd = 0, knotPars = numeric(5), df = numeric(8), minDf = 3,
@@ -80,6 +84,9 @@ Christoffer Moesgaard Albertsen
 }
 \references{
 Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
+\cr\cr Barndorff-Nielsen, O. (1977) Exponentially decreasing distributions for the logarithm of particle size. Proc. R. Soc. Lond. A. 353, 401-419.
+\cr\cr Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling of animal movement data. Ecology 86, 2874-2880.
+\cr\cr Lange, K., Roderick J. A. Little, & Jeremy M. G. Taylor. (1989). Robust Statistical Modeling Using the t Distribution. Journal of the American Statistical Association, 84(408), 881-896.
 }
 \seealso{
 \code{\link{Movement}}, \code{\link{Observation}}, \code{\link{Measurement}}

@@ -6,7 +6,8 @@
 \title{Fits a state-space movement model to animal data}
 \usage{
 \S4method{fitTrack}{Animal}(object, method = c("laplace", "mcmc"),
-  silent = FALSE, fixcorrection = FALSE, nlminb.control = list(), ...)
+  silent = FALSE, fixcorrection = FALSE, nlminb.control = list(),
+  inner.control = list(maxit = 30), ...)
 }
 \arguments{
 \item{object}{\link{Animal} reference class object}
@@ -18,6 +19,8 @@
 \item{fixcorrection}{Should the ratio between measurement errors be fixed?}
 
 \item{nlminb.control}{List of control arguments passed to 'nlminb'}
+
+\item{inner.control}{List of control arguments passed to 'TMB::newton'}
 
 \item{...}{Additional arguments passed to object$getTMBmap}
 }
@@ -34,7 +37,7 @@ The function changes 'object'.
 Christoffer Moesgaard Albertsen
 }
 \seealso{
-\link[TMB]{MakeADFun} \link[stats]{nlminb}
+\link[TMB]{MakeADFun} \link[TMB]{newton} \link[stats]{nlminb}
 
 \code{\link{fitTrack}}
 }
