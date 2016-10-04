@@ -100,9 +100,9 @@ qgig <- Vectorize(function(p, a = 1, b = 1, lambda = 1){
     uniroot(function(x)pgig(x)-p,interval=c(0,1e4))$root
 })
 
-
+#' @importFrom stats runif
 rgig <- function(n, a = 1, b = 1, p = 1){
-    U <- runif(n)
+    U <- stats::runif(n)
     qgig(U)
 }
 

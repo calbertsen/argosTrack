@@ -2,7 +2,6 @@
 #include <R.h>
 #include <Rmath.h>
 #include <Rinternals.h>
-#include <iostream>
 //#include "convenience/convert.hpp"
 
 using namespace Eigen;
@@ -360,7 +359,6 @@ VectorXd rgig(int n,double lambda, double a, double b){
       U = unif_rand();
       V = unif_rand();
       W = unif_rand();
-      std::cout << U << "  " << V << "  " << W;
 
       if( U < q/(p+q+r)){
 	X = -smark + q*V;
@@ -370,7 +368,6 @@ VectorXd rgig(int n,double lambda, double a, double b){
 	X = -smark + p * log(V);
       }
       cond = exp(phiFun(X,alpha,lambda)) < W * (chiFun(X,s,t,smark,tmark,eta,zeta,theta,ksi));
-      std::cout << "  " << cond << "\n";
     }while(cond); 
     res(i) = sqrt(b/a) * (lambda/omega + sqrt(1.0 + lambda*lambda/(omega*omega))) * exp(X);
   }
