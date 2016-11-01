@@ -72,17 +72,42 @@ Observation <- setRefClass("Observation",
 ###############
 ## Do checks ##
 ###############
-                                   if(!(is.numvec(lon)))
+                                   if(!(is.numvec(lon))){
                                        stop("lon must be a numeric vector.")
-                                   if(!(is.numvec(lat)))
+                                       if(any(is.null(lon)))
+                                           stop("lon can not have NULL elements.")
+                                       if(any(!is.finite(lon)))
+                                           stop("lon can only have finite elements.")
+                                   }
+                                   if(!(is.numvec(lat))){
                                        stop("lat must be a numeric vector.")
-                                   if(!is.POSIXct(dates))
-                                          stop("dates must be a POSIXct class.")
+                                       if(any(is.null(lat)))
+                                           stop("lat can not have NULL elements.")
+                                       if(any(!is.finite(lat)))
+                                           stop("lat can only have finite elements.")
+                                   }
+                                   if(!is.POSIXct(dates)){
+                                       stop("dates must be a POSIXct class.")
+                                       if(any(is.null(dates)))
+                                           stop("dates can not have NULL elements.")
+                                       if(any(!is.finite(dates)))
+                                           stop("dates can only have finite elements.")
+                                   }
                                    if(!is.character(locationclass) &&
-                                      !is.factor(locationclass))
+                                      !is.factor(locationclass)){
                                        stop("locationclass must be a factor or character vector.")
-                                   if(!is.logical(include))
-                                       stop("include must be a logical vector.")
+                                       if(any(is.null(locationclass)))
+                                           stop("locationclass can not have NULL elements.")
+                                       if(any(!is.finite(locationclass)))
+                                           stop("locationclass can only have finite elements.")
+                                   }
+                                   if(!is.logical(include)){
+                                       stop("include must be a logical vector.")   
+                                       if(any(is.null(include)))
+                                           stop("include can not have NULL elements.")
+                                       if(any(!is.finite(include)))
+                                           stop("include can only have finite elements.")
+                                   }
                          
                                    if(!is.samelength(lon,lat) ||
                                        !is.samelength(lon,as.numeric(dates)) ||
