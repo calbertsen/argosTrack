@@ -76,9 +76,9 @@ rhalfnorm <- function(n, sigma){
 ##' @keywords internal
 ##' @importFrom stats rt
 rwcauchy <- function(n, mu, gamma){
-    if(is.numsca(gamma))
+    if(!is.numsca(mu))
         stop("mu must be a scalar")
-    if(is.numsca(gamma))
+    if(!is.numsca(gamma))
             stop("gamma must be a scalar")
     if(gamma < 0)
         stop("gamma must be positive")
