@@ -258,6 +258,7 @@ Type objective_function<Type>::operator() ()
 			 (vector<Type>)mu.col(i-1),
 			 (vector<Type>)mu.col(i-2),
 			  dtStates(i),
+			  dtStates(i-1),
 			  (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,2)))),
 			  movePars(2), //Type(2.0*M_PI)/(Type(1.0)+exp(-movePars(1))),
 			  Type(2.0)/(Type(1.0)+exp(-movePars(3))) - Type(1.0),
