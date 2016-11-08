@@ -4,7 +4,7 @@
 
 // Irregular Discrete Time Correlated Random Walk
 template<class Type>
-Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, vector<Type> gamma, Type phi, Type rho, vector<Type> mupar, vector<Type> varState){
+Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, Type dtm, vector<Type> gamma, Type phi, Type rho, vector<Type> mupar, vector<Type> varState){
 
 
   matrix<Type> cov(2,2);
@@ -22,7 +22,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
 
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
   // Needs the real integral
-  vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix())));
+  vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()/dtm)));
 
   matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
