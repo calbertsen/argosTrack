@@ -125,11 +125,11 @@ IDCRW <- setRefClass("IDCRW",
                                           PACKAGE = "argosTrack")
                           }
                           
-                          state <- function(Xm,Xmm,dt){
+                          state <- function(Xm,Xmm,dt,dtm){
                               meGth <- Matrix::expm(-Gth*dt)
                               ##Xm + gamma * as.vector(meGth %*% (Xm-Xmm))
                               ## Need to calculate real integral of V
-                              Xm + dt * (mupar + as.vector(meGth %*% (Xm-Xmm - mupar)))
+                              Xm + dt * (mupar + as.vector(meGth %*% ((Xm-Xmm)/dtm - mupar)))
                           }
                           
                           X <- matrix(NA,2,length(.self$dates))
@@ -139,7 +139,7 @@ IDCRW <- setRefClass("IDCRW",
                                            mu = mu0,
                                            sigma = cov)
                           for(i in 3:length(.self$dates)){
-                              mu0 <- state(X[,i-1],X[,i-2],dt[i])
+                              mu0 <- state(X[,i-1],X[,i-2],dt[i],dt[i-1])
                               X[,i] <- rmvnorm(1,
                                                mu = mu0,
                                                sigma = var(dt[i]))
