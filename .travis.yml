@@ -4,7 +4,6 @@ r:
   - release
   - devel
 
-sudo: required
 cache: packages
 
 
@@ -15,10 +14,6 @@ os:
 env:
   global:
     - OS=$(uname -s)
-
-before_install:
-  - if test ${OS} = Darwin; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; fi
-  - if test ${OS} = Darwin; then sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
 
 
 r_check_args: --as-cran
