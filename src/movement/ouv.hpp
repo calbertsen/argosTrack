@@ -4,7 +4,7 @@
 
 // Ornstein-Uhlenbeck Velocity model
 template<class Type>
-Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, vector<Type> gamma, Type rho, vector<Type> mupar, vector<Type> varState){
+Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, Type dtm, vector<Type> gamma, Type rho, vector<Type> mupar, vector<Type> varState){
 
 
   matrix<Type> cov(2,2);
@@ -21,7 +21,7 @@ Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, v
   Gth(1,0) = gamma(1);
 
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
-  vector<Type> state = mut - (mutm + mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()));
+  vector<Type> state = mut - dt * (mutm + mupar + (vector<Type>)(meGth * ((mutm - mutmm)/dtm - mupar).matrix()));
 
   matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   
@@ -29,7 +29,7 @@ Type nll_ouv(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt, v
   matrix<Type> varMat = asMatrix(varVec,2,2);
   
   
-  matrix<Type> var = varMat - (matrix<Type>)(meGth * (matrix<Type>)(varMat * (matrix<Type>)meGth.transpose()));
+  matrix<Type> var = dt*dt*(varMat - (matrix<Type>)(meGth * (matrix<Type>)(varMat * (matrix<Type>)meGth.transpose())));
   
   return density::MVNORM<Type>(var)(state);
 }

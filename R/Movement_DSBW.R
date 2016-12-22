@@ -77,9 +77,9 @@ DSBW <- setRefClass("DSBW",
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
                               stop("nauticalStates must be logical.")
                           if(!missing(timeunit))
-                          if(!(length(timeunit == 1 &&
+                          if(!(length(timeunit == 1) &&
                                       timeunit %in% c("auto", "secs", "mins", 
-                                                      "hours", "days", "weeks"))))
+                                                      "hours", "days", "weeks")))
                               stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
 
 ################

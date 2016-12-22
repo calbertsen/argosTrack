@@ -272,7 +272,7 @@ Measurement <- setRefClass("Measurement",
                                               Y[,indx2] <- t(rmvsh(length(indx2),
                                                                    mu = c(0,0),
                                                                    sigma = diag(varObs[,i]),
-                                                                   alpha = dfObs[i]
+                                                                   delta = dfObs[i]
                                                                    ))
                                       }else{
                                           if(length(indx2) > 0)

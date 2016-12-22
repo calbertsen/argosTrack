@@ -15,6 +15,7 @@ meas <- Measurement(model="n")
 meas2 <- Measurement(model="sh")
 meas3 <- Measurement(model="t")
 
+
 Yn <- meas$simulate(obs)
 Ysh <- meas2$simulate(obs)
 Yt <- meas3$simulate(obs)
@@ -36,11 +37,11 @@ hist(Yt[2,indx],nclass=35,prob=TRUE)
 mov <- RW(unique(obs$dates))
 mov1 <- DCRW(seq(min(obs$dates),
                   max(obs$dates),
-                  "day"),timeunit="day")
+                  "day"),timeunit="days")
 mov2 <- argosTrack:::IDCRW(unique(obs$dates),
-               timeunit = "hour")
+               timeunit = "hours")
 mov3 <- CTCRW(unique(obs$dates),
-               timeunit = "hour")
+               timeunit = "hours")
 mov4 <- DSBHN(seq(min(obs$dates),
                   max(obs$dates),
                   len=250),
@@ -51,7 +52,7 @@ mov5 <- DSBW(seq(min(obs$dates),
              timeunit="auto")
 
 mov6 <- argosTrack:::OUL(unique(obs$dates),
-                         timeunit = "hour")
+                         timeunit = "hours")
 
 ## xx <- mov$simulate()
 ## xx1 <- mov1$simulate()
@@ -72,11 +73,11 @@ anim1 <- Animal(name = "1",
 anim2 <- Animal(name = "2",
                observation = obs,
                movement = mov2,
-               measurement = Measurement(model="sh"))
+               measurement = Measurement(model="n"))
 anim2t <- Animal(name = "2t",
                observation = obs,
                movement = argosTrack:::IDCRW(unique(obs$dates),
-                                 timeunit = "hour"),
+                                 timeunit = "hours"),
                measurement = Measurement(model="t"))
 anim3 <- Animal(name = "3",
                observation = obs,
@@ -95,15 +96,15 @@ anim6 <- Animal(name = "6",
                movement = mov6,
                measurement = Measurement(model="n"))
 
+
 fitTrack(anim)
 fitTrack(anim1)
-fitTrack(anim2, fixdrift = TRUE, equaldecay = FALSE, fixcorrection = TRUE)
+fitTrack(anim2)
 fitTrack(anim2t, fixdrift = TRUE, equaldecay = TRUE, fixcorrection = TRUE)
 fitTrack(anim3)
 fitTrack(anim4)
 fitTrack(anim5)
 fitTrack(anim6, symdecay = TRUE, independentdecay = FALSE, equaldecay = TRUE)
-
 
 anim
 anim1

@@ -3,6 +3,7 @@ namespace argosTrack {
 
   namespace movement {
 
+#include "csb.hpp"
 #include "ctcrw.hpp"
 #include "mpctcrw.hpp"
 #include "rw.hpp"

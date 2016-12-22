@@ -97,18 +97,18 @@ pgig <- Vectorize(function(q, a = 1, b = 1, lambda = 1){
 })
 
 qgig <- Vectorize(function(p, a = 1, b = 1, lambda = 1){
-    uniroot(function(x)pgig(x)-p,interval=c(0,1e4))$root
+    uniroot(function(x)pgig(x,a,b,lambda)-p,interval=c(0,1e4))$root
 })
 
 #' @importFrom stats runif
 rgig <- function(n, a = 1, b = 1, p = 1){
     U <- stats::runif(n)
-    qgig(U)
+    qgig(U,a,b,p)
 }
 
 
-rmvsh <- function(n, mu, sigma, alpha){
-    u <- rgig(n, alpha ^ 2, 1, 0.5 * (ncol(sigma)+1))
+rmvsh <- function(n, mu, sigma, delta){
+    u <- rgig(n, 1, delta^2, 0.5 * (ncol(sigma)+1))
     X <- sapply(u,function(u0) rmvnorm(1, mu, u0*sigma))
     return(X)
 }

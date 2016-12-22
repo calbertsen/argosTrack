@@ -57,20 +57,17 @@ IDCRW <- setRefClass("IDCRW",
 ###############
                           if(!is.POSIXct(dates))
                               stop("dates must be a POSIXct object.")
-                          dt0 <- as.numeric(difftime(tail(dates,-1),
-                                                     head(dates,-1),
-                                                     units = timeunit))
-                          if(any(dt0 <= 0))
-                              stop("Time steps must be positive.")
+                          if(any(diff(dates) <= 0))
+                              stop("dates must be sorted and different")
                           if(!(length(pars)==6 && is.numvec(pars)))
                               stop("pars must be a numeric vector of length 6.")
                           if(!(length(varPars)==2 && is.numvec(varPars)))
                               stop("varPars must be a numeric vector of length 2.")
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
                               stop("nauticalStates must be logical.")
-                          if(!(length(timeunit == 1 &&
+                          if(!(length(timeunit == 1) &&
                                       timeunit %in% c("auto", "secs", "mins", 
-                                                      "hours", "days", "weeks"))))
+                                                      "hours", "days", "weeks")))
                               stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
 
 ################

@@ -22,7 +22,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
 
   matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
   // Needs the real integral
-  vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * (mutm - mutmm - mupar).matrix()/dtm)));
+  vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * ((mutm - mutmm)/dtm - mupar).matrix())));
 
   matrix<Type> Gks = convenience::kroneckersum(Gth,Gth);
   

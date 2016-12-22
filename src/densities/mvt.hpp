@@ -38,7 +38,7 @@ public:
   //   modelCode = 0;
   // }
   MVT_tt(matrix<Type> Sigma_, Type df_, int modelCode_)
-    : MVNORM_t<Type>(Sigma_)
+    : MVNORM_t<Type>(Sigma_), shnc(0.0)
   {
     df = df_;
     modelCode = modelCode_;
@@ -65,7 +65,7 @@ public:
     Type ndens = -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + p*Type(log(sqrt(2.0*M_PI)));
     Type hdens = 0.0;
     if(modelCode == 2){
-      hdens = shnc + sqrt(df + df * this->Quadform(x));
+      hdens = shnc + sqrt(df*df + this->Quadform(x));
     }
     
     switch(modelCode){

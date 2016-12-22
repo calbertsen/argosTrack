@@ -35,20 +35,17 @@ OUV <- setRefClass("OUV",
 ###############
                           if(!is.POSIXct(dates))
                               stop("dates must be a POSIXct object.")
-                          dt0 <- as.numeric(difftime(tail(dates,-1),
-                                                     head(dates,-1),
-                                                     units = timeunit))
-                          if(any(dt0 <= 0))
-                              stop("Time steps must be positive.")
+                          if(any(diff(dates) <= 0))
+                              stop("dates must be sorted and different")
                           if(!(length(pars)==7 && is.numvec(pars)))
                               stop("pars must be a numeric vector of length 7.")
                           if(!(length(varPars)==2 && is.numvec(varPars)))
                               stop("varPars must be a numeric vector of length 2.")
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
                               stop("nauticalStates must be logical.")
-                          if(!(length(timeunit == 1 &&
+                          if(!(length(timeunit == 1) &&
                                       timeunit %in% c("auto", "secs", "mins", 
-                                                      "hours", "days", "weeks"))))
+                                                      "hours", "days", "weeks")))
                               stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
 
 ################
@@ -95,18 +92,18 @@ OUV <- setRefClass("OUV",
                               ## var[2,1] <- var[1,2]
                               ## var[2,2] <- abs((1/2)*(cov[1,1]*cos(phi*dt)*sin(phi*dt)+cov[2,2]*cos(phi*dt)*sin(phi*dt)-cov[1,1]*phi*dt+cov[2,2]*phi*dt)/phi)
                               ## var
-                              .Call("idtcrwVarMat",dt=dt,
-                                    gamma=gamma,
-                                    phi=phi,
-                                    rho=rho,
-                                    varState=diag(cov),
-                                    PACKAGE = "argosTrack")
+                              dt*dt*.Call("idtcrwVarMat",dt=dt,
+                                          gamma=gamma,
+                                          phi=phi,
+                                          rho=rho,
+                                          varState=diag(cov),
+                                          PACKAGE = "argosTrack")
                           }
                           
-                          state <- function(Xm,Xmm,dt){
+                          state <- function(Xm,Xmm,dt,dtm){
                               meGth <- Matrix::expm(-Gth*dt)
                               ##Xm + gamma * as.vector(meGth %*% (Xm-Xmm))
-                              Xm + mupar + as.vector(meGth %*% (Xm-Xmm - mupar))
+                              Xm + dt*(mupar + as.vector(meGth %*% ((Xm-Xmm)/dtm - mupar)))
                           }
                           
                           X <- matrix(NA,2,length(.self$dates))
@@ -116,7 +113,7 @@ OUV <- setRefClass("OUV",
                                            mu = mu0,
                                            sigma = cov)
                           for(i in 3:length(.self$dates)){
-                              mu0 <- state(X[,i-1],X[,i-2],dt[i])
+                              mu0 <- state(X[,i-1],X[,i-2],dt[i],dt[i-1])
                               X[,i] <- rmvnorm(1,
                                                mu = mu0,
                                                sigma = var(dt[i]))

@@ -285,14 +285,29 @@ Type objective_function<Type>::operator() ()
 			   varState);
       }else{
 	nll += nll_ouv((vector<Type>)mu.col(i),
-			 (vector<Type>)mu.col(i-1),
-			 (vector<Type>)mu.col(i-2),
-			  dtStates(i),
-			  (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
-			  Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
-			  (vector<Type>)movePars.segment(5,2),
-			  varState);
+		       (vector<Type>)mu.col(i-1),
+		       (vector<Type>)mu.col(i-2),
+		       dtStates(i),
+		       dtStates(i-1),
+		       (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
+		       Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
+		       (vector<Type>)movePars.segment(5,2),
+		       varState);
       }
+      break;
+    case 9:
+      nll += nll_csb(stepLengths(i),
+		     stepLengths(i-1),
+		     bearings(i),
+		     bearings(i-1),
+		     exp(movePars(0)),
+		     exp(movePars(1)),
+		     sqrt(varState(0)),
+		     sqrt(varState(1)),
+		     dtStates(i));
+      break;
+    case 10:
+      
       break;
     default:
       error("Movement model not implemented");

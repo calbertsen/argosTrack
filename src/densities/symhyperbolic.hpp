@@ -20,7 +20,7 @@ namespace argosTrack_atomic {
       Float detQ = 1.0 / (-r2 * sdx2 * sdy2 + sdx2 * sdy2);
       Float Quadform = 2.0 * rho * sdx * sdy * x * y - sdx2 * y * y - sdy2 * x * x;
       Quadform /= sdx2 * sdy2 * r2m1;
-      Float ans = exp( - sqrt(theta + theta * Quadform)); // * sqrt(detQ);
+      Float ans = exp( - sqrt(theta*theta + Quadform)); // * sqrt(detQ);
       return ans;
     }
     

@@ -53,6 +53,11 @@ DCRW <- setRefClass("DCRW",
 ###############
 ## Do checks ##
 ###############
+                          
+                          if(!(length(timeunit == 1) &&
+                               timeunit %in% c("auto", "secs", "mins", 
+                                               "hours", "days", "weeks")))
+                              stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
                           if(!is.POSIXct(dates))
                               stop("dates must be a POSIXct class.")
                           dt0 <- as.numeric(difftime(tail(dates,-1),
@@ -66,10 +71,7 @@ DCRW <- setRefClass("DCRW",
                               stop("varPars must be a numeric vector of length 2.")
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
                               stop("nauticalStates must be logical.")
-                          if(!(length(timeunit == 1 &&
-                                      timeunit %in% c("auto", "secs", "mins", 
-                                                      "hours", "days", "weeks"))))
-                              stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
+                          
 
 ################
 ## initFields ##

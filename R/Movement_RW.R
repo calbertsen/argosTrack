@@ -52,6 +52,8 @@ RW <- setRefClass("RW",
 ###############
                           if(!is.POSIXct(dates))
                               stop("dates must be a POSIXct class.")
+                          if(any(diff(dates) <= 0))
+                              stop("dates must be sorted and different")
                           if(!missing(pars))
                           if(!(length(pars)==0 && is.numvec(pars)))
                               stop("pars must be a numeric vector of length 0.")
@@ -61,9 +63,9 @@ RW <- setRefClass("RW",
                           if(!(length(nauticalStates)==1 && is.logical(nauticalStates)))
                               stop("nauticalStates must be logical.")
                           if(!missing(timeunit))
-                          if(!(length(timeunit == 1 &&
+                          if(!(length(timeunit == 1) &&
                                       timeunit %in% c("auto", "secs", "mins", 
-                                                      "hours", "days", "weeks"))))
+                                                      "hours", "days", "weeks")))
                               stop("timeunit must be one of: 'auto', 'secs', 'mins', 'hours', 'days', 'weeks'.")
 
 ################
