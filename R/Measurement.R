@@ -246,7 +246,7 @@ Measurement <- setRefClass("Measurement",
                                   dfObs <- .self$minDf + exp(.self$df)
                                   
                                    for(i in 1:dim(varObs)[1]){
-                                       varObs[i,0] <- exp(2 * .self$logSdObs[i])
+                                       varObs[i,1] <- exp(2 * .self$logSdObs[i])
                                        for(j in 2:dim(varObs)[2])
                                            varObs[i,j] = exp(2 * (.self$logSdObs[i] + .self$logCorrection[i,j-1]))
                                    }
