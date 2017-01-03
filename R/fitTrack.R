@@ -34,7 +34,7 @@ setMethod("fitTrack", "Animal",
                    silent = FALSE,
                    fixcorrection = FALSE,
                    nlminb.control = list(),
-                   inner.control = list(maxit = 30),
+                   inner.control = list(maxit = 1000),
                    ...){
               requireNamespace("TMB",quietly=TRUE)
               method <- match.arg(method)
