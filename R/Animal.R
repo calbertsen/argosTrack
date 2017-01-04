@@ -98,7 +98,7 @@ Animal <- setRefClass("Animal",
                           prevState <- sapply(1:length(observation$lon),
                                               function(i) max((1:length(movement$dates))[movement$dates <= observation$dates[i]]))-1
                            stateFrac <- sapply(1:length(observation$lon),
-                            function(i) 1 - (observation$dates[i] - movement$dates[prevState[i]+1]) / na.omit(c(as.numeric(diff(movement$dates[prevState[i]+1 + 0:1]),units=.self$movement$timeunit),1))[1])
+                            function(i) 1 - as.numeric(observation$dates[i] - movement$dates[prevState[i]+1],units=.self$movement$timeunit) / na.omit(c(as.numeric(diff(movement$dates[prevState[i]+1 + 0:1]),units=.self$movement$timeunit),1))[1])
                           
                           dat <- list(prevState = prevState,
                                       stateFrac = stateFrac)

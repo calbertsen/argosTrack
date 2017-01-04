@@ -166,9 +166,19 @@ IDCRW <- setRefClass("IDCRW",
                                   mpar[5:6] <- NA;
                                   doit <- TRUE
                               }
+                           if("fixrotation" %in% names(args)) ## phi
+                              if(args$fixrotation){
+                                  mpar[3] <- NA;
+                                  doit <- TRUE
+                              }
+                          if("fixmovecor" %in% names(args)) ## rho
+                              if(args$fixmovecor){
+                                  mpar[4] <- NA;
+                                  doit <- TRUE
+                              }
 
                           ## Always equal decay
-                          doit <- TRUE
+                          ##doit <- TRUE
 
                           if(doit)
                               map$movePars <- factor(mpar)
