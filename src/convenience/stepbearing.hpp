@@ -29,8 +29,8 @@ Type atan3(Type y, Type x){
         Type pi2(2. * atan(1.));
 	Type pi(2. * pi2);
 
-	Type ax = abs(x);
-	Type ay = abs(y);
+	Type ax = fabs(x);
+	Type ay = fabs(y);
 	
 	// if( ax > ay )
 	// 	theta = atan(ay / ax);

@@ -60,7 +60,7 @@ public:
 
   /** \brief Evaluate the negative log density */
   Type operator()(vector<Type> x){
-    Type p = x.size();
+    Type p = (int)(x.size());
     Type tdens = -lgamma(Type(0.5)*(df+p))+lgamma(Type(0.5)*df)+p*Type(0.5)*log(df)+p*lgamma(Type(0.5))-Type(0.5)*this->logdetQ + Type(0.5)*(df+p)*log(Type(1.0)+this->Quadform(x)/df);
     Type ndens = -Type(.5)*this->logdetQ + Type(.5)*this->Quadform(x) + p*Type(log(sqrt(2.0*M_PI)));
     Type hdens = 0.0;

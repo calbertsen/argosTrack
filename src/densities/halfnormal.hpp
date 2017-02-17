@@ -11,7 +11,7 @@ Type dhalfnorm(Type x, Type sd, int give_log = 0){
   if(give_log) return Type(0.5)*logres2; else return exp(Type(0.5)*logres2);
 }
 
-VECTORIZE3_tti(dhalfnorm);
+VECTORIZE3_tti(dhalfnorm)
 
 
 
