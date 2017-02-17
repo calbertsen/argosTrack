@@ -20,7 +20,7 @@ Here, \eqn{\epsilon_t} is zero mean Gaussian noise with covariance \eqn{ \pmatri
 }}
 \examples{
 d <- subadult_ringed_seal
-dates <- unique(as.POSIXct(d$date))
+dates <- unique(as.POSIXct(d$date,tz="GMT"))
 dseq <- seq(min(dates),max(dates), "day")
 mov <- DCRW(dseq)
 }
@@ -30,8 +30,10 @@ Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling 
 \seealso{
 \link{Movement}
 
-Other X.Movement.models.: \code{\link{CTCRW}},
-  \code{\link{CTCRW-class}}; \code{\link{DSBHN}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{CTCRW}},
+  \code{\link{CTCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBHN}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},

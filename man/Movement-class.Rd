@@ -37,9 +37,11 @@ This reference class should not be used as it does not implement a model. The cl
 \seealso{
 Used in \code{\link{Animal}}. Currently the following movement models are implemented: \code{\link{CTCRW}}, \code{\link{DCRW}}, \code{\link{DSBHN}}, \code{\link{DSBW}}, \code{\link{RW}}.
 
-Other X.Movement.models.: \code{\link{CTCRW}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{CTCRW}},
   \code{\link{CTCRW-class}}; \code{\link{DCRW}},
-  \code{\link{DCRW-class}}; \code{\link{DSBHN}},
+  \code{\link{DCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBHN}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},

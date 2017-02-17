@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' dates <- unique(as.POSIXct(d$date))
+#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
 #' dseq <- seq(min(dates),max(dates), "day")
 #' mov <- DCRW(dseq)
 #'

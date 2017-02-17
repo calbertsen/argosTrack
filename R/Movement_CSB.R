@@ -15,7 +15,7 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- CSB(unique(as.POSIXct(d$date)))
+#' mov <- argosTrack:::CSB(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' @family "Movement models"
 #'

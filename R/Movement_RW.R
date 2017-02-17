@@ -9,7 +9,7 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- CTCRW(unique(as.POSIXct(d$date)))
+#' mov <- RW(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' @references
 #' Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving light-based geolocation by including sea surface temperature. Fisheries Oceanography, 15: 314-325. doi: 10.1111/j.1365-2419.2005.00401.x

@@ -25,7 +25,7 @@ Hence,
 }}
 \examples{
 d <- subadult_ringed_seal
-mov <- argosTrack:::OUV(unique(as.POSIXct(d$date)))
+mov <- argosTrack:::OUV(unique(as.POSIXct(d$date,tz="GMT")))
 }
 \references{
 Albertsen, C.M. (2016) Personal communication.
@@ -33,9 +33,11 @@ Albertsen, C.M. (2016) Personal communication.
 \seealso{
 \code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 
-Other X.Movement.models.: \code{\link{CTCRW}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{CTCRW}},
   \code{\link{CTCRW-class}}; \code{\link{DCRW}},
-  \code{\link{DCRW-class}}; \code{\link{DSBHN}},
+  \code{\link{DCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBHN}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},

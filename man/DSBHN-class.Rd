@@ -31,16 +31,18 @@ Step-length/Bearings models can be difficult for the Laplace approximation. Esti
 }
 \examples{
 d <- subadult_ringed_seal
-dates <- unique(as.POSIXct(d$date))
+dates <- unique(as.POSIXct(d$date,tz="GMT"))
 dseq <- seq(min(dates),max(dates), "day")
 mov <- DSBHN(dseq)
 }
 \seealso{
 \code{\link{Movement}}, \code{link{DSBW}}.
 
-Other X.Movement.models.: \code{\link{CTCRW}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{CTCRW}},
   \code{\link{CTCRW-class}}; \code{\link{DCRW}},
-  \code{\link{DCRW-class}}; \code{\link{DSBW}},
+  \code{\link{DCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},
   \code{\link{MPCTCRW-class}}; \code{\link{Movement}},

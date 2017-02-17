@@ -17,7 +17,7 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- CTCRW(unique(as.POSIXct(d$date)))
+#' mov <- CTCRW(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' @family "Movement models"
 #'

@@ -19,7 +19,7 @@ The reference class implements a Random Walk (e.g. Nielsen et al. 2006).
 }}
 \examples{
 d <- subadult_ringed_seal
-mov <- CTCRW(unique(as.POSIXct(d$date)))
+mov <- RW(unique(as.POSIXct(d$date,tz="GMT")))
 }
 \references{
 Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving light-based geolocation by including sea surface temperature. Fisheries Oceanography, 15: 314-325. doi: 10.1111/j.1365-2419.2005.00401.x
@@ -27,9 +27,11 @@ Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving lig
 \seealso{
 \link{Movement}
 
-Other X.Movement.models.: \code{\link{CTCRW}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{CTCRW}},
   \code{\link{CTCRW-class}}; \code{\link{DCRW}},
-  \code{\link{DCRW-class}}; \code{\link{DSBHN}},
+  \code{\link{DCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBHN}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},

@@ -31,7 +31,7 @@ For \eqn{c\neq c'} and \eqn{t\neq t'}, \eqn{Cov\left(\eta_{c,t},\zeta_{c',t'}\ri
 }}
 \examples{
 d <- subadult_ringed_seal
-mov <- CTCRW(unique(as.POSIXct(d$date)))
+mov <- CTCRW(unique(as.POSIXct(d$date,tz="GMT")))
 }
 \references{
 Johnson, D. S., J. M. London, M. A. Lea, and J. W. Durban. (2008) Continuous-time correlated random walk model for animal telemetry data. Ecology 89, 1208-1215.
@@ -40,8 +40,10 @@ Johnson, D. S., J. M. London, M. A. Lea, and J. W. Durban. (2008) Continuous-tim
 \seealso{
 \link{Movement}
 
-Other X.Movement.models.: \code{\link{DCRW}},
-  \code{\link{DCRW-class}}; \code{\link{DSBHN}},
+Other X.Movement.models.: \code{\link{CSB}},
+  \code{\link{CSB-class}}; \code{\link{DCRW}},
+  \code{\link{DCRW-class}}; \code{\link{DIRAC}},
+  \code{\link{DIRAC-class}}; \code{\link{DSBHN}},
   \code{\link{DSBHN-class}}; \code{\link{DSBW}},
   \code{\link{DSBW-class}}; \code{\link{IDCRW}},
   \code{\link{IDCRW-class}}; \code{\link{MPCTCRW}},

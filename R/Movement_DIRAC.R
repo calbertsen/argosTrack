@@ -9,7 +9,7 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- NON(unique(as.POSIXct(d$date)))
+#' mov <- argosTrack:::DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' 
 #' @importFrom methods setRefClass new 

@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::IDCRW(unique(as.POSIXct(d$date)))
+#' mov <- argosTrack:::IDCRW(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
 #' @keywords internal
 IDCRW <- setRefClass("IDCRW",

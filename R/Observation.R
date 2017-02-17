@@ -14,7 +14,7 @@
 #' d <- subadult_ringed_seal
 #' obs <- Observation(lon = d$lon,
 #'                    lat = d$lat,
-#'                    dates = as.POSIXct(d$date),
+#'                    dates = as.POSIXct(d$date,tz="GMT"),
 #'                    locationclass = d$lc
 #'                    )
 #' plot(obs)

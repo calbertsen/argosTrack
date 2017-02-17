@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::OUL(unique(as.POSIXct(d$date)))
+#' mov <- argosTrack:::OUL(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
 #' @keywords internal
 OUL <- setRefClass("OUL",

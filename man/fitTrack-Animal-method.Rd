@@ -7,7 +7,7 @@
 \usage{
 \S4method{fitTrack}{Animal}(object, method = c("laplace", "mcmc"),
   silent = FALSE, fixcorrection = FALSE, nlminb.control = list(),
-  inner.control = list(maxit = 30), ...)
+  inner.control = list(maxit = 1000), ...)
 }
 \arguments{
 \item{object}{\link{Animal} reference class object}
