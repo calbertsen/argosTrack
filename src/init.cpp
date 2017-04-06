@@ -3,6 +3,9 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
+#define WITH_LIBTMB
+#include <TMB.hpp>
+
 extern "C" {
 
   // Sample
@@ -21,22 +24,27 @@ extern "C" {
   SEXP stepLength(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical);
   SEXP bearing(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical);
 
-  // TMB
-  SEXP MakeADFunObject(SEXP data, SEXP parameters, SEXP report, SEXP control);
-  SEXP InfoADFunObject(SEXP f);
-  SEXP optimizeADFunObject(SEXP f);
-  SEXP EvalADFunObject(SEXP f, SEXP theta, SEXP control);
-  SEXP MakeDoubleFunObject(SEXP data, SEXP parameters, SEXP report);
-  SEXP EvalDoubleFunObject(SEXP f, SEXP theta, SEXP control);
-  SEXP getParameterOrder(SEXP data, SEXP parameters, SEXP report);
-  SEXP MakeADGradObject(SEXP data, SEXP parameters, SEXP report);
-  SEXP MakeADHessObject2(SEXP data, SEXP parameters, SEXP report, SEXP skip);
-  SEXP usingAtomics();
-  SEXP TMBconfig(SEXP envir, SEXP cmd);
-  
 #define CALLDEF(name,n) {#name, (DL_FUNC) &name, n}
+  
   static const
   R_CallMethodDef callMethods[] = {
+
+    // TMB
+    #ifdef TMB_CALLDEFS
+    TMB_CALLDEFS,
+    #else
+    CALLDEF(MakeADFunObject, 4),
+    CALLDEF(InfoADFunObject, 1),
+    CALLDEF(EvalADFunObject, 3),
+    CALLDEF(MakeDoubleFunObject, 3),
+    CALLDEF(EvalDoubleFunObject, 3),
+    CALLDEF(getParameterOrder, 3),
+    CALLDEF(MakeADGradObject, 3),
+    CALLDEF(MakeADHessObject2, 4),
+    CALLDEF(usingAtomics, 0),
+    CALLDEF(TMBconfig, 2),
+    #endif
+    
     CALLDEF(rmvnorm,3),
     CALLDEF(rmvlnorm,3),
     CALLDEF(rlogistic,3),
@@ -49,26 +57,7 @@ extern "C" {
     CALLDEF(idtcrwVarMat,5),
     CALLDEF(stepLength,5),
     CALLDEF(bearing,5),
-    // FROM TMB
-    CALLDEF(MakeADFunObject, 4),
-    CALLDEF(InfoADFunObject, 1),
-    CALLDEF(EvalADFunObject, 3),
-    CALLDEF(MakeDoubleFunObject, 3),
-    CALLDEF(EvalDoubleFunObject, 3),
-    CALLDEF(getParameterOrder, 3),
-    CALLDEF(MakeADGradObject, 3),
-    CALLDEF(MakeADHessObject2, 4),
-    CALLDEF(usingAtomics, 0),
-    CALLDEF(TMBconfig, 2),
-    /* User's R_unload_lib function must also be registered: */
-#ifdef LIB_UNLOAD
-#define xstringify(s) stringify(s)
-#define stringify(s) #s
-    {xstringify(LIB_UNLOAD), (DL_FUNC) &LIB_UNLOAD, 1},
-#undef xstringify
-#undef stringify
-#endif
-    // END OF CODE FROM TMB
+
     {NULL,NULL,0}
   };
 
