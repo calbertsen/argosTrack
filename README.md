@@ -13,8 +13,3 @@ The development version of argosTrack can be installed with
 devtools::install_github("calbertsen/argosTrack")
 ```
 
-Note: This branch will not compile on Windows. Please install the package with
-
-``` r
-devtools::install_github("calbertsen/argosTrack",ref="prepv1-1-0")
-```
