@@ -93,7 +93,9 @@ CSB <- setRefClass("CSB",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 9, parnames = c("log(beta)","gamma"))
+                                     options = list(moveModelCode = 9,
+                                                    parnames = c("log(beta)","gamma"),
+                                                    varparnames = c("log(sigma_S)","log(sigma_B)"))
                                      )
 
 

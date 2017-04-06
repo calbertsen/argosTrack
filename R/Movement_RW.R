@@ -84,7 +84,9 @@ RW <- setRefClass("RW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 0, parnames = c())
+                                     options = list(moveModelCode = 0,
+                                                    parnames = c(),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 

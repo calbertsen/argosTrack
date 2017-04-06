@@ -29,7 +29,7 @@ OUV <- setRefClass("OUV",
                                             nauticalStates = FALSE,
                                             timeunit = "hours"
                                             ){
-                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{\\Theta_{0,0}}, \\eqn{\\Theta_{1,0}},\\eqn{\\Theta_{0,1}},\\eqn{\\Theta_{1,1}}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
+                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{\\Theta_{0,0}}, \\eqn{\\Theta_{1,0}},\\eqn{\\Theta_{0,1}},\\eqn{\\Theta_{1,1}}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lon})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
 ###############
 ## Do checks ##
 ###############
@@ -64,7 +64,9 @@ OUV <- setRefClass("OUV",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 8, parnames = c("Theta_{11}","Theta_{21}","Theta_{12}","Theta_{22}","logit[-1,1](rho)","mu_1","mu_2"))
+                                     options = list(moveModelCode = 8,
+                                                    parnames = c("Theta_{11}","Theta_{21}","Theta_{12}","Theta_{22}","logit[-1,1](rho)","mu_1","mu_2"),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 

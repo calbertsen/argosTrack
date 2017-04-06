@@ -92,7 +92,9 @@ CTCRW <- setRefClass("CTCRW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 1, parnames = c("log(beta_lat)","log(beta_lon)","gamma_lat","gamma_lon"))
+                                     options = list(moveModelCode = 1,
+                                                    parnames = c("log(beta_lat)","log(beta_lon)","gamma_lat","gamma_lon"),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 

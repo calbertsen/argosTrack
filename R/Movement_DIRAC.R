@@ -83,7 +83,9 @@ DIRAC <- setRefClass("DIRAC",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 10, parnames = c())
+                                     options = list(moveModelCode = 10,
+                                                    parnames = c(),
+                                                    varparnames = c())
                                      )
 
 

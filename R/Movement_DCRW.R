@@ -89,7 +89,9 @@ DCRW <- setRefClass("DCRW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 3, parnames = c("logit[0,1](gamma)","phi","logit[-1,1](rho)"))
+                                     options = list(moveModelCode = 3,
+                                                    parnames = c("logit[0,1](gamma)","phi","logit[-1,1](rho)"),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 

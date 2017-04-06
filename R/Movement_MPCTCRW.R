@@ -57,7 +57,9 @@ MPCTCRW <- setRefClass("MPCTCRW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 2, parnames = c("log(beta_{1,lat})","log(beta_{1,lon})","log(beta_{2,lat}-beta_{1,lat})","log(beta_{2,lon}-beta_{1,lon})","gamma_{1,lat}","gamma_{1,lon}","gamma_{2,lat}","gamma_{2,lon}"))
+                                     options = list(moveModelCode = 2,
+                                                    parnames = c("log(beta_{1,lat})","log(beta_{1,lon})","log(beta_{2,lat}-beta_{1,lat})","log(beta_{2,lon}-beta_{1,lon})","gamma_{1,lat}","gamma_{1,lon}","gamma_{2,lat}","gamma_{2,lon}"),
+                                                    varparnames = c("log(sigma_{1,lat})","log(sigma_{1,lon})","log(sigma_{2,lat})","log(sigma_{2,lon})"))
                                      )
 
 

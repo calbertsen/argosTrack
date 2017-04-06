@@ -61,7 +61,9 @@ OUL <- setRefClass("OUL",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 7, parnames = c("B_{1,1}","B_{2,1}","B_{1,2}","B_{2,2}","mu_1","mu_2"))
+                                     options = list(moveModelCode = 7,
+                                                    parnames = c("B_{1,1}","B_{2,1}","B_{1,2}","B_{2,2}","mu_1","mu_2"),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 

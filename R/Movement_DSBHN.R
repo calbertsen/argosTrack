@@ -97,7 +97,9 @@ DSBHN <- setRefClass("DSBHN",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 5, parnames = c("log(rho)"))
+                                     options = list(moveModelCode = 5,
+                                                    parnames = c("log(rho)"),
+                                                    varparnames = c("log(sigma)")
                                      )
 
 

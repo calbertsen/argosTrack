@@ -100,6 +100,9 @@ Movement <- setRefClass("Movement",
                                 mm <- .self$parameters
                                 names(mm) <- .self$options$parnames
                                 print(mm)
+                                cat("Movement variance parameters:\n")
+                                vv <- .self$varianceParameters
+                                names(mm) <- .self$options$varparnames
                                 cat("Number of latent variables:",dim(.self$mu)[2]+dim(.self$mu)[2],"\n")
                                 cat("Using nautical states:",.self$nauticalStates,"\n")
                                 cat("Using time unit:",.self$timeunit,"\n")

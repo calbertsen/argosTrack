@@ -98,7 +98,9 @@ DSBW <- setRefClass("DSBW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 4, parnames = c("log(rho)","log(scale)","log(shape)"))
+                                     options = list(moveModelCode = 4,
+                                                    parnames = c("log(rho)","log(scale)","log(shape)"),
+                                                    varparnames = c())
                                      )
 
 

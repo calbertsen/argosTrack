@@ -86,7 +86,9 @@ IDCRW <- setRefClass("IDCRW",
                                      vcov = diag(Inf,0),
                                      timeunit = timeunit,
                                      data = list(),
-                                     options = list(moveModelCode = 6, parnames = c("logit[0,1](gamma_1)","logit[0,1](gamma_2)","phi","logit[-1,1](rho)","mu_1","mu_2"))
+                                     options = list(moveModelCode = 6,
+                                                    parnames = c("logit[0,1](gamma_1)","logit[0,1](gamma_2)","phi","logit[-1,1](rho)","mu_1","mu_2"),
+                                                    varparnames = c("log(sigma_lat)","log(sigma_lon)"))
                                      )
 
 
