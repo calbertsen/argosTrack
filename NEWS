@@ -1,10 +1,14 @@
 
-# Version x.y.z
+# Version 1.1.0
 - Added inner.control to fitTrack to control Newton optimization of random effects
-- Added symmetric hyperbolic (sh) as possible measurement error model
-- The Measurement class can now simulate from all 3 models (n,t,sh)
 - Added getTrack function to extract estimated track as data frame
-- Fixed bug in simulation of GPS measurements resulting in NA's
+- Added movement model: Dirac (DIRAC)
+- Added more input checks
+- Added variance parameters to output
+- Added experimental support for the multivariate symmetric hyperbolic distribution for measurements
+- Bug fixes: error with difftime in Anima; rwcauchy; simulation of GPS measurements resulting in NA's; calculation of state fractions
+- Now registers routines as required by CRAN
+- Small updates to examples and vignette
 
 # Version 1.0.1
 - Added namespaces to c++ code to avoid multiple definitions from TMB.
