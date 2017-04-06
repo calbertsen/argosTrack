@@ -2,8 +2,12 @@
 ^appveyor.yml$
 ^travis-tool.sh$
 libs/
+^.gitattributes$
+^.gitignore$
+.git/
 ^README.Rmd$
 README_files
 .*\.so
 .*\.o
 .*\.Rhistory
+.*\.#.*
