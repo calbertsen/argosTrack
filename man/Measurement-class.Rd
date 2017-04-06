@@ -21,7 +21,7 @@ where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \
 \section{Fields}{
 
 \describe{
-\item{\code{model}}{Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (see Details).}
+\item{\code{model}}{Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (Experimental; see Details).}
 
 \item{\code{logSdObs}}{Vector of scale parameters \eqn{\tau} (See Details)}
 
