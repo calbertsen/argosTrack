@@ -45,6 +45,9 @@ Movement <- setRefClass("Movement",
                                 }
                                 value
                             },
+                            initialize = function(...){
+                                stop("The abstract movement class should not be used")
+                            },
                             getTMBdata = function(){
                                 "Function to return a data list for TMB::MakeADFun"
                                 dat <- list(dtStates =  c(NA,
