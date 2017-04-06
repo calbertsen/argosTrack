@@ -9,9 +9,11 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
+#' mov <- DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
 #'
+#' @author Christoffer Moesgaard Albertsen
 #' 
+#' @export Animal
 #' @importFrom methods setRefClass new 
 #' @exportClass DIRAC
 DIRAC <- setRefClass("DIRAC",
