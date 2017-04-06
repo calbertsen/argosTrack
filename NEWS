@@ -1,4 +1,7 @@
 
+# Version x.y.z
+
+
 # Version 1.1.0
 - Added inner.control to fitTrack to control Newton optimization of random effects
 - Added getTrack function to extract estimated track as data frame

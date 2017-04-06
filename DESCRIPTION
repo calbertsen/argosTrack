@@ -1,7 +1,7 @@
 Package: argosTrack
 Type: Package
 Title: Fit Movement Models to Argos Data for Marine Animals
-Version: 1.1.0
+Version: 1.1.0-0001
 Date: 2017-04-6
 Author: Christoffer Moesgaard Albertsen
 Maintainer: Christoffer Moesgaard Albertsen <cmoe@aqua.dtu.dk>
@@ -13,6 +13,6 @@ LazyData: true
 Imports:
     TMB, stats, methods, grDevices, graphics
 LinkingTo: TMB (>= 1.7.6), RcppEigen
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
