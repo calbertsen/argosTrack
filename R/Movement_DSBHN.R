@@ -99,7 +99,7 @@ DSBHN <- setRefClass("DSBHN",
                                      data = list(),
                                      options = list(moveModelCode = 5,
                                                     parnames = c("log(rho)"),
-                                                    varparnames = c("log(sigma)")
+                                                    varparnames = c("log(sigma)"))
                                      )
 
 

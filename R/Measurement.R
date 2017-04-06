@@ -1,6 +1,6 @@
 #' A Reference Class for specifying a measurement model.
 #'
-#' @field model Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (see Details).
+#' @field model Either "n" for multivariate Gaussian measurements, "t" for multivariate t-distributed measurements (Lange et al. 1989), or "sh" for multivariate symmetric hyperbolic distributed measurements of Argos data (Experimental; see Details).
 #' @field logSdObs  Vector of scale parameters \eqn{\tau} (See Details)
 #' @field corObs Correlation parameter between coordiantes (not implemented yet)
 #' @field logCorrection Matrix of scale matrix ratios \eqn{R} (See Details) 
@@ -85,6 +85,9 @@ Measurement <- setRefClass("Measurement",
 ## Do checks ##
 ###############
                                    modelIn <- match.arg(model)
+
+                                   if(modelIn == "sh")
+                                       warning("The symmetric hyperbolic is experimental")
 
                                    if(!missing(logSdObs))
                                        if(!(is.numvec(logSdObs) && length(logSdObs)==2))
@@ -299,6 +302,30 @@ Measurement <- setRefClass("Measurement",
                                    cat("Measurement distribution:",.self$model,"\n")
                                    cat("Use nautical observations:",.self$nauticalObs,"\n")
 
+                                   varObs <- matrix(NA,
+                                                    nrow = dim(.self$logCorrection)[1],
+                                                    ncol = dim(.self$logCorrection)[2] + 1)
+                                   rownames(varObs) <- c("Latitude","Longitude")
+                                   colnames(varObs) <- c("GPS","3", "2", "1", "0", "A", "B","Z")
+                                   dfObs <- .self$minDf + exp(.self$df)
+                                   names(dfObs) <- c("GPS","3", "2", "1", "0", "A", "B","Z")
+                                   
+                                   for(i in 1:dim(varObs)[1]){
+                                       varObs[i,1] <- exp(2 * .self$logSdObs[i])
+                                       for(j in 2:dim(varObs)[2])
+                                           varObs[i,j] = exp(2 * (.self$logSdObs[i] + .self$logCorrection[i,j-1]))
+                                   }
+
+                                   cat("Variance parameters:\n")
+                                   print(varObs)
+                                   if(.self$model == "t"){
+                                       cat("Degrees of freedom parameters:\n")
+                                       print(dfObs)
+                                   }else if(.self$model == "sh"){
+                                       cat("Delta parameters:\n")
+                                       print(dfObs)
+                                   }
+                                   
                                }
                                    
                            )
