@@ -40,7 +40,7 @@ DIRAC <- setRefClass("DIRAC",
                           value
                       },
                       initialize = function(dates,
-                                            pars = numeric(2),
+                                            pars = numeric(0),
                                             varPars = numeric(0),
                                             nauticalStates = FALSE,
                                             timeunit = "hours"
