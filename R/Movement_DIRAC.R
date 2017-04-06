@@ -13,7 +13,7 @@
 #'
 #' @author Christoffer Moesgaard Albertsen
 #' 
-#' @export Animal
+#' @export DIRAC
 #' @importFrom methods setRefClass new 
 #' @exportClass DIRAC
 DIRAC <- setRefClass("DIRAC",
