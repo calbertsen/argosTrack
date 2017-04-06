@@ -77,7 +77,9 @@ Animal <- setRefClass("Animal",
                               if(!("Movement" %in% getRefClass(class(movement))$def@refSuperClasses))
                                    stop(paste("movement must be one of the classes:",
                                               paste(names(getClass("Movement")@subclasses),collapse = ", ")
-                                              ))                                    
+                                              ))
+                              if(length(name) > 1)
+                                  stop("Name should be a character vector of length one")
 
 
 ################
