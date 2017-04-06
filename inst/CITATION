@@ -6,8 +6,7 @@ bibentry(bibtype = "Manual",
          year = year,
          author =
              c(person(c("Christoffer","Moesgaard"), "Albertsen")),
-         note = note,
-         doi = "10.5281/zenodo.30545"
+         note = note
          )
 
 bibentry(bibtype = "article",
