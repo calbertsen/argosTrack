@@ -8,6 +8,7 @@ template<class Type>
 Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Type> veltm,Type dt, vector<Type> beta, vector<Type> gamma, vector<Type> varState){
 
   vector<Type> state(4);
+  state.setZero();
   matrix<Type> cov(4,4);
   cov.setZero();
 
@@ -18,7 +19,7 @@ Type nll_ctcrw(vector<Type> mut, vector<Type> mutm, vector<Type> velt, vector<Ty
   state(3) = velt(1) - (gamma(1)+exp(-beta(1)*dt)*(veltm(1)-gamma(1)));
 
   cov(0,0) = varState(0)/pow(beta(0),2.0)*(dt-2.0*(1.0-exp(-beta(0)*dt))/beta(0)+(1.0-exp(-2.0*beta(0)*dt))/(2.0*beta(0)));
-  cov(1,1) = varState(0)*(1.0-exp(-2.0*beta(0)*dt))/(2*beta(0));
+  cov(1,1) = varState(0)*(1.0-exp(-2.0*beta(0)*dt))/(2.0*beta(0));
   cov(1,0) = varState(0)*(1.0-2.0*exp(-beta(0)*dt)+exp(-2.0*beta(0)*dt))/(2.0*pow(beta(0),2.0));
   cov(0,1) = cov(1,0);
       

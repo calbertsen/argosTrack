@@ -1,10 +1,12 @@
+#define WITH_LIBTMB
+#include <TMB.hpp>
+
+
 #include <R.h>
 #include <Rmath.h>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-#define WITH_LIBTMB
-#include <TMB.hpp>
 
 extern "C" {
 

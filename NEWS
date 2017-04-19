@@ -1,6 +1,7 @@
 
 # Version x.y.z
-
+- Added unit tests
+- Bug fixes: Wrong parameter length in DIRAC; simulation of Animal had issues with state fractions; CTCRW simulation had minor bug in state mean;
 
 # Version 1.1.0
 - Added inner.control to fitTrack to control Newton optimization of random effects

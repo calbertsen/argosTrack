@@ -140,15 +140,16 @@ Animal <- setRefClass("Animal",
                       simulate = function(newObject = FALSE){
                           "Function to simulate movement and measurement data for the Animal. A list containing the movement (X) and measurement (Y) data is returned. If newObject = TRUE, an Animal object is added to the list."
                           dat <- .self$getTMBdata()
-                          dat$prevState
-                          dat$stateFrac
+                          prevState <- dat$prevState + 1
+                          stateFrac <- dat$stateFrac
                           X <- .self$movement$simulate()
                           Y <- .self$measurement$simulate(.self$observation)
-                          mps <- sapply(dat$prevState+2,
-                                        function(x)min(x,dim(X)[2]))
-                          dat$stateFrac[dat$prevState==dim(X)[2]] <- 0
-                          intState <- dat$stateFrac * X[,dat$prevState+1] +
-                              (1 - dat$stateFrac) * X[,mps]
+                          mps <- prevState + 1
+                          mps[mps > dim(X)[2]] <- dim(X)[2]
+                          intState <- sapply(1:length(prevState), function(i){
+                              stateFrac[i] * X[1:2,prevState[i]] +
+                                  (1 - stateFrac[i]) * X[1:2,mps[i]]
+                              })
                           retList <- list(X = X,
                                           Y = Y + intState)
                           if(newObject){

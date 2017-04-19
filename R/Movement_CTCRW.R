@@ -33,22 +33,7 @@ CTCRW <- setRefClass("CTCRW",
                   methods = list(
                       copy = function (shallow = FALSE) 
                       {
-                          def <- .refClassDef
-                          value <- new(def,
-                                       dates = .self$dates)
-                          ## The rest is from methods::
-                          vEnv <- as.environment(value)
-                          selfEnv <- as.environment(.self)
-                          for (field in names(def@fieldClasses)) {
-                              if (shallow) 
-                                  assign(field, get(field, envir = selfEnv), envir = vEnv)
-                              else {
-                                  current <- get(field, envir = selfEnv)
-                                  if (is(current, "envRefClass")) 
-                                      current <- current$copy(FALSE)
-                                  assign(field, current, envir = vEnv)
-                              }
-                          }
+                          value <- callSuper(shallow = shallow)
                           value
                       },
                       initialize = function(dates,
@@ -100,7 +85,7 @@ CTCRW <- setRefClass("CTCRW",
 
                       },
                       simulate = function(x0 = c(0,0,0,0)){
-                          "Function to simulate from the movement model. The initial states (latitudianl velocity, longitudinal velocity, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles."
+                          "Function to simulate from the movement model. The initial states (latitudianl velocity, longitudinal velocity, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles."
 
                           ## TODO: Handle nautical states better
                           beta <- exp(.self$parameters[1:2])
@@ -112,18 +97,18 @@ CTCRW <- setRefClass("CTCRW",
                           
                                       
                           X <- matrix(NA,4,length(.self$dates))
-                          X[,1] <- x0
+                          X[,1] <- x0[c(1,3,2,4)]
                           for(i in 2:length(.self$dates)){
 
                               ## Create covariance matrix
-                              cov <- matrix(NA,4,4)
+                              cov <- matrix(0,4,4)
                               cov[1,1] <- varState[1]/beta[1]^2 * (dt[i]-2.0*(1.0-exp(-beta[1]*dt[i]))/beta[1]+(1.0-exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1]))
-                              cov[2,2] <- varState[1]*(1.0-exp(-2.0*beta[1]*dt[i]))/(2*beta[1])
-                              cov[2,1] <- cov[1,2] <- varState[1]*(1.0-2.0*exp(-beta[1]*dt[i])+exp(-2.0*beta[1]*dt[2]))/(2.0*beta[1] ^ 2.0)
+                              cov[2,2] <- varState[1]*(1.0-exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1])
+                              cov[2,1] <- cov[1,2] <- varState[1]*(1.0-2.0*exp(-beta[1]*dt[i])+exp(-2.0*beta[1]*dt[i]))/(2.0*beta[1] ^ 2.0)
 
                               cov[3,3] <- varState[2]/beta[2]^2 * (dt[i]-2.0*(1.0-exp(-beta[2]*dt[i]))/beta[2]+(1.0-exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2]))
                               cov[4,4] <- varState[2]*(1.0-exp(-2.0*beta[2]*dt[i]))/(2*beta[2])
-                              cov[4,3] <- cov[3,4] <- varState[2]*(1.0-2.0*exp(-beta[2]*dt[i])+exp(-2.0*beta[2]*dt[2]))/(2.0*beta[2] ^ 2.0)
+                              cov[4,3] <- cov[3,4] <- varState[2]*(1.0-2.0*exp(-beta[2]*dt[i])+exp(-2.0*beta[2]*dt[i]))/(2.0*beta[2] ^ 2.0)
 
                               ## Create mean vector
                               state <- rep(NA,4)
@@ -131,14 +116,14 @@ CTCRW <- setRefClass("CTCRW",
                               state[2] <- gamma[1]+exp(-beta[1]*dt[i])*(X[2,i-1]-gamma[1])
 
                               state[3] <- X[3,i-1]+X[4,i-1]*(1.0-exp(-beta[2]*dt[i]))/beta[2]
-                              state[4] <- gamma[2]+exp(-beta[1]*dt[i])*(X[2,i-1]-gamma[2])
+                              state[4] <- gamma[2]+exp(-beta[2]*dt[i])*(X[4,i-1]-gamma[2])
                               
                               X[,i] <- rmvnorm(1,
                                                mu = state,
                                                sigma = cov)
                           }
                           ## Return positions
-                          return(X[c(1,3),])
+                          return(X[c(1,3,2,4),])
                       },
                       getTMBmap = function(...){
                           "Function to return a map list for TMB::MakeADFun. If equaldecay=TRUE, \\eqn{\\beta_1} and \\eqn{\\beta_2} are estimated as equal. If equaldrift=TRUE, \\eqn{\\gamma_1} and \\eqn{\\gamma_2} are estimated as equal. If fixdrift=TRUE, \\eqn{\\gamma_1} and \\eqn{\\gamma_2} are fixed at the current value."

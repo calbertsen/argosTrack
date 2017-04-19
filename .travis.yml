@@ -14,6 +14,7 @@ os:
 env:
   global:
     - OS=$(uname -s)
+    - NOT_CRAN=true
 
 matrix:
   exclude:

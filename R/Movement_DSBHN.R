@@ -30,22 +30,7 @@ DSBHN <- setRefClass("DSBHN",
                   methods = list(
                       copy = function (shallow = FALSE) 
                       {
-                          def <- .refClassDef
-                          value <- new(def,
-                                       dates = .self$dates)
-                          ## The rest is from methods::
-                          vEnv <- as.environment(value)
-                          selfEnv <- as.environment(.self)
-                          for (field in names(def@fieldClasses)) {
-                              if (shallow) 
-                                  assign(field, get(field, envir = selfEnv), envir = vEnv)
-                              else {
-                                  current <- get(field, envir = selfEnv)
-                                  if (is(current, "envRefClass")) 
-                                      current <- current$copy(FALSE)
-                                  assign(field, current, envir = vEnv)
-                              }
-                          }
+                          value <- callSuper(shallow = shallow)
                           value
                       },
                       initialize = function(dates,
