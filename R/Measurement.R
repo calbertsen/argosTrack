@@ -44,7 +44,8 @@
 #' @author Christoffer Moesgaard Albertsen
 #' 
 #' @export Measurement
-#' @importFrom methods setRefClass new 
+#' @importFrom methods setRefClass new
+#' @importFrom stats splinefun
 #' @exportClass Measurement
 Measurement <- setRefClass("Measurement",
                            fields = c(model = "character",
@@ -256,43 +257,57 @@ Measurement <- setRefClass("Measurement",
                                    covKnown <- diag(0.00001,2)
 
                                    ## Model code:
-                                   ## 0: argos incl GPS
-                                   ## 1: Known
-                                   ## 2: spline
-                                   indx <- which(observation$varModelCode == 0)
+                                  ## 0: argos incl GPS
+                                  ## 1: Known
+                                  ## 2: spline
+                                  indx <- which(observation$varModelCode == 0)
                                   for(i in 1:nlevels(observation$qual)){
                                       indx2 <- which(as.numeric(observation$qual[indx])==i)
-                                      if(model == "t"){
+                                      if(.self$model == "t"){
                                           if(length(indx2) > 0)
-                                              Y[,indx2] <- t(rmvt(length(indx2),
-                                                                  mu = c(0,0),
-                                                                  sigma = diag(varObs[,i]),
-                                                                  df = dfObs[i]
-                                                                  ))
+                                              Y[,indx][,indx2] <- t(rmvt(length(indx2),
+                                                                         mu = c(0,0),
+                                                                         sigma = diag(varObs[,i]),
+                                                                         df = dfObs[i]
+                                                                         ))
 
-                                      }else if(model == "sh"){
+                                      }else if(.self$model == "sh"){
                                           if(length(indx2) > 0)
-                                              Y[,indx2] <- t(rmvsh(length(indx2),
-                                                                   mu = c(0,0),
-                                                                   sigma = diag(varObs[,i]),
-                                                                   delta = dfObs[i]
-                                                                   ))
+                                              Y[,indx][,indx2] <- t(rmvsh(length(indx2),
+                                                                          mu = c(0,0),
+                                                                          sigma = diag(varObs[,i]),
+                                                                          delta = dfObs[i]
+                                                                          ))
                                       }else{
                                           if(length(indx2) > 0)
-                                              Y[,indx2] <- t(rmvnorm(length(indx2),
-                                                                     mu = c(0,0),
-                                                                     sigma = diag(varObs[,i])))
+                                              Y[,indx][,indx2] <- t(rmvnorm(length(indx2),
+                                                                            mu = c(0,0),
+                                                                            sigma = diag(varObs[,i])))
                                       }
-                                       ## Implement t and sh
-                                       
-                                   }
-                                   indx <- which(observation$varModelCode == 1)
-                                   Y[,indx] <- 0
-                                   indx <- which(observation$varModelCode == 2)
+                                      ## Implement t and sh
+                                      
+                                  }
+                                  indx <- which(observation$varModelCode == 1)
+                                  Y[,indx] <- t(rmvnorm(length(indx),
+                                                        mu = c(0,0),
+                                                        sigma = covKnown))
+                                  indx <- which(observation$varModelCode == 2)
+                                  splineUse <- .self$reportSpline[,1]
+                                  if(all(is.na(splineUse))){
+                                      nKnots <- length(.self$knotPars)
+                                      splineKnots <- c(0,
+                                                      quantile(observation$dayOfYear,
+                                                               seq(0,1,len=nKnots))[-c(1,nKnots)],
+                                                      366)
+                                      splineUse <- exp(stats::splinefun(splineKnots,
+                                                                    .self$knotPars)(0:365+1))
+
+                                  }
                                   for(i in indx){                                   
                                        Y[,i] <- t(rmvnorm(1,
                                                           mu = c(0,0),
-                                                          sigma = diag(c(exp(2*.self$splineXlogSd), .self$reportSpline[observation$dayOfYear[i]]^2))))
+                                                          sigma = diag(c(exp(2*.self$splineXlogSd),
+                                                                         splineUse[observation$dayOfYear[i]]^2))))
                                    }
                                    return(Y)
                                },

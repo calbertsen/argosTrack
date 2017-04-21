@@ -3,7 +3,7 @@
 allMoveNames <- names(getClass("Movement")@subclasses)
 exportedMoveNames <- allMoveNames[allMoveNames %in% ls("package:argosTrack")]
 
-readyMoveNames <- c("IDCRW")
+readyMoveNames <- c("IDCRW")#,"OUL","OUV","CSB")
 
 for(mn in readyMoveNames)
     eval(parse(text=sprintf("%s <- argosTrack:::%s",mn,mn)))
@@ -11,3 +11,5 @@ for(mn in readyMoveNames)
 moveNamesUse <- c(exportedMoveNames,readyMoveNames)
 
 regulars <- c("DCRW","DSBHN","DSBW")
+
+

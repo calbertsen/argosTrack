@@ -7,7 +7,7 @@ check_movement_model_consistency <- function(mov){
     {
         skip_if_not_installed("TMB")
         ##skip_if_not_installed("numDeriv")
-        skip_on_cran()
+        skip_on_travis()
         nobs <- 20
         expr <- sprintf('Animal(measurement=Measurement(),movement=%s(as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),observation=Observation(lon=rep(0,%s),lat=rep(0,%s),locationclass=rep("GPS",%s),dates=as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),name="TestAnim")',mov,nobs,nobs,nobs,nobs,nobs)
         mod <- eval(parse(text=expr))

@@ -324,7 +324,7 @@ Type objective_function<Type>::operator() ()
     if(nauticalObs){
       obs(0) = yobs(i);
       obs(1) = xobs(i);
-      if(stateFrac(i)+1 > y.size()){
+      if(prevState(i)+1 >= y.size()){
 	obs(0) -= y(prevState(i));
 	obs(1) -= x(prevState(i));
       }else{

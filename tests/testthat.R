@@ -1,4 +1,5 @@
 library(testthat)
 library(argosTrack)
 
-test_check("argosTrack")
+if(identical(Sys.getenv("NOT_CRAN"), "true"))
+    test_check("argosTrack")

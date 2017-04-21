@@ -68,8 +68,6 @@ setMethod("simTrack", "Animal",
                    n = 1,
                    newObject = TRUE,
                    ...){
-              if(!newObject && n>1)
-                  stop("n must be 1 if newObject is TRUE.")
               X <- replicate(n,object$simulate(newObject))
               return(X)
           }

@@ -66,7 +66,7 @@ setMethod("getTrack", "Observation",
               r <- data.frame(dates=object$dates,
                               obs.lat=object$lat,
                               obs.lon=object$lon,
-                              obs.lc=object$qual)
+                              obs.lc=object$getLocationClassInput())
               return(r)
           })
 
