@@ -21,7 +21,6 @@ matrix:
   - r: devel
     os: osx
 
-r_build_args: --no-build-vignettes
 r_check_args: --as-cran --no-vignettes --no-build-vignettes
 
 r_packages:
