@@ -15,13 +15,13 @@
 
 
 double asDouble(SEXP x){
-  if(!(isNumeric(x) && length(x)==1))error("Element must be a numeric of length 1");
+  if(!(isNumeric(x) && Rf_length(x)==1))error("Element must be a numeric of length 1");
   return REAL(x)[0];
 }
 
 
 int asInteger(SEXP x){
-  if(!(isInteger(x) && length(x)==1))
+  if(!(isInteger(x) && Rf_length(x)==1))
     Rf_error("Element must be an integer vector of length 1");
   return INTEGER(x)[0];
 }

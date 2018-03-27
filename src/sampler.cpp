@@ -69,7 +69,7 @@ VectorXd asVector(SEXP x) {
 
   if(!isNumeric(x))error("Element must be a numeric vector");
 
-  int n = length(x);
+  int n = Rf_length(x);
   VectorXd y(n);
 
   for(int i = 0; i < n; ++i)
@@ -83,7 +83,7 @@ SEXP getListElement(SEXP list, const char *str)
 {
     SEXP elmt = R_NilValue, names = getAttrib(list, R_NamesSymbol);
 
-    for (R_len_t i = 0; i < length(list); i++)
+    for (R_len_t i = 0; i < Rf_length(list); i++)
         if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
            elmt = VECTOR_ELT(list, i);
            break;
@@ -221,7 +221,7 @@ MatrixXd rmvgaussmix(int n, MatrixXd mu, Matrix<MatrixXd,Dynamic,1> sigma, Vecto
 
 extern "C" {
   SEXP rmvgaussmix(SEXP n, SEXP mu, SEXP sigma, SEXP alpha){
-    Matrix<MatrixXd,Dynamic,1> sds(length(sigma));
+    Matrix<MatrixXd,Dynamic,1> sds(Rf_length(sigma));
     for(int i = 0; i < sds.rows(); ++i){
       sds(i) = asMatrix(VECTOR_ELT(sigma, i));
     }
