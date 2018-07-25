@@ -16,7 +16,7 @@ test_that("default fitTrack works and updates parameters; should give output",
     sim <- simTrack(mod,1)[,1]$Animal
     oldPar <- sim$getTMBparameters()
     ## Before fitting, the optim list should be empty
-    expect_equal(length(sim$optim),0)
+    expect_equal(length(sim$optim),0)    
     expect_output(fit<-fitTrack(sim))
     expect_equivalent(class(fit),"fittedTrack")
     newPar <- sim$getTMBparameters()

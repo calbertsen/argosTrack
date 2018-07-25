@@ -17,12 +17,23 @@ test_that("It works with expected input",
 })
 
 
-test_that("Anima$show works",
+test_that("Anima$show works with n measurement",
 {
     mod <- Animal(measurement=Measurement(model="n"),
                   movement=RW(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),observation=Observation(lon=rep(0,100),lat=rep(0,100),locationclass=rep("GPS",100),dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),name="TestAnim")
     expect_gt(length(capture.output(mod)),0)
-
+})
+test_that("Anima$show works with t measurement",
+{
+    mod <- Animal(measurement=Measurement(model="t"),
+                  movement=RW(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),observation=Observation(lon=rep(0,100),lat=rep(0,100),locationclass=rep("GPS",100),dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),name="TestAnim")
+    expect_gt(length(capture.output(mod)),0)
+})
+test_that("Anima$show works with sh measurement",
+{
+    expect_warning(mod <- Animal(measurement=Measurement(model="sh"),
+                                 movement=RW(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),observation=Observation(lon=rep(0,100),lat=rep(0,100),locationclass=rep("GPS",100),dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),name="TestAnim"))
+    expect_gt(length(capture.output(mod)),0)
 })
 
 
@@ -78,5 +89,9 @@ test_that("Animal Plot functions works",
     expect_null(eval(parse(text=paste0("plotLat(",expr,")"))))
     expect_null(eval(parse(text=paste0("plotLon(",expr,")"))))
     expect_null(eval(parse(text=paste0("plotMap(",expr,")"))))
+    expect_null(eval(parse(text=paste0("plot(",expr,", sd = TRUE)"))))
+    expect_null(eval(parse(text=paste0("plotLat(",expr,", sd = TRUE)"))))
+    expect_null(eval(parse(text=paste0("plotLon(",expr,", sd = TRUE)"))))
+    expect_null(eval(parse(text=paste0("plotMap(",expr,", sd = TRUE)"))))
 })
 

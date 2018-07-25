@@ -15,7 +15,11 @@ check_tmb_object <- function(meas,mov,lc,nobs){
         
         expr <- sprintf('Animal(measurement=Measurement(model="%s"),movement=%s(as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),observation=Observation(lon=rep(0,%s),lat=rep(0,%s),locationclass=%s,dates=as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),name="TestAnim")',
                         meas,mov,nobs,nobs,nobs,paste0(deparse(lcc),collapse=""),nobs)
-        mod <- eval(parse(text=expr))
+        if(meas == "sh"){
+            expect_warning(mod <- eval(parse(text=expr)))
+        }else{
+            mod <- eval(parse(text=expr))
+        }
         sim <- simTrack(mod,1)[,1]$Animal
         dat <- sim$getTMBdata()
         par <- sim$getTMBparameters()

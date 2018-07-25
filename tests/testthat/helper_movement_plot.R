@@ -8,9 +8,9 @@ check_movement_model_plots <- function(mov){
             for(plotSd in c(TRUE,FALSE))
                 for(plotType in c("plot","plotLat","plotLon","plotMap")){
                     expr <- sprintf('%s(%s(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60,nauticalStates=%s),sd=%s)',plotType,mov,naut,plotSd)
-            expect_null(eval(parse(text=expr)))
+            expect_silent(eval(parse(text=expr)))
             
-            expect_null(eval(parse(text=expr)))
+            expect_silent(eval(parse(text=expr)))
         }
     })
 

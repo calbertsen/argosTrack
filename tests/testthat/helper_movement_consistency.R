@@ -9,6 +9,7 @@ check_movement_model_consistency <- function(mov){
         ##skip_if_not_installed("numDeriv")
         skip_on_travis()
         nobs <- 20
+        nsim <- 1000
         expr <- sprintf('Animal(measurement=Measurement(),movement=%s(as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),observation=Observation(lon=rep(0,%s),lat=rep(0,%s),locationclass=rep("GPS",%s),dates=as.POSIXct("2017-01-01 00:00:00") + (1:%s) * 60 * 60),name="TestAnim")',mov,nobs,nobs,nobs,nobs,nobs)
         mod <- eval(parse(text=expr))
         getGrHe <- function(){
@@ -24,20 +25,22 @@ check_movement_model_consistency <- function(mov){
             obj <- TMB::MakeADFun(data = tra$getTMBdata(),
                                   parameters = tra$getTMBparameters(),
                                   map = map,
+                                  silent = TRUE,
                                   DLL = "argosTrack")
             ## list(gr=obj$gr(obj0$par)#,
             ##      #he=obj$he(obj0$par)
             ##      )
             return(as.vector(obj$gr(obj$par)))
         }
-        vals <- replicate(1000,getGrHe())
-        meanGr <- rowMeans(vals)
-        ## res <- vals[2,1]$he
-        ## for(i in 2:ncol(vals))
-        ##     res <- res + vals[2,i]$he
-        ## res <- res / ncol(vals)
-        ## R <- diag(1,length(meanGr))
-        ## testv <- t(R %*% meanGr) %*% solve(t(R)%*%solve(res)%*%R) %*% (R %*% meanGr)
+        vals <- replicate(nsim,getGrHe())
+        ## mu <- rowMeans(vals)
+        ## H <- var(t(vals))
+        ## iH <- solve(H)
+        ## mu.scaled <- sqrt(nsim) * mu
+        ## q <- as.vector( t(mu.scaled) %*% iH %*% mu.scaled )
+        ## p.value <- 1 - pchisq(q, df=length(mu))
+        ## bias <- -iH %*% mu
+        #expect_true(p.value > 0.05)
         expect_true(all(apply(vals,1,function(x)quantile(x,.4) < 0 & quantile(x,0.6) > 0)))
         ##expect_true(all(abs(meanGr) < 1))
     })
