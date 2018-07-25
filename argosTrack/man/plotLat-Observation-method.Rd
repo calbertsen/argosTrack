@@ -19,6 +19,9 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Latitude plot for an Observation reference class object
 }

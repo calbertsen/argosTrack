@@ -4,6 +4,7 @@
 ##' @param x Animal reference class object
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotLat}}, and \code{\link{plotLon}}
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @importFrom graphics layout
 ##' @export
@@ -14,6 +15,7 @@ plot.Animal <- function(x,...){
               do.call("plotMap",args)
               do.call("plotLat",args)
               do.call("plotLon",args)
+              invisible(x)
 }
 
 ##' Plotting a Movement object
@@ -22,6 +24,7 @@ plot.Animal <- function(x,...){
 ##' @param x Movement reference class object
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotLat}}, and \code{\link{plotLon}}
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @importFrom graphics layout
 ##' @export
@@ -32,6 +35,7 @@ plot.Movement <- function(x,...){
               do.call("plotMap",args)
               do.call("plotLat",args)
               do.call("plotLon",args)
+              invisible(x)
 }
 
 
@@ -41,6 +45,7 @@ plot.Movement <- function(x,...){
 ##' @param x Observation reference class object
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotLat}}, and \code{\link{plotLon}}
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @importFrom graphics layout
 ##' @export
@@ -51,4 +56,5 @@ plot.Observation <- function(x,...){
               do.call("plotMap",args)
               do.call("plotLat",args)
               do.call("plotLon",args)
+              invisible(x)
 }

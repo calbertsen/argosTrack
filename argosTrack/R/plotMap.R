@@ -5,6 +5,7 @@
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotMap,Animal-method}}, \code{\link{plotMap,Movement-method}}, \code{\link{plotMap,Observation-method}}
+##' @return Invisibly returns the reference class object
 #' @export
 #' @importFrom graphics plot
 setGeneric("plotMap",
@@ -23,6 +24,7 @@ setGeneric("plotMap",
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param ... additional arguments
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotMap,Movement-method}}, \code{\link{plotMap,Observation-method}}
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 setMethod("plotMap", "Animal",
           function(object, plotArgs = list(), args = list(lwd=3,col="red"),add=FALSE, obsArgs = list(pch=16), sdArgs = list(col = "grey", border=NA),   ...){
@@ -53,7 +55,7 @@ setMethod("plotMap", "Animal",
                   do.call("plot",plotArgs)
               }
               object$addToMapPlot(obsArgs,args)
-                            
+              invisible(object)  
           }
           )
 
@@ -65,6 +67,7 @@ setMethod("plotMap", "Animal",
 ##' @param add If FALSE a new plot window is created.
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotMap,Animal-method}}, \code{\link{plotMap,Observation-method}}
 ##' @author Christoffer Moesgaard Albertsen
 setMethod("plotMap", "Movement",
@@ -96,8 +99,7 @@ setMethod("plotMap", "Movement",
                   do.call("plot",plotArgs)
               }
               object$addToMapPlot(args)
-                            
-                            
+              invisible(object)
           }
           )
 
@@ -110,6 +112,7 @@ setMethod("plotMap", "Movement",
 ##' @param add If FALSE a new plot window is created.
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @seealso \code{\link{plotMap}}, \code{\link{plotMap,Animal-method}}, \code{\link{plotMap,Movement-method}}
 ##' @author Christoffer Moesgaard Albertsen
 setMethod("plotMap", "Observation",
@@ -141,8 +144,7 @@ setMethod("plotMap", "Observation",
                   do.call("plot",plotArgs)
               }
               object$addToMapPlot(args)
-                            
-                            
+              invisible(object)
           }
           )
 

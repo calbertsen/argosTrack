@@ -4,6 +4,7 @@
 ##' Generic function to fit movement models.
 ##' @param object The object to be fitted
 ##' @param ... Additional arguments passed to the appropriate method
+##' @return The optimization result
 ##' @seealso \code{\link{fitTrack,Animal-method}}
 #' @export
 setGeneric("fitTrack",
@@ -28,6 +29,7 @@ setGeneric("fitTrack",
 ##' @author Christoffer Moesgaard Albertsen
 ##'  @seealso \code{\link{fitTrack}}
 ##' @importFrom stats nlminb optimHess
+##' @importFrom TMB MakeADFun sdreport
 setMethod("fitTrack", "Animal",
           function(object,
                    method = c("laplace","mcmc"),

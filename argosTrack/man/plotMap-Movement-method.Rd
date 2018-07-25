@@ -22,6 +22,9 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Map plot for a Movement reference class object
 }

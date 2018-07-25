@@ -11,9 +11,12 @@ getTrack(object, ...)
 
 \item{...}{Additional arguments passed to the appropriate method}
 }
+\value{
+A data frame of positions
+}
 \description{
 Generic function to extract movement track.
 }
 \seealso{
-\code{\link{getTrack,Animal-method}}
+\code{\link{getTrack,Animal-method}} \code{\link{getTrack,Movement-method}} \code{\link{getTrack,Observation-method}}
 }

@@ -23,6 +23,9 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Longitude plot for a Movement reference class object
 }

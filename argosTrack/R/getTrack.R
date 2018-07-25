@@ -4,7 +4,8 @@
 ##' Generic function to extract movement track.
 ##' @param object The object from which to extract the track
 ##' @param ... Additional arguments passed to the appropriate method
-##' @seealso \code{\link{getTrack,Animal-method}}
+##' @return A data frame of positions
+##' @seealso \code{\link{getTrack,Animal-method}} \code{\link{getTrack,Movement-method}} \code{\link{getTrack,Observation-method}}
 ##' @export
 setGeneric("getTrack",
   function(object, ...)

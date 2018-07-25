@@ -5,6 +5,7 @@
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotLon,Animal-method}}, \code{\link{plotLon,Movement-method}}, \code{\link{plotLon,Observation-method}}
+##' @return Invisibly returns the reference class object
 ##' @export
 setGeneric("plotLon",
   function(object, ...)
@@ -23,6 +24,7 @@ setGeneric("plotLon",
 ##' @param sd Should standard errors be plotted?
 ##' @param ... additional arguments
 ##' @seealso \code{\link{plotLon}}, \code{\link{plotLon,Movement-method}}, \code{\link{plotLon,Observation-method}}
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 setMethod("plotLon", "Animal",
           function(object, plotArgs = list(), args = list(lwd=3,col="red"),add=FALSE, obsArgs = list(pch=16), sdArgs = list(col = "grey", border=NA), sd=FALSE,   ...){
@@ -51,7 +53,7 @@ setMethod("plotLon", "Animal",
                   do.call("plot",plotArgs)
               }
               object$addToLonPlot(obsArgs,args,sdArgs,sd)
-                            
+              invisible(object)  
           }
           )
 
@@ -65,6 +67,7 @@ setMethod("plotLon", "Animal",
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param sd Should standard errors be plotted?
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @seealso \code{\link{plotLon}}, \code{\link{plotLon,Animal-method}}, \code{\link{plotLon,Observation-method}}
 ##' @author Christoffer Moesgaard Albertsen
 setMethod("plotLon", "Movement",
@@ -93,7 +96,7 @@ setMethod("plotLon", "Movement",
               if(sd)
                   object$addToLonPlotSd(sdArgs)
               object$addToLonPlot(args)
-                            
+              invisible(object)
           }
           )
 
@@ -105,6 +108,7 @@ setMethod("plotLon", "Movement",
 ##' @param add If FALSE a new plot window is created.
 ##' @param ... additional arguments
 ##' @author Christoffer Moesgaard Albertsen
+##' @return Invisibly returns the reference class object
 ##'  @seealso \code{\link{plotLon}}, \code{\link{plotLon,Animal-method}}, \code{\link{plotLon,Movement-method}}
 setMethod("plotLon", "Observation",
           function(object, plotArgs = list(), args = list(),add=FALSE, ...){
@@ -130,6 +134,6 @@ setMethod("plotLon", "Observation",
                   do.call("plot",plotArgs)
               }
               object$addToLonPlot(args)
-                            
+              invisible(object)
           }
           )

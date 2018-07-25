@@ -11,7 +11,7 @@ License: GPL-2
 BugReports: https://github.com/calbertsen/argosTrack/issues
 LazyData: true
 Imports:
-    TMB, stats, methods, grDevices, graphics
+    TMB, stats, methods, grDevices, graphics, utils
 LinkingTo: TMB (>= 1.7.6), RcppEigen
 Suggests: knitr, rmarkdown, testthat, inline
 VignetteBuilder: knitr

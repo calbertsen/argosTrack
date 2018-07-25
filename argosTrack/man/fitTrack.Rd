@@ -11,6 +11,9 @@ fitTrack(object, ...)
 
 \item{...}{Additional arguments passed to the appropriate method}
 }
+\value{
+The optimization result
+}
 \description{
 Generic function to fit movement models.
 }

@@ -11,6 +11,9 @@
 
 \item{...}{other parameters to be passed through to plotting functions.}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Plots time \eqn{\times} latitude, time \eqn{\times} longitude and longitude \eqn{\times} latitude for an Animal reference class object.
 }

@@ -12,6 +12,9 @@ argosTrack(...)
 \arguments{
 \item{...}{Not used}
 }
+\value{
+Nothing
+}
 \description{
 These functions are provided to guide users from old versions of the package to the new functionality.
 }
