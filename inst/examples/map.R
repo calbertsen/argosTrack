@@ -15,7 +15,7 @@ obs <- Observation(lon = d$lon,
 anim <- Animal(name = as.character(d$id[1]),
                observation = obs,
                movement =  argosTrack:::RW(unique(obs$dates),
-                                 timeunit = "hour"),
+                                 timeunit = "hours"),
                measurement = Measurement(model="n"))
 fitTrack(anim, nlminb.control=list(iter.max=1000,eval.max=1000))
 
@@ -27,5 +27,6 @@ library(sp)
 data("countriesHigh", package = "rworldxtra")
 rng <- anim$getRange()
 plotMap(anim, args=list(type="n"), obsArgs = list(type="n"))
-plot(countriesHigh, add = TRUE, col="grey",border=NA)
+sp::plot(countriesHigh, add = TRUE, col="grey",border=NA)
 plotMap(anim,add=TRUE, obsArgs=list(pch=16,cex=0.5,col=rgb(0,0,1,0.3)))
+box()

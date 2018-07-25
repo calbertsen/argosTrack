@@ -13,9 +13,6 @@ This movement model extends \code{\link{CTCRW}} by having two velocity processes
 \describe{
 \item{\code{getTMBmap(...)}}{Function to return a map list for TMB::MakeADFun.}
 
-\item{\code{initialize(dates, pars = numeric(8), varPars = numeric(4),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \eqn{log(\beta_{1,lat})}, \eqn{log(\beta_{1,lon})}, \eqn{log(\beta_{2,lat})}, \eqn{log(\beta_{2,lon})}, \eqn{\gamma_{1,lat}}, \eqn{\gamma_{1,lon}}, \eqn{\gamma_{2,lat}}, \eqn{\gamma_{2,lon}}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{1,lat})}, \eqn{log(\sigma_{1,lon})}, \eqn{log(\sigma_{2,lat})}, \eqn{log(\sigma_{2,lon})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
 \item{\code{simulate(x0 = c(0, 0, 0, 0, 0, 0))}}{Function to simulate from the movement model. The initial states (latitudianl velocity 1, longitudinal velocity 1, latitudianl velocity 2, longitudinal velocity 2, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 

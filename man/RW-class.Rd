@@ -12,9 +12,6 @@ The reference class implements a Random Walk (e.g. Nielsen et al. 2006).
 \section{Methods}{
 
 \describe{
-\item{\code{initialize(dates, pars = numeric(0), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is zero length vector of the movement parameters; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{lat})}, \eqn{log(\sigma_{lon})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 

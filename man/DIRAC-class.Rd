@@ -14,9 +14,6 @@ The reference class implements a Dirac movement model with no movement
 \describe{
 \item{\code{getTMBmap(...)}}{Function to return a map list for TMB::MakeADFun.}
 
-\item{\code{initialize(dates, pars = numeric(2), varPars = numeric(0),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is a zero length vector of the movement parameters; 'varPars' is a zero length vector of movement variance parameters; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 

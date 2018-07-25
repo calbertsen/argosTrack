@@ -51,7 +51,7 @@ where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \
 
 \item{\code{getTMBmap(correlated = FALSE, useSpline = FALSE, fixcorrection = FALSE,
   usedLevels = c("GPS", "3", "2", "1", "0", "A", "B", "Z"),
-  numPerLevel = c())}}{Function to return a map list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
+  numPerLevel = c(), needExtraVarPar = FALSE)}}{Function to return a map list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 

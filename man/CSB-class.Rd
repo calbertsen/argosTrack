@@ -22,9 +22,6 @@ Here, \eqn{\Delta_t} is the length of the time steps and \eqn{\eta_{t}}, \eqn{\z
 \describe{
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun}
 
-\item{\code{initialize(dates, pars = numeric(2), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \eqn{log(\beta)}, \eqn{\gamma}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{S})}, \eqn{log(\sigma_{B})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 

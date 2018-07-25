@@ -13,8 +13,7 @@ Here, \eqn{\epsilon_t} is zero mean Gaussian noise with covariance \eqn{ \pmatri
 \section{Methods}{
 
 \describe{
-\item{\code{initialize(dates, pars = numeric(3), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and equidistant POSIXct dates; 'pars' is vector of the movement parameters: \eqn{logit_{(0,1)}(\gamma)}, \eqn{\phi}, \eqn{logit_{(-1,1)}(\rho)}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{lat})}, \eqn{log(\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
+\item{\code{getTMBmap(...)}}{Function to return a map list for TMB::MakeADFun.}
 
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}

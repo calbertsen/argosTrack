@@ -24,10 +24,7 @@ For \eqn{c\neq c'} and \eqn{t\neq t'}, \eqn{Cov\left(\eta_{c,t},\zeta_{c',t'}\ri
 \describe{
 \item{\code{getTMBmap(...)}}{Function to return a map list for TMB::MakeADFun.}
 
-\item{\code{initialize(dates, pars = numeric(4), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \eqn{log(\beta_{lat})}, \eqn{log(\beta_{lon})}, \eqn{\gamma_{lat}}, \eqn{\gamma_{lon}}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma_{lat})}, \eqn{log(\sigma_{lon})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
-\item{\code{simulate(x0 = c(0, 0, 0, 0))}}{Function to simulate from the movement model. The initial states (latitudianl velocity, longitudinal velocity, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
+\item{\code{simulate(x0 = c(0, 0, 0, 0))}}{Function to simulate from the movement model. The initial states (latitudianl velocity, longitudinal velocity, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
 \examples{

@@ -21,9 +21,6 @@ and the bearings are modelled by a wrapped Cauchy distribution with location par
 \describe{
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun}
 
-\item{\code{initialize(dates, pars = numeric(1), varPars = numeric(1),
-  nauticalStates = FALSE, timeunit = "hours")}}{Method to initialize the class. 'dates' is a vector of distinct and equidistant POSIXct dates; 'pars' is vector of the movement parameters: \eqn{log(\rho)}; 'varPars' is a vector of movement variance parameters: \eqn{log(\sigma)}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps.}
-
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
