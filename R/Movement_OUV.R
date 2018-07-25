@@ -20,6 +20,7 @@
 #' mov <- argosTrack:::OUV(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
 #' @keywords internal
+# nocov start
 OUV <- setRefClass("OUV",
                   contains = "Movement",
                   methods = list(
@@ -170,3 +171,4 @@ OUV <- setRefClass("OUV",
                   
                   )
                   )
+# nocov end

@@ -59,7 +59,7 @@ IDCRW <- setRefClass("IDCRW",
 ## initFields ##
 ################
                           
-                          initFields(model = "Irregularized Discrete Time Correlated Random Walk (IDTCRW)",
+                          initFields(model = "Irregularized first Differenced Correlated Random Walk (IDTCRW)",
                                      dates = dates,
                                      parameters = pars,
                                      varianceParameters = varPars,
@@ -80,7 +80,7 @@ IDCRW <- setRefClass("IDCRW",
                       },
                       simulate = function(x0 = c(0,0)){
                           "Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles."
-                          dt <- c(1,as.numeric(difftime(tail(.self$dates,-1),
+                          dt <- c(0,as.numeric(difftime(tail(.self$dates,-1),
                                                         head(.self$dates,-1),
                                                         units = .self$timeunit)))
                           gamma <- 1/(1+exp(-.self$parameters[1:2]))
@@ -94,14 +94,14 @@ IDCRW <- setRefClass("IDCRW",
 
                           Gth <- matrix(c(-log(gamma[1]),-phi,phi,-log(gamma[2])),2,2)
                          
-                          var <- function(dt){
+                          var <- function(dt,dtm){
                               ## var <- matrix(NA,2,2)
                               ## var[1,1] <- abs((1/2)*(cov[1,1]*cos(phi*dt)*sin(phi*dt)+cov[2,2]*cos(phi*dt)*sin(phi*dt)+cov[1,1]*phi*dt-cov[2,2]*phi*dt)/phi)
                               ## var[1,2] <- 0.0 ##-(1/2)*(cov[1,1]*cos(phi*dt)^2+cos(phi*dt)^2*cov[2,2]-2*cov[1,2]*phi*dt-cov[1,1]-cov[2,2])/phi
                               ## var[2,1] <- var[1,2]
                               ## var[2,2] <- abs((1/2)*(cov[1,1]*cos(phi*dt)*sin(phi*dt)+cov[2,2]*cos(phi*dt)*sin(phi*dt)-cov[1,1]*phi*dt+cov[2,2]*phi*dt)/phi)
                               ## var
-                              dt*dt*.Call("idtcrwVarMat",dt=dt,
+                              dt*dt*.Call("idtcrwVarMat",dt=dtm,
                                           gamma=gamma,
                                           phi=phi,
                                           rho=rho,
@@ -110,7 +110,7 @@ IDCRW <- setRefClass("IDCRW",
                           }
                           
                           state <- function(Xm,Xmm,dt,dtm){
-                              meGth <- Matrix::expm(-Gth*dt)
+                              meGth <- Matrix::expm(-Gth*dtm)
                               ##Xm + gamma * as.vector(meGth %*% (Xm-Xmm))
                               ## Need to calculate real integral of V
                               Xm + dt * (mupar + as.vector(meGth %*% ((Xm-Xmm)/dtm - mupar)))
@@ -126,7 +126,7 @@ IDCRW <- setRefClass("IDCRW",
                               mu0 <- state(X[,i-1],X[,i-2],dt[i],dt[i-1])
                               X[,i] <- rmvnorm(1,
                                                mu = mu0,
-                                               sigma = var(dt[i]))
+                                               sigma = var(dt[i],dt[i-1]))
                           }
                           return(X)
                       },
@@ -166,6 +166,11 @@ IDCRW <- setRefClass("IDCRW",
 
                           ## Always equal decay
                           ##doit <- TRUE
+                          if("equalvar" %in% names(args)) ## var
+                              if(args$equalvar){
+                                  map$logSdState <- factor(c(1,1))
+                              }
+                          
 
                           if(doit)
                               map$movePars <- factor(mpar)

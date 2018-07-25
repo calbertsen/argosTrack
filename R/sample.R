@@ -9,6 +9,7 @@
 ##' @return A n x length(mu) matrix of simulated values 
 ##' @author Christoffer Moesgaard Albertsen
 ##' @keywords internal
+##' @importFrom stats rnorm
 rmvnorm <- function(n, mu, sigma){
     if(!is.nummat(sigma))
         stop("sigma must be a numeric matrix.")
@@ -18,8 +19,12 @@ rmvnorm <- function(n, mu, sigma){
         stop("sigma must be a square matrix.")
     if(!is.samelength(sigma,mu))
         stop("mu and sigma must have compatible dimensions")
-    X <- .Call("rmvnorm",n=as.integer(n),mu=mu,sigma=sigma, PACKAGE = "argosTrack")
-    return(X)
+    ##X <- .Call("rmvnorm",n=as.integer(n),mu=mu,sigma=sigma, PACKAGE = "argosTrack")
+    Y <- matrix(stats::rnorm(n*length(mu)),length(mu),n)
+    L <- t(chol(sigma))
+    LY <- L %*% Y
+    X <- apply(LY,2,function(x)x+mu)
+    return(t(X))
 }
 
 
@@ -34,6 +39,7 @@ rmvnorm <- function(n, mu, sigma){
 ##' @return A n x length(mu) matrix of simulated values 
 ##' @author Christoffer Moesgaard Albertsen
 ##' @keywords internal
+##' @importFrom stats rchisq
 rmvt <- function(n, mu, sigma, df){
     if(!is.numsca(df))
         stop("df must be a scalar.")
@@ -45,7 +51,9 @@ rmvt <- function(n, mu, sigma, df){
         stop("sigma must be a square matrix.")
     if(!is.samelength(sigma,mu))
         stop("mu and sigma must have compatible dimensions")
-    X <- .Call("rmvt",n=as.integer(n),mu=mu,sigma=sigma,df=df, PACKAGE = "argosTrack")
+    ##X <- .Call("rmvt",n=as.integer(n),mu=mu,sigma=sigma,df=df, PACKAGE = "argosTrack")
+    W <- df / stats::rchisq(n,df)
+    X <- do.call("rbind",sapply(W,function(w) rmvnorm(1,mu,sigma*w),simplify=FALSE))
     return(X)
 }
 

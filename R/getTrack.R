@@ -18,6 +18,7 @@ setGeneric("getTrack",
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @return A data frame of positions
 ##' @author Christoffer Moesgaard Albertsen
+##' @method getTrack Animal
 setMethod("getTrack", "Animal",
           function(object,
                    ...){
@@ -38,6 +39,7 @@ setMethod("getTrack", "Animal",
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @return A data frame of positions
 ##' @author Christoffer Moesgaard Albertsen
+##' @method getTrack Movement
 setMethod("getTrack", "Movement",
           function(object,
                    ...){
@@ -60,6 +62,7 @@ setMethod("getTrack", "Movement",
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @return A data frame of positions
 ##' @author Christoffer Moesgaard Albertsen
+##' @method getTrack Observation
 setMethod("getTrack", "Observation",
           function(object,
                    ...){

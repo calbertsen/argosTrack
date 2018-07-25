@@ -50,6 +50,7 @@
 Measurement <- setRefClass("Measurement",
                            fields = c(model = "character",
                                       logSdObs = "numeric",
+                                      logSdObsExtra = "numeric",
                                       corObs = "numeric",
                                       logCorrection = "matrix",
                                       vcov = "matrix",
@@ -129,6 +130,7 @@ Measurement <- setRefClass("Measurement",
                                    
                                    initFields(model = modelIn,
                                               logSdObs = logSdObs,
+                                              logSdObsExtra = 0,
                                               corObs = corObs,
                                               logCorrection = logCorrection,
                                               vcov = diag(Inf,0),
@@ -157,7 +159,8 @@ Measurement <- setRefClass("Measurement",
                                },
                               getTMBparameters = function(){
                                   "Function to return a parameter list for TMB::MakeADFun. Intended to be called from an Animal reference class object."
-                                   pars <- list(logSdObs = .self$logSdObs,
+                                  pars <- list(logSdObs = .self$logSdObs,
+                                               logSdObsExtra = .self$logSdObsExtra,
                                                 logCorrection = .self$logCorrection,
                                                 splineXlogSd = .self$splineXlogSd,
                                                 knotPars = .self$knotPars,
@@ -169,7 +172,8 @@ Measurement <- setRefClass("Measurement",
                                                     useSpline = FALSE,
                                                     fixcorrection = FALSE,
                                                     usedLevels = c("GPS","3", "2", "1", "0", "A", "B","Z"),
-                                                    numPerLevel = c()){
+                                                    numPerLevel = c(),
+                                                    needExtraVarPar = FALSE){
                                    "Function to return a map list for TMB::MakeADFun. Intended to be called from an Animal reference class object."
                                    argosClasses <- c("GPS","3", "2", "1", "0", "A", "B","Z")
                                    map <- list()
@@ -195,7 +199,9 @@ Measurement <- setRefClass("Measurement",
                                        }
 
                                    }
-
+                                   if(!needExtraVarPar)
+                                       map$logSdObsExtra <- factor(NA)
+                                   
                                    if(!useSpline){
                                        map$splineXlogSd <- factor(NA)
                                        map$knotPars <- factor(rep(NA,length(.self$knotPars)))

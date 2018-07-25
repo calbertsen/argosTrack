@@ -26,6 +26,7 @@
 #' @importFrom methods setRefClass new
 #' @importFrom stats rnorm
 #' @keywords internal
+# nocov start
 CSB <- setRefClass("CSB",
                   contains = "Movement",
                   methods = list(
@@ -126,3 +127,4 @@ CSB <- setRefClass("CSB",
                                        
                   )
                   )
+# nocov end

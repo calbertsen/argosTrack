@@ -13,6 +13,7 @@
 #' 
 #' @importFrom methods setRefClass new
 #' @keywords internal
+# nocov start
 MPCTCRW <- setRefClass("MPCTCRW",
                   contains = "Movement",
                   methods = list(
@@ -159,3 +160,4 @@ MPCTCRW <- setRefClass("MPCTCRW",
                   
                   )
                   )
+# nocov end

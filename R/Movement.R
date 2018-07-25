@@ -50,7 +50,7 @@ Movement <- setRefClass("Movement",
                             },
                             getTMBdata = function(){
                                 "Function to return a data list for TMB::MakeADFun"
-                                dat <- list(dtStates =  c(NA,
+                                dat <- list(dtStates =  c(0,
                                                           as.numeric(difftime(tail(.self$dates,-1),
                                                                               head(.self$dates,-1),
                                                                               units=.self$timeunit)

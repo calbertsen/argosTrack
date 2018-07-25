@@ -148,6 +148,12 @@ CTCRW <- setRefClass("CTCRW",
                                   doit <- TRUE
                               }
 
+                          if("equalvar" %in% names(args)) ## var
+                              if(args$equalvar){
+                                  map$logSdState <- factor(c(1,1))
+                              }
+                          
+
                           if(doit)
                               map$movePars <- factor(mpar)
 

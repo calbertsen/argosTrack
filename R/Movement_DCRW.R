@@ -48,7 +48,7 @@ DCRW <- setRefClass("DCRW",
                           dt0 <- as.numeric(difftime(tail(dates,-1),
                                                      head(dates,-1),
                                                      units = timeunit))
-                          if(!(all(round(dt0,10) == round(dt0[1],10))))
+                          if(!(all(round(dt0,7) == round(dt0[1],7))))
                               stop("Dates must be equidistant.")
                           if(!(length(pars)==3 && is.numvec(pars)))
                               stop("pars must be a numeric vector of length 3.")
@@ -62,7 +62,7 @@ DCRW <- setRefClass("DCRW",
 ## initFields ##
 ################
                           
-                          initFields(model = "Discrete Time Correlated Random Walk (DTCRW)",
+                          initFields(model = "first Differenced Correlated Random Walk (DCRW)",
                                      dates = dates,
                                      parameters = pars,
                                      varianceParameters = varPars,
@@ -105,6 +105,40 @@ DCRW <- setRefClass("DCRW",
                                                sigma = cov)
                           }
                           return(X)
+                      },
+                      getTMBmap = function(...){
+                          "Function to create map list for TMB::MakeADFun. If equaldecay=TRUE, \\eqn{\\gamma_1} and \\eqn{\\gamma_2} are estimated as equal. If equaldecay=TRUE, \\eqn{\\mu_1} and \\eqn{\\mu_2} are estimated as equal. If fixdrift=TRUE, \\eqn{\\mu_1} and \\eqn{\\mu_2} are fixed at the current value."
+                          
+                          map <- callSuper(...)
+                          args <- list(...)
+                          mpar <- 1:3
+                          doit <- FALSE
+
+                           if("fixrotation" %in% names(args)) ## phi
+                              if(args$fixrotation){
+                                  mpar[2] <- NA;
+                                  doit <- TRUE
+                              }
+                          if("fixmovecor" %in% names(args)) ## rho
+                              if(args$fixmovecor){
+                                  mpar[3] <- NA;
+                                  doit <- TRUE
+                              }
+
+                          if("equalvar" %in% names(args)) ## var
+                              if(args$equalvar){
+                                  map$logSdState <- factor(c(1,1))
+                              }
+                          
+
+                          ## Always equal decay
+                          ##doit <- TRUE
+
+                          if(doit)
+                              map$movePars <- factor(mpar)
+
+                          return(map)
+                          
                       }
 
                   

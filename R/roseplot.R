@@ -1,3 +1,23 @@
+
+
+gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
+shortfrac <- Vectorize(
+    function(x,y,txt){  
+        if(x==y)
+            return(substitute(expression(d),list(d=as.symbol(txt))))
+        v <- x/y
+        if(round(v)==v){
+            return(substitute(expression(a*d),list(a=v,d=as.symbol(txt))))
+        }
+        v <- gcd(x,y)
+        x <- x/v
+        y <- y/v
+        if(x==1)
+            return(substitute(expression(frac(d,b)),list(b=y,d=as.symbol(txt))))
+        return(substitute(expression(frac(a,b)*d),list(a=x,b=y,d=as.symbol(txt))))
+    })
+
+
 ##' Roseplot / radar histogram
 ##' @title Roseplot / radar histogram
 ##' @param x Vector of values
@@ -12,24 +32,7 @@
 ##' @importFrom graphics hist lines text polygon segments
 ##'
 ##' 
-.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "", ...){
-
-    gcd <- function(a,b) ifelse (b==0, a, gcd(b, a %% b)) 
-    shortfrac <- Vectorize(
-        function(x,y,txt){  
-            if(x==y)
-                return(substitute(expression(d),list(d=as.symbol(txt))))
-            v <- x/y
-            if(round(v)==v){
-                return(substitute(expression(a*d),list(a=v,d=as.symbol(txt))))
-            }
-            v <- gcd(x,y)
-            x <- x/v
-            y <- y/v
-            if(x==1)
-                return(substitute(expression(frac(d,b)),list(b=y,d=as.symbol(txt))))
-            return(substitute(expression(frac(a,b)*d),list(a=x,b=y,d=as.symbol(txt))))
-    })
+.roseplot <- function(x, breaks = "Sturges", prob=TRUE, main = NULL, xlab = "",showAllPi = TRUE, ...){
     
     if(breaks == "Sturges"){    
         nbrk <- grDevices::nclass.Sturges(x)
@@ -47,8 +50,12 @@
     h <- graphics::hist(x %% (2 * pi),
               breaks = seq(0, 2 * pi, len = nbrk),
               plot = FALSE)
-    vals <- if(prob){h$density}else{h$counts}
-
+    if(prob){
+        vals <- h$density
+    }else{
+        vals <- h$counts
+    }
+    
     slices <- lapply(as.list(1:length(vals)),
                      function(i)complex(argument=c(0,
                                             seq(h$breaks[i],
@@ -80,7 +87,7 @@
              col="grey")
     a <- lapply(slices,function(x)graphics::polygon(x,...))
 
-    nlabs <- 7
+    nlabs <- ifelse(showAllPi,7,1)
     labval <- cbind(1:nlabs,(nlabs+1)/2)
     
     pos <- cbind(1.05*mshw*cos(seq(0,2*pi,len=nlabs+2)[-1]),

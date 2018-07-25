@@ -122,6 +122,7 @@ Animal <- setRefClass("Animal",
                       getTMBmap = function(fixcorrection = FALSE,...){
                           "Function to return a map list for TMB::MakeADFun. If fixcorrection = TRUE, the ratio between measurement errors for argos data is fixed."
                           useSpline <- any(.self$observation$varModelCode == 2)
+                          needExtraVarPar <- any(.self$observation$varModelCode == 3)
                           numPrClass <- table(.self$observation$qual[.self$observation$varModelCode == 0])
                           usedLevels <- names(numPrClass)
                           om <- .self$observation$getTMBmap(...)
@@ -130,7 +131,8 @@ Animal <- setRefClass("Animal",
                                                              useSpline = useSpline,
                                                              fixcorrection = fixcorrection,
                                                              usedLevels = usedLevels,
-                                                             numPerLevel = numPrClass)
+                                                             numPerLevel = numPrClass,
+                                                             needExtraVarPar = needExtraVarPar)
                           return(c(om,mvm,mem))
                       },
                       updateFromFit = function(opt){

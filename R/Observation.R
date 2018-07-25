@@ -134,7 +134,8 @@ Observation <- setRefClass("Observation",
                                    argosClasses <- c("GPS","3", "2", "1", "0", "A", "B","Z")
 
                                    varModelCodeIn <- ifelse(locationclass=="K",1L,
-                                                   ifelse(locationclass=="S", 2L,0L))
+                                                     ifelse(locationclass=="S", 2L,
+                                                     ifelse(locationclass=="A", 3L, 0L)))
                                    dayOfYearIn <- as.numeric(strftime(dates,"%j"))
 
 
@@ -186,6 +187,7 @@ Observation <- setRefClass("Observation",
                           lc <- as.character(.self$qual)
                           lc[.self$varModelCode == 1] <- "K"
                           lc[.self$varModelCode == 2] <- "S"
+                          lc[.self$varModelCode == 3] <- "A"
                           return(lc)
                       },
                       show = function(){
