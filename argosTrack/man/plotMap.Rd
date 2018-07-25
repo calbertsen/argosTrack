@@ -11,6 +11,9 @@ plotMap(object, ...)
 
 \item{...}{other parameters to be passed through to plotting functions.}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Generic map plot
 }

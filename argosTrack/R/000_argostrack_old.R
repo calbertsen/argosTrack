@@ -6,6 +6,7 @@
 #' @param ... Not used
 #' @aliases argosTrack
 #' @docType package
+#' @return Nothing 
 #' @section argosTrack function:
 #' The argosTrack function is replaced by a combination of functions. To achieve the similar results as the old function call,
 #'\preformatted{

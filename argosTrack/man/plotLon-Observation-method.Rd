@@ -19,10 +19,13 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Invisibly returns the reference class object
+ @seealso \code{\link{plotLon}}, \code{\link{plotLon,Animal-method}}, \code{\link{plotLon,Movement-method}}
+}
 \description{
 Longitude plot for an Observation reference class object
 }
 \author{
 Christoffer Moesgaard Albertsen
- @seealso \code{\link{plotLon}}, \code{\link{plotLon,Animal-method}}, \code{\link{plotLon,Movement-method}}
 }

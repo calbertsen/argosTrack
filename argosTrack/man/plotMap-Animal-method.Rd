@@ -24,6 +24,9 @@
 
 \item{...}{additional arguments}
 }
+\value{
+Invisibly returns the reference class object
+}
 \description{
 Map plot for an Animal reference class object
 }

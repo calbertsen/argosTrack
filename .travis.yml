@@ -1,11 +1,11 @@
 language: r
+
+sudo: required
+
 r:
   - oldrel
   - release
   - devel
-
-cache: packages
-
 
 os:
   - linux
@@ -14,32 +14,20 @@ os:
 env:
   global:
     - OS=$(uname -s)
-    - NOT_CRAN=false
-
-matrix:
-  exclude:
-  - r: devel
-    os: osx
-
-r_check_args: --as-cran --no-vignettes --no-build-vignettes
-
-r_packages:
-  - RcppEigen
-  - TMB
-  - Matrix
-  - knitr
-  - rmarkdown
 
 
-after_failure:
-  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
-  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
-  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
-  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
-  - ./travis-tool.sh dump_logs
+install:
+  - R -e 'install.packages(c("roxygen2"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
+  - make install_dependencies 
+
+script:
+  - make check
+  - make test
 
 after_success:
-  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
-  - if [ ${OS} = Darwin ]; then cat /Users/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
-  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00check.log; fi
-  - if [ ${OS} != Darwin ]; then cat /home/travis/build/calbertsen/argosTrack/argosTrack.Rcheck/00install.out; fi
+  - cat argosTrack.Rcheck/00check.log
+  - cat argosTrack.Rcheck/00install.out
+
+after_failure:
+  - cat argosTrack.Rcheck/00check.log
+  - cat argosTrack.Rcheck/00install.out

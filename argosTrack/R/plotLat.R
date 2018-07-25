@@ -5,6 +5,7 @@
 ##' @param ... other parameters to be passed through to plotting functions.
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotLat,Animal-method}}, \code{\link{plotLat,Movement-method}}, \code{\link{plotLat,Observation-method}}
+##' @return Invisibly returns the reference class object
 ##' @export
 setGeneric("plotLat",
   function(object, ...)
@@ -21,6 +22,7 @@ setGeneric("plotLat",
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param sd Should standard errors be plotted?
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotLat}}, \code{\link{plotLat,Movement-method}}, \code{\link{plotLat,Observation-method}}
 setMethod("plotLat", "Animal",
@@ -50,7 +52,7 @@ setMethod("plotLat", "Animal",
                   do.call("plot",plotArgs)
               }
               object$addToLatPlot(obsArgs,args,sdArgs,sd)
-                            
+              invisible(object)  
           }
           )
 
@@ -64,6 +66,7 @@ setMethod("plotLat", "Animal",
 ##' @param sdArgs Arguments for plotting standard errors.
 ##' @param sd Should standard errors be plotted?
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotLat}}, \code{\link{plotLat,Animal-method}}, \code{\link{plotLat,Observation-method}}
 setMethod("plotLat", "Movement",
@@ -92,7 +95,7 @@ setMethod("plotLat", "Movement",
               if(sd)
                   object$addToLatPlotSd(sdArgs)
               object$addToLatPlot(args)
-                            
+              invisible(object)  
           }
           )
 
@@ -104,6 +107,7 @@ setMethod("plotLat", "Movement",
 ##' @param args Arguments for plotting latitude observation data.
 ##' @param add If FALSE a new plot window is created.
 ##' @param ... additional arguments
+##' @return Invisibly returns the reference class object
 ##' @author Christoffer Moesgaard Albertsen
 ##' @seealso \code{\link{plotLat}}, \code{\link{plotLat,Animal-method}}, \code{\link{plotLat,Movement-method}}
 setMethod("plotLat", "Observation",
@@ -130,6 +134,6 @@ setMethod("plotLat", "Observation",
                   do.call("plot",plotArgs)
               }
               object$addToLatPlot(args)
-                            
+              invisible(object)
           }
           )
