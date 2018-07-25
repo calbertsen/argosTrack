@@ -25,8 +25,8 @@ vector<Type> n2ll(Type x, Type y){
 // Export to R
 extern "C" {
   SEXP ll2n(SEXP lon, SEXP lat){
-    if(!(isNumeric(lon) && length(lon)==1))error("lon must be a numeric of length 1");
-    if(!(isNumeric(lat) && length(lat)==1))error("lat must be a numeric of length 1");
+    if(!(isNumeric(lon) && Rf_length(lon)==1))error("lon must be a numeric of length 1");
+    if(!(isNumeric(lat) && Rf_length(lat)==1))error("lat must be a numeric of length 1");
     vector<double> res = ll2n(REAL(lon)[0],REAL(lat)[0]);
     SEXP ress = PROTECT(allocVector(REALSXP,res.size()));
     for(int i = 0; i < res.size(); ++i)
@@ -35,8 +35,8 @@ extern "C" {
     return ress;
   }
   SEXP n2ll(SEXP x, SEXP y){
-    if(!(isNumeric(x) && length(x)==1))error("x must be a numeric of length 1");
-    if(!(isNumeric(y) && length(y)==1))error("y must be a numeric of length 1");
+    if(!(isNumeric(x) && Rf_length(x)==1))error("x must be a numeric of length 1");
+    if(!(isNumeric(y) && Rf_length(y)==1))error("y must be a numeric of length 1");
     vector<double> res = n2ll(REAL(x)[0],REAL(y)[0]);
     SEXP ress = PROTECT(allocVector(REALSXP,res.size()));
     for(int i = 0; i < res.size(); ++i)
