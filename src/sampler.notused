@@ -1,3 +1,4 @@
+#include <Eigen/Dense>
 #include <Eigen/Cholesky>
 #include <R.h>
 #include <Rmath.h>
@@ -112,16 +113,23 @@ MatrixXd rmvnorm(int n,VectorXd mu, MatrixXd sigma){
   LLT<MatrixXd> llt(sigma);
   MatrixXd L = llt.matrixL();
   MatrixXd Y(sigma.cols(),n);
+  Y.setZero();
   GetRNGstate();
   for(int j = 0; j < Y.rows(); ++j)
     for(int i = 0; i < Y.cols(); ++i){
       Y(j,i) = norm_rand();
     }
   PutRNGstate();
-  
-  MatrixXd X = (L*Y).transpose();
+
+  MatrixXd LY(L.rows(),n);
+  LY.setZero();
+  LY.noalias() += L*Y;
+  MatrixXd X = LY; //(LY.cols(),LY.rows());
+  //X.noalias() = LY.transpose();
   for(int i = 0; i < X.rows(); ++i){
-    X.row(i) += mu;
+    for(int j = 0; j < X.cols(); ++j){
+      X(i,j) += mu(i);
+    }
   }
   return X;
 }
@@ -202,7 +210,7 @@ extern "C" {
     int nn = asInteger(n);
     VectorXd prob = asVector(probs);
     VectorXi X = rcategory(nn,prob);
-return asSEXP(X);
+    return asSEXP(X);
   }
 }
 
@@ -251,15 +259,22 @@ MatrixXd rmvt(int n,VectorXd mu, MatrixXd sigma, double df){
     for(int i = 0; i < Y.cols(); ++i){
       Y(j,i) = norm_rand();
     }
+  }  
+  //MatrixXd X = (L*Y).transpose();
+  MatrixXd LY(L.rows(),n);
+  LY.setZero();
+  LY.noalias() += L*Y;
+  MatrixXd X = LY;//(LY.cols(),LY.rows());
+  //X = LY.transpose();
+
+  for(int j = 0; j < X.cols(); ++j){
+    double W = df / Rf_rchisq(df);
+    for(int i = 0; i < X.rows(); ++i){
+      X(i,j) *= sqrt(W);
+      X(i,j) += mu(i);
+    }
   }
   PutRNGstate();
-  
-  MatrixXd X = (L*Y).transpose();
-  for(int i = 0; i < X.rows(); ++i){
-    double W = df / Rf_rchisq(df);
-    X.row(i) *= sqrt(W);
-    X.row(i) += mu;
-  }
   return X;
 }
 

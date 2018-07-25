@@ -15,5 +15,4 @@ Type nll_csb(Type st, Type stm, Type phit, Type phitm, Type beta, Type gamma, Ty
   return res;
 }
 
-
 #endif

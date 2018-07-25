@@ -20,7 +20,7 @@ Type nll_idtcrw(vector<Type> mut, vector<Type> mutm, vector<Type> mutmm, Type dt
   Gth(0,1) = phi;
   Gth(1,0) = -phi;
 
-  matrix<Type> meGth = expm((matrix<Type>)(-Gth * dt));
+  matrix<Type> meGth = expm((matrix<Type>)(-Gth * dtm));
   // Needs the real integral
   vector<Type> state = mut - (mutm + dt*(mupar + (vector<Type>)(meGth * ((mutm - mutmm)/dtm - mupar).matrix())));
 

@@ -58,6 +58,7 @@ Type objective_function<Type>::operator() ()
 
   // Measurement related  
   PARAMETER_VECTOR(logSdObs);
+  PARAMETER(logSdObsExtra);
   PARAMETER_MATRIX(logCorrection);
   PARAMETER(splineXlogSd);
   PARAMETER_VECTOR(knotPars);
@@ -201,14 +202,14 @@ Type objective_function<Type>::operator() ()
 		       varState);
       break;
     case 2:			// Mixed memory Continuous Time Correlated Random Walk on lat+lon
-      nll += nll_mpctcrw((vector<Type>)mu.col(i),
-			 (vector<Type>)mu.col(i-1),
-			 (vector<Type>)vel.col(i),
-			 (vector<Type>)vel.col(i-1),
-			 dtStates(i),
-			 exp((vector<Type>)movePars.segment(0,4)),
-			 (vector<Type>)movePars.segment(4,4),
-			 varState);
+      // nll += nll_mpctcrw((vector<Type>)mu.col(i),
+      // 			 (vector<Type>)mu.col(i-1),
+      // 			 (vector<Type>)vel.col(i),
+      // 			 (vector<Type>)vel.col(i-1),
+      // 			 dtStates(i),
+      // 			 exp((vector<Type>)movePars.segment(0,4)),
+      // 			 (vector<Type>)movePars.segment(4,4),
+      // 			 varState);
       break;
     case 3:			// Discrete time correlated random walk on lat+lon
       if(i == 1){
@@ -267,44 +268,44 @@ Type objective_function<Type>::operator() ()
       }
       break;
     case 7: 			// Ornstein-Uhlenbeck Location
-      nll += nll_oul((vector<Type>)mu.col(i),
-		       (vector<Type>)mu.col(i-1),
-		       dtStates(i),
-		       (vector<Type>)movePars.segment(0,4),
-		       (vector<Type>)movePars.segment(4,2),
-		       varState);
+      // nll += nll_oul((vector<Type>)mu.col(i),
+      // 		       (vector<Type>)mu.col(i-1),
+      // 		       dtStates(i),
+      // 		       (vector<Type>)movePars.segment(0,4),
+      // 		       (vector<Type>)movePars.segment(4,2),
+      // 		       varState);
       break;
     case 8:			// Ornstein-Uhlenbeck Velocity
-      if(i == 1){
-	nll += nll_ouv1((vector<Type>)mu.col(i),
-			   (vector<Type>)mu.col(i-1),
-			   dtStates(i),
-			   (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
-			   Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
-			   (vector<Type>)movePars.segment(5,2),
-			   varState);
-      }else{
-	nll += nll_ouv((vector<Type>)mu.col(i),
-		       (vector<Type>)mu.col(i-1),
-		       (vector<Type>)mu.col(i-2),
-		       dtStates(i),
-		       dtStates(i-1),
-		       (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
-		       Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
-		       (vector<Type>)movePars.segment(5,2),
-		       varState);
-      }
+      // if(i == 1){
+      // 	nll += nll_ouv1((vector<Type>)mu.col(i),
+      // 			   (vector<Type>)mu.col(i-1),
+      // 			   dtStates(i),
+      // 			   (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
+      // 			   Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
+      // 			   (vector<Type>)movePars.segment(5,2),
+      // 			   varState);
+      // }else{
+      // 	nll += nll_ouv((vector<Type>)mu.col(i),
+      // 		       (vector<Type>)mu.col(i-1),
+      // 		       (vector<Type>)mu.col(i-2),
+      // 		       dtStates(i),
+      // 		       dtStates(i-1),
+      // 		       (vector<Type>)(Type(1.0)/(Type(1.0)+exp(-movePars.segment(0,4)))),
+      // 		       Type(2.0)/(Type(1.0)+exp(-movePars(4))) - Type(1.0),
+      // 		       (vector<Type>)movePars.segment(5,2),
+      // 		       varState);
+      // }
       break;
     case 9:
-      nll += nll_csb(stepLengths(i),
-		     stepLengths(i-1),
-		     bearings(i),
-		     bearings(i-1),
-		     exp(movePars(0)),
-		     exp(movePars(1)),
-		     sqrt(varState(0)),
-		     sqrt(varState(1)),
-		     dtStates(i));
+      // nll += nll_csb(stepLengths(i),
+      // 		     stepLengths(i-1),
+      // 		     bearings(i),
+      // 		     bearings(i-1),
+      // 		     exp(movePars(0)),
+      // 		     exp(movePars(1)),
+      // 		     sqrt(varState(0)),
+      // 		     sqrt(varState(1)),
+      // 		     dtStates(i));
       break;
     case 10:
       
@@ -356,6 +357,9 @@ Type objective_function<Type>::operator() ()
       break;
     case 2:			// Geolocation data
       nll_dist_geoloc.setSigma(convenience::geolocVarMat(exp(splineXlogSd), dayOfYear(i), logSplLat));
+      nll += nll_dist_geoloc(obs)*include(i)*klon(i)*klat(i);
+    case 3:
+      nll_dist_geoloc.setSigma(convenience::geolocVarMatFormula(exp(logSdObs(0)), dayOfYear(i), exp(logSdObs(1)), logSdObsExtra));
       nll += nll_dist_geoloc(obs)*include(i)*klon(i)*klat(i);
       break;
     }

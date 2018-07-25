@@ -1,7 +1,6 @@
 #define WITH_LIBTMB
 #include <TMB.hpp>
 
-
 #include <R.h>
 #include <Rmath.h>
 #include <Rinternals.h>
@@ -11,13 +10,13 @@
 extern "C" {
 
   // Sample
-  SEXP rmvnorm(SEXP n,SEXP mu, SEXP sigma);
-  SEXP rmvlnorm(SEXP n,SEXP logmu, SEXP sigma);
-  SEXP rlogistic(SEXP n,SEXP logimu, SEXP sigma);
-  SEXP rcategory(SEXP n,SEXP probs);
-  SEXP rmvgaussmix(SEXP n, SEXP mu, SEXP sigma, SEXP alpha);
-  SEXP rmvt(SEXP n,SEXP mu, SEXP sigma, SEXP df);
-  SEXP rgig(SEXP n,SEXP lambda, SEXP a, SEXP b);
+  // SEXP rmvnorm(SEXP n,SEXP mu, SEXP sigma);
+  // SEXP rmvlnorm(SEXP n,SEXP logmu, SEXP sigma);
+  // SEXP rlogistic(SEXP n,SEXP logimu, SEXP sigma);
+  // SEXP rcategory(SEXP n,SEXP probs);
+  // SEXP rmvgaussmix(SEXP n, SEXP mu, SEXP sigma, SEXP alpha);
+  // SEXP rmvt(SEXP n,SEXP mu, SEXP sigma, SEXP df);
+  // SEXP rgig(SEXP n,SEXP lambda, SEXP a, SEXP b);
 
   // Convenience
   SEXP ll2n(SEXP lon, SEXP lat);
@@ -47,13 +46,13 @@ extern "C" {
     CALLDEF(TMBconfig, 2),
     #endif
     
-    CALLDEF(rmvnorm,3),
-    CALLDEF(rmvlnorm,3),
-    CALLDEF(rlogistic,3),
-    CALLDEF(rcategory,2),
-    CALLDEF(rmvgaussmix,4),
-    CALLDEF(rmvt,4),
-    CALLDEF(rgig,4),
+    // CALLDEF(rmvnorm,3),
+    // CALLDEF(rmvlnorm,3),
+    // CALLDEF(rlogistic,3),
+    // CALLDEF(rcategory,2),
+    // CALLDEF(rmvgaussmix,4),
+    // CALLDEF(rmvt,4),
+    // CALLDEF(rgig,4),
     CALLDEF(ll2n,2),
     CALLDEF(n2ll,2),
     CALLDEF(idtcrwVarMat,5),

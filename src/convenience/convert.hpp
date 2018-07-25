@@ -20,11 +20,11 @@ double asDouble(SEXP x){
 }
 
 
-int asInteger(SEXP x){
-  if(!(isInteger(x) && length(x)==1))
-    Rf_error("Element must be an integer vector of length 1");
-  return INTEGER(x)[0];
-}
+// int asInteger(SEXP x){
+//   if(!(isInteger(x) && length(x)==1))
+//     Rf_error("Element must be an integer vector of length 1");
+//   return INTEGER(x)[0];
+// }
 
 bool asBool(SEXP x){
   return LOGICAL(x)[0];
