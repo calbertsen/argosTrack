@@ -1,5 +1,6 @@
 
 run_tests <- function(package,dir){
+    library(package)
     env <- new.env(parent = getNamespace(package))
     setPackageName(paste(package,as.character(Sys.time()),sep="-"),env)
     sys.source(file.path(dir,"000-testing_functions.R"),env, keep.source = TRUE)

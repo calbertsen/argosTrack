@@ -8,16 +8,16 @@ doc:
 	rm -f ${PACKAGE}/src/*.so
 	$(R) -q -e 'devtools::document("${PACKAGE}")'
 
-build: doc
+build: 
 	@echo "\033[0;32mBuilding package\033[0;0m"
 	$(R) CMD build ${PACKAGE}
 
-check: doc build
+check: build
 	@echo "\033[0;32mChecking package as cran\033[0;0m"
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	$(R) CMD check --as-cran ${PACKAGE}_${VERSION}.tar.gz
 
-checkquick: doc build
+checkquick: build
 	@echo "\033[0;32mChecking package as cran (no vignette) \033[0;0m"
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	$(R) CMD check --as-cran --no-vignettes --no-build-vignettes ${PACKAGE}_${VERSION}.tar.gz
@@ -52,7 +52,7 @@ testquick:
 
 coverage:
 	@echo "\033[0;32mChecking code coverage for all tests\033[0;0m"
-	@RUN_ALL_TESTS=true $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
+	@RUN_ALL_TESTS=true $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
 
 coveragequick:
 	@echo "\033[0;32mChecking code coverage for quick tests\033[0;0m"
