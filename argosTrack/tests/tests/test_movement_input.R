@@ -1,12 +1,11 @@
 
 
-context("Movement abstract class")
+#### Movement abstract class
 
-test_that("Movement class fails to be constructed",
-{
-    expect_error(Movement())
-    expect_error(Movement(as.POSIXct("2017-01-01 00:00:00")))
-})
+## Movement class fails to be constructed
+gives_error(Movement())
+gives_error(Movement(as.POSIXct("2017-01-01 00:00:00")))
+
 
 
 for(mm in moveNamesUse)
