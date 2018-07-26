@@ -22,7 +22,7 @@ install:
 
 script:
   - make check
-  - make test
+  - make testquick
 
 after_success:
   - cat argosTrack.Rcheck/00check.log

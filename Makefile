@@ -12,16 +12,12 @@ build: doc
 	@echo "\033[0;32mBuilding package\033[0;0m"
 	$(R) CMD build ${PACKAGE}
 
-buildquick: doc
-	@echo "\033[0;32mBuilding package (no vignette)\033[0;0m"
-	$(R) CMD build --no-build-vignettes ${PACKAGE}
-
 check: doc build
 	@echo "\033[0;32mChecking package as cran\033[0;0m"
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	$(R) CMD check --as-cran ${PACKAGE}_${VERSION}.tar.gz
 
-checkquick: doc buildquick
+checkquick: doc build
 	@echo "\033[0;32mChecking package as cran (no vignette) \033[0;0m"
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	$(R) CMD check --as-cran --no-vignettes --no-build-vignettes ${PACKAGE}_${VERSION}.tar.gz
@@ -47,20 +43,20 @@ install_bc:
 	$(R) -q -e 'if (!"BiocManager" %in% rownames(installed.packages())) install.packages("BiocManager"); BiocManager::install("BiocCheck")'
 
 test:
-	@echo "\033[0;31mRunning all tests\033[0;0m"
-	NOT_CRAN=true $(R) -q -e 'testthat::test_("${PACKAGE}")'
+	@echo "\033[0;32mRunning all tests\033[0;0m"
+	@RUN_ALL_TESTS=true $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
 
 testquick:
-	@echo "\033[0;31mRunning all tests\033[0;0m"
-	$(R) -q -e 'testthat::test_("${PACKAGE}")'
+	@echo "\033[0;32mRunning almost all tests\033[0;0m"
+	@RUN_ALL_TESTS=false $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
 
 coverage:
-	@echo "\033[0;31mChecking code coverage\033[0;0m"
-	NOT_CRAN=true $(R) -q -e 'aa<-covr::package_coverage("${PACKAGE}"); report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
+	@echo "\033[0;32mChecking code coverage for all tests\033[0;0m"
+	@RUN_ALL_TESTS=true $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
 
 coveragequick:
-	@echo "\033[0;31mChecking code coverage\033[0;0m"
-	$(R) -q -e 'aa<-covr::package_coverage("${PACKAGE}"); report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
+	@echo "\033[0;32mChecking code coverage for quick tests\033[0;0m"
+	@RUN_ALL_TESTS=false $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
 
 clean:
 	@echo "\033[0;32mCleaning directory\033[0;0m"

@@ -1,5 +1,7 @@
-inst/doc
-libs/
-src/*.so
-src/*.o
+*/inst/doc
+*/libs/
+*/src/*.so
+*/src/*.o
 .Rhistory
+*.Rcheck
+*.tar.gz
