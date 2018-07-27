@@ -17,7 +17,7 @@ env:
 
 
 install:
-  - R -e 'install.packages(c("roxygen2"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
+  - R -e 'install.packages(c("roxygen2","TMB"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
   - make install_dependencies 
 
 script:

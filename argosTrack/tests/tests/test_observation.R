@@ -1,5 +1,5 @@
 
-#### Test Animal
+#### Test Observation
 
 
 ## It works with expected input
@@ -26,6 +26,10 @@ gives_error(Observation(lon=rep(0,100),lat=rep(0,100),
                         dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60))
 
 ## include not logical fails
+gives_error(Observation(lon=rep(0,100),lat=rep(0,100),
+                        locationclass=rep("GPS",100),
+                        include = NULL,
+                        dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60))
 gives_error(Observation(lon=rep(0,100),lat=rep(0,100),
                         locationclass=rep("GPS",100),
                         include = rep(0,100),
@@ -126,3 +130,18 @@ gives_no_output(eval(parse(text=paste0("plotLon(",expr,")"))))
 gives_no_output(eval(parse(text=paste0("plotMap(",expr,")"))))
 
 
+## getTMBmap should fix logSdObs if all locationclasses are K, S or P
+## Do not fix anything:
+for(v in c("GPS","3","2","1","0","A","B","Z","K","S","P")){
+    m <- Observation(lon=rep(0,100),lat=rep(0,100),
+                     locationclass=rep(v,100),
+                     dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60)$getTMBmap()
+    if(v %in% c("K","S","P")){
+        is_equal(class(m), "list")
+        is_equal(names(m), "logSdObs")
+        is_equal(m$logSdObs, factor(c(NA,NA)))
+    }else{
+        is_equal(class(m), "list")
+        is_equal(length(m), 0)
+    }
+}

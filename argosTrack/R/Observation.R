@@ -5,7 +5,7 @@
 #' @field dates POSIXct vector of time stamps for observations
 #' @field dayOfYear Day of year corresponding to dates
 #' @field qual Factor of Argos location quality classes
-#' @field varModelCode Integer vector of variance model codes (0, 1, or 2)
+#' @field varModelCode Integer vector of variance model codes (0, 1, 2, or 3)
 #' @field include Logical vector of whether observations should be included in likelihood
 #' 
 #' @seealso \code{\link{Movement}}, \code{\link{Measurement}}, \code{\link{Animal}}
@@ -52,8 +52,9 @@ Observation <- setRefClass("Observation",
                                            assign(field, get(field, envir = selfEnv), envir = vEnv)
                                        else {
                                            current <- get(field, envir = selfEnv)
-                                           if (is(current, "envRefClass")) 
-                                               current <- current$copy(FALSE)
+                                           ## current is never a ref class
+                                           ## if (is(current, "envRefClass")) 
+                                           ##     current <- current$copy(FALSE)
                                            assign(field, current, envir = vEnv)
                                        }
                                    }
@@ -107,10 +108,10 @@ Observation <- setRefClass("Observation",
                                       any(is.nan(locationclass)))
                                        stop("locationclass can not have NULL, NA, or NaN elements.")
                                   
+                                   if(is.null(include))
+                                       stop("include can not be NULL.")
                                    if(!is.logical(include))
                                        stop("include must be a logical vector.")   
-                                   if(any(is.null(include)))
-                                       stop("include can not have NULL elements.")
                                    if(any(!is.finite(include)) ||
                                       any(is.na(include)) ||
                                       any(is.nan(include)))
@@ -179,7 +180,7 @@ Observation <- setRefClass("Observation",
                       getTMBmap = function(...){
                           "Function to return a map list for TMB::MakeADFun."
                           map <- list()
-                          if(all(varModelCode %in% c(1,2)))
+                          if(all(varModelCode %in% c(1,2,3)))
                               map$logSdObs <- factor(c(NA,NA)) ## Should probably be in Measurement class??
                           return(map) 
                       },
@@ -187,7 +188,7 @@ Observation <- setRefClass("Observation",
                           lc <- as.character(.self$qual)
                           lc[.self$varModelCode == 1] <- "K"
                           lc[.self$varModelCode == 2] <- "S"
-                          lc[.self$varModelCode == 3] <- "A"
+                          lc[.self$varModelCode == 3] <- "P"
                           return(lc)
                       },
                       show = function(){
