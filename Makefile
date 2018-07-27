@@ -27,7 +27,7 @@ checkbc: build
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	$(R) CMD BiocCheck --no-check-bioc-views ${PACKAGE}_${VERSION}.tar.gz
 
-install: doc build
+install: build
 	@echo "\033[0;32mInstalling package\033[0;0m"
 	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
 	@echo "Version: ${VERSION}"
