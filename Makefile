@@ -56,7 +56,7 @@ coverage:
 
 coveragequick:
 	@echo "\033[0;32mChecking code coverage for quick tests\033[0;0m"
-	@RUN_ALL_TESTS=false $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
+	@RUN_ALL_TESTS=false $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report-quick.html",browse = FALSE); aa'
 
 clean:
 	@echo "\033[0;32mCleaning directory\033[0;0m"

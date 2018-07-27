@@ -38,8 +38,9 @@ Movement <- setRefClass("Movement",
                                         assign(field, get(field, envir = selfEnv), envir = vEnv)
                                     else {
                                         current <- get(field, envir = selfEnv)
-                                        if (is(current, "envRefClass")) 
-                                            current <- current$copy(FALSE)
+                                        ## current is never a ref class
+                                        ## if (is(current, "envRefClass")) 
+                                        ##     current <- current$copy(FALSE)
                                         assign(field, current, envir = vEnv)
                                     }
                                 }

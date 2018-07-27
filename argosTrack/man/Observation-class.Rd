@@ -21,7 +21,7 @@ A Reference Class for argosTrack observations.
 
 \item{\code{qual}}{Factor of Argos location quality classes}
 
-\item{\code{varModelCode}}{Integer vector of variance model codes (0, 1, or 2)}
+\item{\code{varModelCode}}{Integer vector of variance model codes (0, 1, 2, or 3)}
 
 \item{\code{include}}{Logical vector of whether observations should be included in likelihood}
 }}

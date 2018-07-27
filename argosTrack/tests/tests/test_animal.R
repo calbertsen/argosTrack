@@ -74,3 +74,49 @@ gives_no_output(eval(parse(text=paste0("plotLat(",expr,", sd = TRUE)"))))
 gives_no_output(eval(parse(text=paste0("plotLon(",expr,", sd = TRUE)"))))
 gives_no_output(eval(parse(text=paste0("plotMap(",expr,", sd = TRUE)"))))
 
+
+
+
+## Check copying
+
+anim <- Animal(measurement=Measurement(model="n"),
+               movement=RW(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),
+               observation=Observation(lon=rep(0,100),lat=rep(0,100),
+                                       locationclass=rep("GPS",100),
+                                       dates=as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60),
+               name="TestAnim")
+fieldNames <- names(getClass("Animal")@fieldClasses)
+
+## Animal can be copied
+anim2 <- anim$copy()    
+for(fn in fieldNames){
+    is_equal(anim$field(fn),
+                 anim2$field(fn))
+}
+
+## Animal can be shallow copied
+anim3 <- anim$copy(shallow = TRUE)
+for(fn in fieldNames){
+    is_equal(anim$field(fn),
+             anim3$field(fn))
+}
+
+
+
+## Test getRange
+
+## If zoonToState; result should match result from movement
+is_equal(anim$getRange(FALSE,zoomToState = TRUE),
+         anim$movement$getRange(FALSE))
+is_equal(anim$getRange(TRUE,zoomToState = TRUE),
+         anim$movement$getRange(TRUE))
+
+## If !zoonToState; result should be range from movement and obs
+r1 <- anim$movement$getRange(FALSE)
+r2 <- anim$observation$getRange()
+is_equal(anim$getRange(FALSE,zoomToState = FALSE),
+         rbind(range(r1[1,],r2[1,]),range(r1[2,],r2[2,])))
+r1 <- anim$movement$getRange(TRUE)
+r2 <- anim$observation$getRange()
+is_equal(anim$getRange(TRUE,zoomToState = FALSE),
+         rbind(range(r1[1,],r2[1,]),range(r1[2,],r2[2,])))

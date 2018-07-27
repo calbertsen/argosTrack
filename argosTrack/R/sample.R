@@ -18,7 +18,7 @@ rmvnorm <- function(n, mu, sigma){
     if(dim(sigma)[1] != dim(sigma)[2])
         stop("sigma must be a square matrix.")
     if(!is.samelength(sigma,mu))
-        stop("mu and sigma must have compatible dimensions")
+        stop("mu and sigma must have compatible dimensions.")
     ##X <- .Call("rmvnorm",n=as.integer(n),mu=mu,sigma=sigma, PACKAGE = "argosTrack")
     Y <- matrix(stats::rnorm(n*length(mu)),length(mu),n)
     L <- t(chol(sigma))
@@ -116,7 +116,17 @@ rgig <- function(n, a = 1, b = 1, p = 1){
 
 
 rmvsh <- function(n, mu, sigma, delta){
+    if(!is.nummat(sigma))
+        stop("sigma must be a numeric matrix.")
+    if(!is.numvec(mu))
+        stop("mu must be a numeric vector.")
+    if(dim(sigma)[1] != dim(sigma)[2])
+        stop("sigma must be a square matrix.")
+    if(!is.samelength(sigma,mu))
+        stop("mu and sigma must have compatible dimensions.")
+    if(!is.numsca(delta) || delta <= 0)
+        stop("delta must be a positive scalar.")
     u <- rgig(n, 1, delta^2, 0.5 * (ncol(sigma)+1))
     X <- sapply(u,function(u0) rmvnorm(1, mu, u0*sigma))
-    return(X)
+    return(t(X))
 }
