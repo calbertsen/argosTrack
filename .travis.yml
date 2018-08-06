@@ -17,13 +17,11 @@ env:
 
 
 install:
-  - R -e 'install.packages(c("roxygen2","TMB"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
+  - R -e 'install.packages(c("TMB"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
   - make install_dependencies 
 
 script:
   - make check
-  - make install
-  - make test
 
 after_success:
   - cat argosTrack.Rcheck/00check.log
