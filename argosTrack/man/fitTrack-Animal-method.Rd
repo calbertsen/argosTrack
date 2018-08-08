@@ -35,8 +35,9 @@ The function changes 'object'.
 }
 \seealso{
 \link[TMB]{MakeADFun} \link[TMB]{newton} \link[stats]{nlminb}
+
+\code{\link{fitTrack}}
 }
 \author{
 Christoffer Moesgaard Albertsen
- @seealso \code{\link{fitTrack}}
 }

@@ -42,7 +42,7 @@ Johnson, D. S., J. M. London, M. A. Lea, and J. W. Durban. (2008) Continuous-tim
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{DCRW-class}}, \code{\link{DIRAC-class}},
   \code{\link{DSBHN-class}}, \code{\link{DSBW-class}},
-  \code{\link{IDCRW-class}}, \code{\link{MPCTCRW-class}},
+  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }

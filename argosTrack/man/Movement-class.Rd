@@ -41,7 +41,7 @@ Used in \code{\link{Animal}}. Currently the following movement models are implem
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
   \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{IDCRW-class}},
+  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
   \code{\link{MPCTCRW-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }

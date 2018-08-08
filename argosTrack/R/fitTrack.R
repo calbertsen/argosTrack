@@ -6,7 +6,7 @@
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @return The optimization result
 ##' @seealso \code{\link{fitTrack,Animal-method}}
-#' @export
+##' @export
 setGeneric("fitTrack",
   function(object, ...)
     standardGeneric("fitTrack")
@@ -27,7 +27,7 @@ setGeneric("fitTrack",
 ##' @seealso \link[TMB]{MakeADFun} \link[TMB]{newton} \link[stats]{nlminb}
 ##' @note The function changes 'object'.
 ##' @author Christoffer Moesgaard Albertsen
-##'  @seealso \code{\link{fitTrack}}
+##' @seealso \code{\link{fitTrack}}
 ##' @importFrom stats nlminb optimHess
 ##' @importFrom TMB MakeADFun sdreport
 setMethod("fitTrack", "Animal",

@@ -1,4 +1,4 @@
-#' A Reference Class for fitting an Irregularized first Difference Correlated Random Walk model.
+#' A Reference Class for fitting a Generalized first Difference Correlated Random Walk model.
 #'
 #' The reference class implements an Irregularized first Difference Correlated Random Walk (Albertsen 2016). The velocity is modelled by the (bivariate) stochastic differential equation
 #' \deqn{dV_t = -\pmatrix{ -\log\gamma_1 & \phi \cr -\phi & -\log\gamma_2 } (V_t-\mu) d_t + S dB_t,}
@@ -19,10 +19,12 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::IDCRW(unique(as.POSIXct(d$date,tz="GMT")))
+#' mov <- argosTrack:::GDCRW(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
 #' @keywords internal
-IDCRW <- setRefClass("IDCRW",
+#' @export GDCRW
+#' @exportClass GDCRW
+GDCRW <- setRefClass("GDCRW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
