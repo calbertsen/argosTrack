@@ -34,7 +34,7 @@ Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DIRAC-class}},
   \code{\link{DSBHN-class}}, \code{\link{DSBW-class}},
-  \code{\link{IDCRW-class}}, \code{\link{MPCTCRW-class}},
+  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }

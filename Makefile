@@ -1,41 +1,42 @@
 R?=R
 PACKAGE=argosTrack
+VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))")
 
-all: doc build check test install
+TARBALL := ${PACKAGE}_${VERSION}.tar.gz
+RFILES := $(wildcard ${PACKAGE}/R/*.R)
+NAMESPACEFILE := ${PACKAGE}/NAMESPACE
+RCHECK := ${PACKAGE}.Rcheck
 
-doc:
+
+$(NAMESPACEFILE): $(RFILES)
 	@echo "\033[0;32mUpdating documentation\033[0;0m"
 	rm -f ${PACKAGE}/src/*.so
 	$(R) -q -e 'devtools::document("${PACKAGE}")'
+	@touch $@
 
-build: 
+$(TARBALL): $(NAMESPACEFILE)
 	@echo "\033[0;32mBuilding package\033[0;0m"
 	$(R) CMD build ${PACKAGE}
 
-check: build
+build: $(TARBALL)
+
+$(RCHECK): $(TARBALL)
 	@echo "\033[0;32mChecking package as cran\033[0;0m"
-	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
-	$(R) CMD check --as-cran ${PACKAGE}_${VERSION}.tar.gz
+	$(R) CMD check --as-cran $(TARBALL)
 
-checkquick: build
-	@echo "\033[0;32mChecking package as cran (no vignette) \033[0;0m"
-	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
-	$(R) CMD check --as-cran --no-vignettes --no-build-vignettes ${PACKAGE}_${VERSION}.tar.gz
+check: $(RCHECK)
 
-checkbc: build
+checkbc: $(TARBALL)
 	@echo "\033[0;32mChecking package with bioconductor\033[0;0m"
-	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
-	$(R) CMD BiocCheck --no-check-bioc-views ${PACKAGE}_${VERSION}.tar.gz
+	$(R) CMD BiocCheck --no-check-bioc-views $(TARBALL)
 
-install: build
+install: $(TARBALL)
 	@echo "\033[0;32mInstalling package\033[0;0m"
-	$(eval VERSION = $(shell Rscript -e "l<-readLines(\"${PACKAGE}/DESCRIPTION\");cat(gsub(\"Version: \",\"\",l[grepl(\"Version: \",l)]))"))
-	@echo "Version: ${VERSION}"
-	$(R) CMD INSTALL ${PACKAGE}_${VERSION}.tar.gz
+	$(R) CMD INSTALL $(TARBALL)
 
 install_dependencies:
 	@echo "\033[0;32mInstalling package dependencies\033[0;0m"
-	@echo "source('https://raw.githubusercontent.com/calbertsen/caMisc/master/R/build_from_github.R'); \
+	@echo "source(https://raw.githubusercontent.com/calbertsen/caMisc/master/caMisc/R/build_from_github.R'); \
 	installDependencies('${PACKAGE}/DESCRIPTION',dependencies=c(\"Depends\",\"LinkingTo\",\"Imports\",\"Suggests\",\"Enhances\"))" | $(R) -q --slave
 
 install_bc:
@@ -50,13 +51,19 @@ testquick:
 	@echo "\033[0;32mRunning almost all tests\033[0;0m"
 	@RUN_ALL_TESTS=false $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
 
-coverage:
+COVRALL := ${PACKAGE}-report.html
+$(COVRALL): $(RFILES)
 	@echo "\033[0;32mChecking code coverage for all tests\033[0;0m"
 	@RUN_ALL_TESTS=true $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report.html",browse = FALSE); aa'
 
-coveragequick:
+coverage: $(COVRALL)
+
+COVRQUICK := ${PACKAGE}-report-quick.html
+$(COVRQUICK): $(RFILES)
 	@echo "\033[0;32mChecking code coverage for quick tests\033[0;0m"
 	@RUN_ALL_TESTS=false $(R) --slave -e 'aa<-covr::package_coverage("${PACKAGE}"); covr::report(aa,file="${PACKAGE}-report-quick.html",browse = FALSE); aa'
+
+coveragequick: $(COVRQUICK)
 
 clean:
 	@echo "\033[0;32mCleaning directory\033[0;0m"
