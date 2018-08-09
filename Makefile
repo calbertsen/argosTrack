@@ -43,13 +43,22 @@ install_bc:
 	@echo "\033[0;32mInstalling BiocCheck\033[0;0m"
 	$(R) -q -e 'if (!"BiocManager" %in% rownames(installed.packages())) install.packages("BiocManager"); BiocManager::install("BiocCheck")'
 
-test:
+test: $(TARBALL)
 	@echo "\033[0;32mRunning all tests\033[0;0m"
-	@RUN_ALL_TESTS=true $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
+	@RUN_ALL_TESTS=true RUNTEST_PKG='../../${TARBALL}' $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
 
-testquick:
+test_installed:
+	@echo "\033[0;32mRunning all tests\033[0;0m"
+	@RUN_ALL_TESTS=true RUNTEST_PKG=${PACKAGE} $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
+
+
+testquick: $(TARBALL)
 	@echo "\033[0;32mRunning almost all tests\033[0;0m"
-	@RUN_ALL_TESTS=false $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
+	@RUN_ALL_TESTS=false RUNTEST_PKG=../../$(TARBALL) $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
+
+testquick_installed:
+	@echo "\033[0;32mRunning almost all tests\033[0;0m"
+	@RUN_ALL_TESTS=false RUNTEST_PKG=argosTrack $(R) -q --slave -e 'lf<-list.files("${PACKAGE}/tests","\\.R$$",full.names=TRUE); for(f in lf) source(f, chdir = TRUE, print.eval = TRUE )'
 
 COVRALL := ${PACKAGE}-report.html
 $(COVRALL): $(RFILES)

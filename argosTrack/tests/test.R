@@ -1,6 +1,29 @@
 
-run_tests <- function(package,dir){
-    library(package, character.only = TRUE)
+run_tests <- function(package,
+                      dir,
+                      install_opts = c()){
+    ## From utils::install.packages
+    get_package_name <- function(pkg) {
+        gsub("_[.](zip|tar[.]gz|tar[.]bzip2|tar[.]xz)", "",
+             gsub(.standard_regexps()$valid_package_version, 
+                  "", basename(pkg)))
+    }
+    if(grepl("(zip|tar[.]gz|tar[.]bzip2|tar[.]xz)$",package)){
+        tarball <- package
+        package <- get_package_name(package)
+        tmpdir <- tempdir()
+        utils::install.packages(tarball,
+                                lib = tmpdir,
+                                repos = NULL,                       
+                                dependencies = NA,
+                                INSTALL_opts = install_opts,
+                                keep_outputs = tmpdir,
+                                Ncpus = 1,
+                                type = "source")
+        library(package, character.only = TRUE, lib.loc = tmpdir)
+    }else{
+        library(package, character.only = TRUE)
+    }
     env <- new.env(parent = getNamespace(package))
     setPackageName(paste(package,as.character(Sys.time()),sep="-"),env)
     sys.source(file.path(dir,"000-testing_functions.R"),env, keep.source = TRUE)
@@ -13,4 +36,6 @@ run_tests <- function(package,dir){
     env$Test
 }
 
-run_tests("argosTrack","tests")
+
+
+run_tests(Sys.getenv("RUNTEST_PKG","argosTrack"),"tests")
