@@ -15,6 +15,11 @@ env:
   global:
     - OS=$(uname -s)
 
+matrix:
+  exclude:
+  - r: devel
+    os: osx
+
 
 install:
   - R -e 'install.packages(c("TMB","devtools"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
