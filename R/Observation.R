@@ -135,7 +135,7 @@ Observation <- setRefClass("Observation",
 
                                    varModelCodeIn <- ifelse(locationclass=="K",1L,
                                                      ifelse(locationclass=="S", 2L,
-                                                     ifelse(locationclass=="A", 3L, 0L)))
+                                                     ifelse(locationclass=="P", 3L, 0L)))
                                    dayOfYearIn <- as.numeric(strftime(dates,"%j"))
 
 

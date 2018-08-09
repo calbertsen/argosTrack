@@ -1,3 +1,5 @@
+# Version 1.2.1
+- Bug fixes: Observation class used incorrect variance model for location class A
 
 # Version 1.2.0
 - Added unit tests
