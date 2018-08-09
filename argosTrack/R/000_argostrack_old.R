@@ -51,5 +51,5 @@
 
 ##' @export
 argosTrack <- function(...){
-    .Defunct(c("CTCRW","Animal","fitTrack"))
+    .Defunct(c("CTCRW","Animal","fitTrack"), package = "argosTrack")
 }
