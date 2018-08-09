@@ -22,7 +22,7 @@ matrix:
 
 
 install:
-  - R -e 'install.packages(c("TMB","devtools"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
+  - R -e 'install.packages(c("TMB","roxygen2","devtools"),dependencies = c("Depends", "Imports", "LinkingTo", "Enhances"))'
   - make install_dependencies 
 
 script:
