@@ -3,7 +3,6 @@
 \docType{class}
 \name{OUL-class}
 \alias{OUL-class}
-\alias{OUL}
 \title{A Reference Class for fitting an Ornstein-Uhlenbeck Location model.}
 \description{
 The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process
@@ -18,23 +17,17 @@ where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pma
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
-\examples{
-d <- subadult_ringed_seal
-mov <- argosTrack:::OUL(unique(as.POSIXct(d$date,tz="GMT")))
-
-}
 \references{
 Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayesian inference for animal movement in continuous time. Methods Ecol Evol, 7: 184-195. doi:10.1111/2041-210X.12460
 }
 \seealso{
-\code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here)
+\code{\link{Movement-class}}, \code{\link{OUL}}.
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
+  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW}}, \code{\link{GDCRW-class}},
   \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUV-class}},
   \code{\link{RW-class}}
 }
-\keyword{internal}

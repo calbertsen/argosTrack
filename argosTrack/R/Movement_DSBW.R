@@ -10,7 +10,7 @@
 #' \deqn{S_t \sim Weibull(scale,shape)}
 #' and the bearings are modelled by a wrapped Cauchy distribution with location parameter \eqn{B_{t-1}} and concentration parameter \eqn{rho}.
 #' 
-#' @seealso \code{\link{Movement}}, \code{\link{DSBHN}}.
+#' @seealso \code{\link{Movement-class}}, \code{\link{DSBW}}, \code{\link{DSBHN}}.
 #'
 #' @family "Movement models"
 #'
@@ -19,14 +19,8 @@
 #' @references
 #' McClintock, B. T., London, J. M., Cameron, M. F. and Boveng, P. L. (2015) Modelling animal movement using the Argos satellite telemetry location error ellipse. Methods Ecol Evol, 6: 266-277. doi:10.1111/2041-210X.12311
 #' 
-#' @examples
-#' d <- subadult_ringed_seal
-#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
-#' dseq <- seq(min(dates),max(dates), "day")
-#' mov <- DSBW(dseq)
 #'
 #' 
-#' @export DSBW
 #' @importFrom methods setRefClass new 
 #' @exportClass DSBW
 DSBW <- setRefClass("DSBW",
@@ -129,3 +123,34 @@ DSBW <- setRefClass("DSBW",
                       }                  
                   )
                   )
+
+
+
+##' Create a DSBW movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{log(\\rho)}, \\eqn{log(shape)}, \\eqn{log(scale)}
+##' @param varPars Zeero length vector of movement variance parameters
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A DSBW object
+##' @seealso \code{\link{DSBW-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
+#' dseq <- seq(min(dates),max(dates), "day")
+#' mov <- DSBW(dseq)
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+DSBW <- function(dates,
+                  pars = numeric(3),
+                  varPars = numeric(0),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("DSBW",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

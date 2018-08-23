@@ -3,7 +3,7 @@
 #' The reference class implements a Random Walk (e.g. Nielsen et al. 2006).
 #' \deqn{X_t \sim N(X_{t-\Delta_t},\Delta_t diag(\sigma_1^2,\sigma_2^2))}
 #' 
-#' @seealso \link{Movement}
+#' @seealso \link{Movement-class} \link{RW}
 #'
 #' @family "Movement models"
 #' 
@@ -14,10 +14,9 @@
 #' @references
 #' Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving light-based geolocation by including sea surface temperature. Fisheries Oceanography, 15: 314-325. doi: 10.1111/j.1365-2419.2005.00401.x
 #' 
-#' @export RW
 #' @importFrom methods setRefClass new 
 #' @exportClass RW
-RW <- setRefClass("RW",
+setRefClass("RW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -92,3 +91,33 @@ RW <- setRefClass("RW",
                   
                   )
                   )
+
+
+
+
+##' Create a RW movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Zero length vector of movement parameters
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lon})}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A RW object
+##' @seealso \code{\link{RW-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' mov <- RW(unique(as.POSIXct(d$date,tz="GMT")))
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+RW <- function(dates,
+                  pars = numeric(0),
+                  varPars = numeric(2),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("RW",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

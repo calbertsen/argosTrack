@@ -268,12 +268,12 @@ Type objective_function<Type>::operator() ()
       }
       break;
     case 7: 			// Ornstein-Uhlenbeck Location
-      // nll += nll_oul((vector<Type>)mu.col(i),
-      // 		       (vector<Type>)mu.col(i-1),
-      // 		       dtStates(i),
-      // 		       (vector<Type>)movePars.segment(0,4),
-      // 		       (vector<Type>)movePars.segment(4,2),
-      // 		       varState);
+      nll += nll_oul((vector<Type>)mu.col(i),
+      		       (vector<Type>)mu.col(i-1),
+      		       dtStates(i),
+      		       (vector<Type>)movePars.segment(0,4),
+      		       (vector<Type>)movePars.segment(4,2),
+      		       varState);
       break;
     case 8:			// Ornstein-Uhlenbeck Velocity
       // if(i == 1){

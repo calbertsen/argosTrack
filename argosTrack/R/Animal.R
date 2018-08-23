@@ -6,27 +6,14 @@
 #' @field measurement Measurement reference class
 #' @field optim List to keep results of optimization through \code{\link{fitTrack}}
 #' 
-#' @seealso \code{\link{Movement}} \code{\link{Observation}} \code{\link{Measurement}}
-#'
-#' @examples
-#' d <- subadult_ringed_seal
-#' obs <- Observation(lon = d$lon,
-#'                    lat = d$lat,
-#'                    dates = as.POSIXct(d$date,tz="GMT"),
-#'                    locationclass = d$lc
-#'                    )
-#' meas <- Measurement(model="n")
-#' mov <- RW(unique(obs$dates))
-#' anim <- Animal(obs,mov,meas,"Subadult")
-#' plot(anim)
+#' @seealso \code{\link{Animal}} \code{\link{Movement-class}} \code{\link{Observation-class}} \code{\link{Measurement-class}}
 #'
 #' @note The reference class methods are not intended to be used by the user. Please use appropriate functions such as \code{\link{fitTrack}}, \code{\link{plot}}, \code{\link{plotLon}}, \code{\link{plotLat}}, \code{\link{plotMap}}, and \code{\link{simTrack}}.
 #' @author Christoffer Moesgaard Albertsen
 #' 
-#' @export Animal
 #' @importFrom methods setRefClass new 
 #' @exportClass Animal
-Animal <- setRefClass("Animal",
+setRefClass("Animal",
                       sealed = TRUE,
                       field = c(name = "character",
                                 observation = "refObject",
@@ -235,3 +222,42 @@ Animal <- setRefClass("Animal",
                       }
                   )
                   )
+
+
+
+##' Construct an Animal object
+##'
+##' @param observation an Observation object
+##' @param movement a Movement object
+##' @param measurement a Measurement object
+##' @param name Name of the animal
+##' @param ... Other arguments not currently used
+##' @return An Animal class object
+##' @seealso \code{\link{Animal-class}} \code{\link{Movement}} \code{\link{Observation}} \code{\link{Measurement}}
+##' @examples
+#' d <- subadult_ringed_seal
+#' obs <- Observation(lon = d$lon,
+#'                    lat = d$lat,
+#'                    dates = as.POSIXct(d$date,tz="GMT"),
+#'                    locationclass = d$lc
+#'                    )
+#' meas <- Measurement(model="n")
+#' mov <- RW(unique(obs$dates))
+#' anim <- Animal(obs,mov,meas,"Subadult")
+#' plot(anim)
+##' @author Christoffer Moesgaard Albertsen
+##' @importFrom methods new
+##' @export
+Animal <- function(observation,
+                   movement,
+                   measurement,
+                   name = "",
+                   ...){
+    methods::new("Animal",
+                 observation = observation,
+                 movement = movement,
+                 measurement = measurement,
+                 name = name,
+                 ...)
+}
+

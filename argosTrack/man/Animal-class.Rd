@@ -3,7 +3,6 @@
 \docType{class}
 \name{Animal-class}
 \alias{Animal-class}
-\alias{Animal}
 \title{A Reference Class for combining animal movement model parts.}
 \description{
 A Reference Class for combining animal movement model parts.
@@ -52,21 +51,8 @@ A Reference Class for combining animal movement model parts.
 \note{
 The reference class methods are not intended to be used by the user. Please use appropriate functions such as \code{\link{fitTrack}}, \code{\link{plot}}, \code{\link{plotLon}}, \code{\link{plotLat}}, \code{\link{plotMap}}, and \code{\link{simTrack}}.
 }
-\examples{
-d <- subadult_ringed_seal
-obs <- Observation(lon = d$lon,
-                   lat = d$lat,
-                   dates = as.POSIXct(d$date,tz="GMT"),
-                   locationclass = d$lc
-                   )
-meas <- Measurement(model="n")
-mov <- RW(unique(obs$dates))
-anim <- Animal(obs,mov,meas,"Subadult")
-plot(anim)
-
-}
 \seealso{
-\code{\link{Movement}} \code{\link{Observation}} \code{\link{Measurement}}
+\code{\link{Animal}} \code{\link{Movement-class}} \code{\link{Observation-class}} \code{\link{Measurement-class}}
 }
 \author{
 Christoffer Moesgaard Albertsen

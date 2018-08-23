@@ -3,7 +3,6 @@
 \docType{class}
 \name{CTCRW-class}
 \alias{CTCRW-class}
-\alias{CTCRW}
 \title{A Reference Class for fitting a Continuous Time Correlated Random Walk model.}
 \description{
 The reference class implements a Continuous Time Correlated Random Walk (Johnson et al. 2008). The velocity is modelled by an Ornstein Uhlenbeck process in each coordinate (\eqn{c}),
@@ -27,21 +26,16 @@ For \eqn{c\neq c'} and \eqn{t\neq t'}, \eqn{Cov\left(\eta_{c,t},\zeta_{c',t'}\ri
 \item{\code{simulate(x0 = c(0, 0, 0, 0))}}{Function to simulate from the movement model. The initial states (latitudianl velocity, longitudinal velocity, latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
-\examples{
-d <- subadult_ringed_seal
-mov <- CTCRW(unique(as.POSIXct(d$date,tz="GMT")))
-
-}
 \references{
 Johnson, D. S., J. M. London, M. A. Lea, and J. W. Durban. (2008) Continuous-time correlated random walk model for animal telemetry data. Ecology 89, 1208-1215.
 \cr\cr Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
 }
 \seealso{
-\link{Movement}
+\link{Movement-class} \link{CTCRW}
 
 Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{DCRW-class}}, \code{\link{DIRAC-class}},
-  \code{\link{DSBHN-class}}, \code{\link{DSBW-class}},
+  \code{\link{DCRW-class}}, \code{\link{DIRAC}},
+  \code{\link{DSBHN-class}}, \code{\link{DSBW}},
   \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}

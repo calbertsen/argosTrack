@@ -13,11 +13,7 @@
 #' \deqn{Cov\left(\eta_{c,t},\zeta_{c,t}\right)= \frac{\sigma_c^2}{2\beta_c^2}\left(1-2e^{-\beta_c\Delta_t}+e^{-2\beta_c\Delta_i}\right).}
 #' For \eqn{c\neq c'} and \eqn{t\neq t'}, \eqn{Cov\left(\eta_{c,t},\zeta_{c',t'}\right)=0}
 #'
-#' @seealso \link{Movement}
-#' 
-#' @examples
-#' d <- subadult_ringed_seal
-#' mov <- CTCRW(unique(as.POSIXct(d$date,tz="GMT")))
+#' @seealso \link{Movement-class} \link{CTCRW}
 #'
 #' @family "Movement models"
 #'
@@ -25,10 +21,9 @@
 #' Johnson, D. S., J. M. London, M. A. Lea, and J. W. Durban. (2008) Continuous-time correlated random walk model for animal telemetry data. Ecology 89, 1208-1215.
 #' \cr\cr Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
 #' 
-#' @export CTCRW
 #' @importFrom methods setRefClass new 
 #' @exportClass CTCRW
-CTCRW <- setRefClass("CTCRW",
+setRefClass("CTCRW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -164,3 +159,31 @@ CTCRW <- setRefClass("CTCRW",
                   
                   )
                   )
+
+
+##' Create a CTCRW movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{log(\\beta_{lat})}, \\eqn{log(\\beta_{lon})}, \\eqn{\\gamma_{lat}}, \\eqn{\\gamma_{lon}}
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lon})}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A CTCRW object
+##' @seealso \code{\link{CTCRW-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' mov <- CTCRW(unique(as.POSIXct(d$date,tz="GMT")))
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+CTCRW <- function(dates,
+                  pars = numeric(4),
+                  varPars = numeric(2),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("CTCRW",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

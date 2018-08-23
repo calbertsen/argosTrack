@@ -6,10 +6,9 @@
 #' 
 #' @family "Movement models"
 #' 
-#' @export Movement
 #' @importFrom methods setRefClass new 
 #' @exportClass Movement
-Movement <- setRefClass("Movement",
+setRefClass("Movement",
                         sealed = TRUE,
                         fields = list(model = "character",
                                       dates = "POSIXct",

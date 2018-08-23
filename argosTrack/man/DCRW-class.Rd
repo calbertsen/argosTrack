@@ -3,7 +3,6 @@
 \docType{class}
 \name{DCRW-class}
 \alias{DCRW-class}
-\alias{DCRW}
 \title{A Reference Class for fitting a discrete time first Difference Correlated Random Walk model.}
 \description{
 The reference class implements a discrete time first Difference Correlated Random Walk (Jonsen et al. 2005). The locations are modelled by
@@ -18,22 +17,15 @@ Here, \eqn{\epsilon_t} is zero mean Gaussian noise with covariance \eqn{ \pmatri
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
-\examples{
-d <- subadult_ringed_seal
-dates <- unique(as.POSIXct(d$date,tz="GMT"))
-dseq <- seq(min(dates),max(dates), "day")
-mov <- DCRW(dseq)
-
-}
 \references{
 Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling of animal movement data. Ecology 86, 2874-2880.
 }
 \seealso{
-\link{Movement}
+\link{Movement-class} \link{DCRW}
 
 Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DIRAC-class}},
-  \code{\link{DSBHN-class}}, \code{\link{DSBW-class}},
+  \code{\link{CTCRW-class}}, \code{\link{DIRAC}},
+  \code{\link{DSBHN-class}}, \code{\link{DSBW}},
   \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}

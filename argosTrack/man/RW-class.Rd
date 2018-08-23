@@ -3,7 +3,6 @@
 \docType{class}
 \name{RW-class}
 \alias{RW-class}
-\alias{RW}
 \title{A Reference Class for fitting a Random Walk model.}
 \description{
 The reference class implements a Random Walk (e.g. Nielsen et al. 2006).
@@ -24,12 +23,12 @@ mov <- RW(unique(as.POSIXct(d$date,tz="GMT")))
 Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving light-based geolocation by including sea surface temperature. Fisheries Oceanography, 15: 314-325. doi: 10.1111/j.1365-2419.2005.00401.x
 }
 \seealso{
-\link{Movement}
+\link{Movement-class} \link{RW}
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
+  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW}}, \code{\link{GDCRW-class}},
   \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}

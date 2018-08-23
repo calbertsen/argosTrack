@@ -3,7 +3,6 @@
 \docType{class}
 \name{CSB-class}
 \alias{CSB-class}
-\alias{CSB}
 \title{A Reference Class for fitting a Continuous Time Step lengths / Bearings model.}
 \description{
 The reference class implements a Continuous Time Step lengths / Bearings model (Parton et al. 2016). The bearings are modelled by a Brownian Motion,
@@ -25,20 +24,15 @@ Here, \eqn{\Delta_t} is the length of the time steps and \eqn{\eta_{t}}, \eqn{\z
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. The function only returns the locations. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
-\examples{
-d <- subadult_ringed_seal
-mov <- argosTrack:::CSB(unique(as.POSIXct(d$date,tz="GMT")))
-
-}
 \references{
 Parton, A., P. G. Blackwell, and A. Skarin. (2016) Bayesian Inference for Continuous Time Animal Movement Based on Steps and Turns. arXiv:1608.05583.
 }
 \seealso{
-\link{Movement}
+\link{Movement-class} \link{CSB}
 
 Other "Movement models": \code{\link{CTCRW-class}},
-  \code{\link{DCRW-class}}, \code{\link{DIRAC-class}},
-  \code{\link{DSBHN-class}}, \code{\link{DSBW-class}},
+  \code{\link{DCRW-class}}, \code{\link{DIRAC}},
+  \code{\link{DSBHN-class}}, \code{\link{DSBW}},
   \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}

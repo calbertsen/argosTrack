@@ -11,11 +11,8 @@
 #' \eqn{\eta_t} follows a Gaussian distribution with mean zero and variance
 #' \deqn{V\left(\eta_t\right) = \Delta_t \sigma_B^2}
 #'
-#' @seealso \link{Movement}
+#' @seealso \link{Movement-class} \link{CSB}
 #' 
-#' @examples
-#' d <- subadult_ringed_seal
-#' mov <- argosTrack:::CSB(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' @family "Movement models"
 #'
@@ -27,7 +24,7 @@
 #' @importFrom stats rnorm
 #' @keywords internal
 # nocov start
-CSB <- setRefClass("CSB",
+setRefClass("CSB",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -126,5 +123,34 @@ CSB <- setRefClass("CSB",
                       }   
                                        
                   )
-                  )
+
+            )
+
+
+##' Create a CSB movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{log(\\beta)}, \\eqn{\\gamma}
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma_{S})}, \\eqn{log(\\sigma_{B})}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A CSB object
+##' @seealso \code{\link{CSB-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' mov <- argosTrack:::CSB(unique(as.POSIXct(d$date,tz="GMT")))
+##' @author Christoffer Moesgaard Albertsen
+CSB <- function(dates,
+                pars = numeric(2),
+                varPars = numeric(2),
+                nauticalStates = FALSE,
+                timeunit = "hours"){
+    new("CSB",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}
+
 # nocov end

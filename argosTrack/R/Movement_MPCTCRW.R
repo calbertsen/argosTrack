@@ -2,7 +2,7 @@
 #'
 #' This movement model extends \code{\link{CTCRW}} by having two velocity processes; one with short memory and one with longer memory.
 #' 
-#' @seealso \link{Movement}
+#' @seealso \link{Movement-class}
 #'
 #' @family "Movement models"
 #' 
@@ -14,7 +14,7 @@
 #' @importFrom methods setRefClass new
 #' @keywords internal
 # nocov start
-MPCTCRW <- setRefClass("MPCTCRW",
+setRefClass("MPCTCRW",
                   contains = "Movement",
                   methods = list(
                       initialize = function(dates,

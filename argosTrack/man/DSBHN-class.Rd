@@ -3,7 +3,6 @@
 \docType{class}
 \name{DSBHN-class}
 \alias{DSBHN-class}
-\alias{DSBHN}
 \title{A Reference Class for fitting a Discrete time Step-length/Bearings model with Half Normal distributed steps.}
 \description{
 The reference class implements a Discrete time Step-length/Bearings model with Half Normal distributed steps. \cr
@@ -27,19 +26,12 @@ and the bearings are modelled by a wrapped Cauchy distribution with location par
 \note{
 Step-length/Bearings models can be difficult for the Laplace approximation. Estimation problems can often be solved by decreasing the number of states relative to the number of observations.
 }
-\examples{
-d <- subadult_ringed_seal
-dates <- unique(as.POSIXct(d$date,tz="GMT"))
-dseq <- seq(min(dates),max(dates), "day")
-mov <- DSBHN(dseq)
-
-}
 \seealso{
-\code{\link{Movement}}, \code{link{DSBW}}.
+\code{\link{Movement-class}}, \code{link{DSBHN}}, \code{link{DSBW}}.
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBW-class}},
+  \code{\link{DIRAC}}, \code{\link{DSBW}},
   \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}

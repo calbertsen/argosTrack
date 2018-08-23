@@ -21,7 +21,7 @@
 #' 
 #' @keywords internal
 # nocov start
-OUV <- setRefClass("OUV",
+setRefClass("OUV",
                   contains = "Movement",
                   methods = list(
                       initialize = function(dates,

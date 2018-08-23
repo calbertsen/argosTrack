@@ -3,7 +3,6 @@
 \docType{class}
 \name{OUV-class}
 \alias{OUV-class}
-\alias{OUV}
 \title{A Reference Class for fitting an Ornstein-Uhlenbeck Velocity model.}
 \description{
 The reference class implements an Ornstein-Uhlenbeck Velocity. The velocity is modelled by the (bivariate) stochastic differential equation
@@ -34,8 +33,8 @@ Albertsen, C.M. (2016) Personal communication.
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
+  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW}}, \code{\link{GDCRW-class}},
   \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{RW-class}}

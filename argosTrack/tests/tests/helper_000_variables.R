@@ -2,7 +2,7 @@
 ## Create data frame of movement models to test
 allMoveNames <- names(getClass("Movement")@subclasses)
 
-excludeMoveNames <- c("CSB","MPCTCRW","OUL","OUV")
+excludeMoveNames <- c("CSB","MPCTCRW","OUV")
 
 moveNamesUse <- readyMoveNames <- setdiff(allMoveNames, excludeMoveNames)
 

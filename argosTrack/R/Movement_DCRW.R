@@ -4,23 +4,17 @@
 #' \deqn{X_t = X_{t-\Delta} + \gamma T(\phi) (X_t - X_{t-\Delta}) + \epsilon_t}
 #' Here, \eqn{\epsilon_t} is zero mean Gaussian noise with covariance \eqn{ \pmatrix{ \sigma_1^2 & \rho\sigma_1\sigma_2 \cr \rho\sigma_1\sigma_2 & \sigma_2^2 }}. \eqn{T(\phi)} is the rotation matrix \eqn{ \pmatrix{ \cos(\phi) & -\sin(\phi) \cr \sin(\phi) & \cos(\phi) }}. \eqn{\gamma} is a scalar.
 #' 
-#' @seealso \link{Movement}
+#' @seealso \link{Movement-class} \link{DCRW}
 #'
 #' @family "Movement models"
 #'
-#' @examples
-#' d <- subadult_ringed_seal
-#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
-#' dseq <- seq(min(dates),max(dates), "day")
-#' mov <- DCRW(dseq)
 #'
 #' @references
 #' Jonsen, I., J. Mills Flemming, and R. Myers. (2005) Robust state-space modeling of animal movement data. Ecology 86, 2874-2880.
 #' 
-#' @export DCRW
 #' @importFrom methods setRefClass new 
 #' @exportClass DCRW
-DCRW <- setRefClass("DCRW",
+setRefClass("DCRW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -144,3 +138,34 @@ DCRW <- setRefClass("DCRW",
                   
                   )
                   )
+
+
+
+##' Create a DCRW movement model object
+##'
+##' @param dates Vector of distinct, equidistant, and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{logit_{(0,1)}(\\gamma)}, \\eqn{\\phi}, \\eqn{logit_{(-1,1)}(\\rho)}
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lat})}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A DCRW object
+##' @seealso \code{\link{DCRW-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
+#' dseq <- seq(min(dates),max(dates), "day")
+#' mov <- DCRW(dseq)
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+DCRW <- function(dates,
+                 pars = numeric(3),
+                 varPars = numeric(2),
+                 nauticalStates = FALSE,
+                 timeunit = "hours"){
+    new("DCRW",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

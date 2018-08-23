@@ -10,22 +10,16 @@
 #' \deqn{S_t \sim HN(\sigma^2)}
 #' and the bearings are modelled by a wrapped Cauchy distribution with location parameter \eqn{B_{t-1}} and concentration parameter \eqn{\rho}.
 #' 
-#' @seealso \code{\link{Movement}}, \code{link{DSBW}}.
+#' @seealso \code{\link{Movement-class}}, \code{link{DSBHN}}, \code{link{DSBW}}.
 #'
 #' @family "Movement models"
 #'
 #' @note Step-length/Bearings models can be difficult for the Laplace approximation. Estimation problems can often be solved by decreasing the number of states relative to the number of observations.
 #' 
-#' @examples
-#' d <- subadult_ringed_seal
-#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
-#' dseq <- seq(min(dates),max(dates), "day")
-#' mov <- DSBHN(dseq)
 #' 
-#' @export DSBHN
 #' @importFrom methods setRefClass new 
 #' @exportClass DSBHN
-DSBHN <- setRefClass("DSBHN",
+setRefClass("DSBHN",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -126,3 +120,34 @@ DSBHN <- setRefClass("DSBHN",
                       }                  
                   )
                   )
+
+
+
+##' Create a DSBHN movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{log(\\rho)}
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma)}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A DSBHN object
+##' @seealso \code{\link{DSBHN-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' dates <- unique(as.POSIXct(d$date,tz="GMT"))
+#' dseq <- seq(min(dates),max(dates), "day")
+#' mov <- DSBHN(dseq)
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+DSBHN <- function(dates,
+                  pars = numeric(1),
+                  varPars = numeric(1),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("DSBHN",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

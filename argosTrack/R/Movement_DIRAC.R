@@ -3,7 +3,7 @@
 #' The reference class implements a Dirac movement model with no movement
 #' \deqn{X_t \sim \delta(X_0))}
 #' 
-#' @seealso \link{Movement}
+#' @seealso \link{Movement-class} \link{DIRAC}
 #'
 #' @family "Movement models"
 #' 
@@ -13,7 +13,6 @@
 #'
 #' @author Christoffer Moesgaard Albertsen
 #' 
-#' @export DIRAC
 #' @importFrom methods setRefClass new 
 #' @exportClass DIRAC
 DIRAC <- setRefClass("DIRAC",
@@ -92,3 +91,32 @@ DIRAC <- setRefClass("DIRAC",
                   
                   )
                   )
+
+
+
+##' Create a DIRAC movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Zero length vector of movement parameters
+##' @param varPars Zero length vector of movement variance parameters
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A DIRAC object
+##' @seealso \code{\link{DIRAC-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' mov <- DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+DIRAC <- function(dates,
+                  pars = numeric(0),
+                  varPars = numeric(0),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("DIRAC",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}

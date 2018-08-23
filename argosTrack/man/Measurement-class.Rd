@@ -3,7 +3,6 @@
 \docType{class}
 \name{Measurement-class}
 \alias{Measurement-class}
-\alias{Measurement}
 \title{A Reference Class for specifying a measurement model.}
 \description{
 A Reference Class for specifying a measurement model.
@@ -69,19 +68,6 @@ where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \
 \note{
 The reference class methods are not intended to be used by the user. Please use appropriate functions such as \code{\link{simTrack}}.
 }
-\examples{
-d <- subadult_ringed_seal
-obs <- Observation(lon = d$lon,
-                   lat = d$lat,
-                   dates = as.POSIXct(d$date,tz="GMT"),
-                   locationclass = d$lc
-                   )
-meas <- Measurement(model="t")
-mov <- RW(unique(obs$dates))
-anim <- Animal(obs,mov,meas,"Subadult")
-plot(anim)
-
-}
 \references{
 Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M. (2015) Fast fitting of non-Gaussian state-space models to animal movement data via Template Model Builder. Ecology, 96(10), 2598-2604. doi: 10.1890/14-2101.1
 \cr\cr Barndorff-Nielsen, O. (1977) Exponentially decreasing distributions for the logarithm of particle size. Proc. R. Soc. Lond. A. 353, 401-419.
@@ -89,7 +75,7 @@ Albertsen, C. M., Whoriskey, K., Yurkowski, D., Nielsen, A., and Flemming, J. M.
 \cr\cr Lange, K., Roderick J. A. Little, & Jeremy M. G. Taylor. (1989). Robust Statistical Modeling Using the t Distribution. Journal of the American Statistical Association, 84(408), 881-896.
 }
 \seealso{
-\code{\link{Movement}}, \code{\link{Observation}}, \code{\link{Measurement}}
+\code{\link{Measurement}} \code{\link{Movement-class}}, \code{\link{Observation-class}}, \code{\link{Animal-class}}
 }
 \author{
 Christoffer Moesgaard Albertsen

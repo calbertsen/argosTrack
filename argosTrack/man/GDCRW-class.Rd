@@ -3,7 +3,6 @@
 \docType{class}
 \name{GDCRW-class}
 \alias{GDCRW-class}
-\alias{GDCRW}
 \title{A Reference Class for fitting a Generalized first Difference Correlated Random Walk model.}
 \description{
 The reference class implements an Irregularized first Difference Correlated Random Walk (Albertsen 2016). The velocity is modelled by the (bivariate) stochastic differential equation
@@ -23,22 +22,16 @@ Hence,
 \item{\code{simulate(x0 = c(0, 0))}}{Function to simulate from the movement model. The initial states (latitudinal/y-coordinate location and longitudinal/x-coordinate location) must be given. If nauticalStates==TRUE, the result is returned in nautical miles.}
 }}
 
-\examples{
-d <- subadult_ringed_seal
-mov <- argosTrack:::GDCRW(unique(as.POSIXct(d$date,tz="GMT")))
-
-}
 \references{
 Albertsen, C.M. (2016) Personal communication.
 }
 \seealso{
-\code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
+\code{\link{Movement-class}}, \code{\link{GDCRW}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{MPCTCRW-class}},
+  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW}}, \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }
-\keyword{internal}

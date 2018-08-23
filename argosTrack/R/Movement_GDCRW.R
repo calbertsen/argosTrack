@@ -10,21 +10,16 @@
 #' \deqn{X_{t_n} = X_{t_{n-1}} + \mu \pmatrix{ \cos ((t_n-t_{n-1})\phi) & -\sin ((t_n-t_{n-1})\phi) \cr \sin ((t_n-t_{n-1})\phi) & \cos ((t_n-t_{n-1})\phi) } \pmatrix{ \gamma_1^{t_n-t_{n-1}} & 0 \cr 0 & \gamma_2^{t_n-t_{n-1}} } (X_{t_{n-1}} - X_{t_{n-2}} - \mu)}
 #'
 #' 
-#' @seealso \code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
+#' @seealso \code{\link{Movement-class}}, \code{\link{GDCRW}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 #'
 #' @family "Movement models"
 #' 
 #' @references
 #' Albertsen, C.M. (2016) Personal communication.
 #'
-#' @examples
-#' d <- subadult_ringed_seal
-#' mov <- argosTrack:::GDCRW(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
-#' @keywords internal
-#' @export GDCRW
 #' @exportClass GDCRW
-GDCRW <- setRefClass("GDCRW",
+setRefClass("GDCRW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -38,7 +33,7 @@ GDCRW <- setRefClass("GDCRW",
                                             nauticalStates = FALSE,
                                             timeunit = "hours"
                                             ){
-                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{logit_{(0,1)}(\\gamma_{lat})}, \\eqn{logit_{(0,1)}(gamma_{lon})}, \\eqn{\\phi}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lat})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
+                          "Method to initialize the class. 'dates' is a vector of distinct and increasing POSIXct dates; 'pars' is vector of the movement parameters: \\eqn{logit_{(0,1)}(\\gamma_{lat})}, \\eqn{logit_{(0,1)}(gamma_{lon})}, \\eqn{\\phi}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}; 'varPars' is a vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lon})}; 'nauticalStates' is a logical value indicating whether the states should be modelled in nautical miles, and 'timeunit' is the time unit to use for calculating time steps."
 ###############
 ## Do checks ##
 ###############
@@ -184,3 +179,32 @@ GDCRW <- setRefClass("GDCRW",
                   
                   )
                   )
+
+
+
+##' Create a GDCRW movement model object
+##'
+##' @param dates Vector of distinct and increasing POSIXct dates
+##' @param pars Vector of movement parameters: \\eqn{logit_{(0,1)}(\\gamma_{lat})}, \\eqn{logit_{(0,1)}(gamma_{lon})}, \\eqn{\\phi}, \\eqn{logit_{(-1,1)}(\\rho)}, \\eqn{\\mu_{lat}}, \\eqn{\\mu_{lon}}
+##' @param varPars Vector of movement variance parameters: \\eqn{log(\\sigma_{lat})}, \\eqn{log(\\sigma_{lon})}
+##' @param nauticalStates Should latent states be transformed from longitude/latitude to nautical miles?
+##' @param timeunit timeunit used for calculating time steps.
+##' @return A GDCRW object
+##' @seealso \code{\link{GDCRW-class}}
+#' @examples
+#' d <- subadult_ringed_seal
+#' mov <- GDCRW(unique(as.POSIXct(d$date,tz="GMT")))
+##' @author Christoffer Moesgaard Albertsen
+##' @export
+GDCRW <- function(dates,
+                  pars = numeric(6),
+                  varPars = numeric(2),
+                  nauticalStates = FALSE,
+                  timeunit = "hours"){
+    new("GDCRW",
+        dates = dates,
+        pars = pars,
+        varPars = varPars,
+        nauticalStates = nauticalStates,
+        timeunit = timeunit)
+}
