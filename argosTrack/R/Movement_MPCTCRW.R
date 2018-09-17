@@ -8,7 +8,7 @@
 #' 
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::MPCTCRW(unique(as.POSIXct(d$date,tz="GMT")))
+#' #mov <- argosTrack:::MPCTCRW(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' 
 #' @importFrom methods setRefClass new

@@ -36,7 +36,7 @@ setMethod("getTrack", "Animal",
 ##' Extracts track from animal data
 ##'
 ##' Extracts the estimated track from a Movement object
-##' @param object \link{Movement} reference class object
+##' @param object \link{Movement-class} reference class object
 ##' @param ... Additional arguments passed to the appropriate method
 ##' @return A data frame of positions
 ##' @author Christoffer Moesgaard Albertsen

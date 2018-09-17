@@ -7,7 +7,7 @@
 \description{
 The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process
 \deqn{X_t - \gamma = e^{B\Delta_t}[X_{t-\Delta_t} - \gamma] + \eta_{t}}
-where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrx{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
+where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrix{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
 }
 \section{Methods}{
 
@@ -25,8 +25,8 @@ Blackwell, P. G., Niu, M., Lambert, M. S. and LaPoint, S. D. (2016), Exact Bayes
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW}}, \code{\link{GDCRW-class}},
+  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
   \code{\link{MPCTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUV-class}},
   \code{\link{RW-class}}

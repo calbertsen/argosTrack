@@ -58,7 +58,7 @@ plot(obs)
 
 }
 \seealso{
-\code{\link{Movement}}, \code{\link{Measurement}}, \code{\link{Animal}}
+\code{\link{Movement-class}}, \code{\link{Measurement}}, \code{\link{Animal}}
 }
 \author{
 Christoffer Moesgaard Albertsen

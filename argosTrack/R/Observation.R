@@ -8,7 +8,7 @@
 #' @field varModelCode Integer vector of variance model codes (0, 1, 2, or 3)
 #' @field include Logical vector of whether observations should be included in likelihood
 #' 
-#' @seealso \code{\link{Movement}}, \code{\link{Measurement}}, \code{\link{Animal}}
+#' @seealso \code{\link{Movement-class}}, \code{\link{Measurement}}, \code{\link{Animal}}
 #'
 #' @examples
 #' d <- subadult_ringed_seal

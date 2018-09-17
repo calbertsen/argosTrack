@@ -8,7 +8,7 @@
 #' \deqn{X_{t_n} = X_{t_{n-1}} + \mu + \Theta (X_{t_{n-1}} - X_{t_{n-2}} - \mu)}
 #'
 #' 
-#' @seealso \code{\link{Movement}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
+#' @seealso \code{\link{Movement-class}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 #'
 #' @family "Movement models"
 #' 
@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' d <- subadult_ringed_seal
-#' mov <- argosTrack:::OUV(unique(as.POSIXct(d$date,tz="GMT")))
+#' #mov <- argosTrack:::OUV(unique(as.POSIXct(d$date,tz="GMT")))
 #' 
 #' @keywords internal
 # nocov start

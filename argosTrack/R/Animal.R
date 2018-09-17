@@ -233,7 +233,7 @@ setRefClass("Animal",
 ##' @param name Name of the animal
 ##' @param ... Other arguments not currently used
 ##' @return An Animal class object
-##' @seealso \code{\link{Animal-class}} \code{\link{Movement}} \code{\link{Observation}} \code{\link{Measurement}}
+##' @seealso \code{\link{Animal-class}} \code{\link{Movement-class}} \code{\link{Observation-class}} \code{\link{Measurement-class}}
 ##' @examples
 #' d <- subadult_ringed_seal
 #' obs <- Observation(lon = d$lon,

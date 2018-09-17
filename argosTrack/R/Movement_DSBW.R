@@ -19,11 +19,10 @@
 #' @references
 #' McClintock, B. T., London, J. M., Cameron, M. F. and Boveng, P. L. (2015) Modelling animal movement using the Argos satellite telemetry location error ellipse. Methods Ecol Evol, 6: 266-277. doi:10.1111/2041-210X.12311
 #' 
-#'
 #' 
 #' @importFrom methods setRefClass new 
 #' @exportClass DSBW
-DSBW <- setRefClass("DSBW",
+setRefClass("DSBW",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 

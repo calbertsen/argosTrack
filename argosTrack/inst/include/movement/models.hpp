@@ -11,7 +11,7 @@ namespace argosTrack {
 #include "idtcrw.hpp"
 #include "dsb_weibull.hpp"
 #include "dsb_halfnorm.hpp"
-//#include "oul.hpp"
+#include "oul.hpp"
 //#include "ouv.hpp"
 
   }

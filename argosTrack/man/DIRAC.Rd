@@ -2,12 +2,8 @@
 % Please edit documentation in R/Movement_DIRAC.R
 \name{DIRAC}
 \alias{DIRAC}
-\alias{DIRAC}
-\title{A Reference Class for fitting a Dirac movement model.}
+\title{Create a DIRAC movement model object}
 \usage{
-DIRAC(dates, pars = numeric(0), varPars = numeric(0),
-  nauticalStates = FALSE, timeunit = "hours")
-
 DIRAC(dates, pars = numeric(0), varPars = numeric(0),
   nauticalStates = FALSE, timeunit = "hours")
 }
@@ -26,32 +22,15 @@ DIRAC(dates, pars = numeric(0), varPars = numeric(0),
 A DIRAC object
 }
 \description{
-The reference class implements a Dirac movement model with no movement
-\deqn{X_t \sim \delta(X_0))}
-
 Create a DIRAC movement model object
 }
 \examples{
 d <- subadult_ringed_seal
 mov <- DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
-
-d <- subadult_ringed_seal
-mov <- DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
 }
 \seealso{
-\link{Movement-class} \link{DIRAC}
-
 \code{\link{DIRAC-class}}
-
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DSBHN-class}}, \code{\link{DSBW}},
-  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}, \code{\link{RW-class}}
 }
 \author{
-Christoffer Moesgaard Albertsen
-
 Christoffer Moesgaard Albertsen
 }

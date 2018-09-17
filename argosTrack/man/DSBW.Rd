@@ -2,12 +2,8 @@
 % Please edit documentation in R/Movement_DSBW.R
 \name{DSBW}
 \alias{DSBW}
-\alias{DSBW}
-\title{A Reference Class for fitting a Discrete time Step-length/Bearings model with Weibull distributed steps.}
+\title{Create a DSBW movement model object}
 \usage{
-DSBW(dates, pars = numeric(3), varPars = numeric(0),
-  nauticalStates = FALSE, timeunit = "hours")
-
 DSBW(dates, pars = numeric(3), varPars = numeric(0),
   nauticalStates = FALSE, timeunit = "hours")
 }
@@ -26,20 +22,7 @@ DSBW(dates, pars = numeric(3), varPars = numeric(0),
 A DSBW object
 }
 \description{
-The reference class implements a Discrete time Step-length/Bearings model with Weibull distributed steps (McClintock et al. 2015, with small modifications). \cr
-Let \eqn{X_t} be the (bivariate) location (in nautical miles) at time \eqn{t}. The step lengths are
-\deqn{S_t = \sqrt{\sum\left(X_t-X_{t-1}\right)^2}}
-and the bearings are
-\deqn{B_t = atan2(X_{y,t}-X_{y,t-1},X_{x,t}-X_{y,t-1})} 
-where \eqn{x} denotes the east/west coordinate and \eqn{y} denotes the north/south coordinate.
-The step lengths are modelled by a half normal distribution
-\deqn{S_t \sim Weibull(scale,shape)}
-and the bearings are modelled by a wrapped Cauchy distribution with location parameter \eqn{B_{t-1}} and concentration parameter \eqn{rho}.
-
 Create a DSBW movement model object
-}
-\note{
-Step-length/Bearings models can be difficult for the Laplace approximation. Estimation problems can often be solved by using \code{\link{DSBHN}} instead or by decreasing the number of states relative to the number of observations.
 }
 \examples{
 d <- subadult_ringed_seal
@@ -47,20 +30,8 @@ dates <- unique(as.POSIXct(d$date,tz="GMT"))
 dseq <- seq(min(dates),max(dates), "day")
 mov <- DSBW(dseq)
 }
-\references{
-McClintock, B. T., London, J. M., Cameron, M. F. and Boveng, P. L. (2015) Modelling animal movement using the Argos satellite telemetry location error ellipse. Methods Ecol Evol, 6: 266-277. doi:10.1111/2041-210X.12311
-}
 \seealso{
-\code{\link{Movement-class}}, \code{\link{DSBW}}, \code{\link{DSBHN}}.
-
 \code{\link{DSBW-class}}
-
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
-  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}, \code{\link{RW-class}}
 }
 \author{
 Christoffer Moesgaard Albertsen

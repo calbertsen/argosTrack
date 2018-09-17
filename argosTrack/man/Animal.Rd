@@ -36,7 +36,7 @@ anim <- Animal(obs,mov,meas,"Subadult")
 plot(anim)
 }
 \seealso{
-\code{\link{Animal-class}} \code{\link{Movement}} \code{\link{Observation}} \code{\link{Measurement}}
+\code{\link{Animal-class}} \code{\link{Movement-class}} \code{\link{Observation-class}} \code{\link{Measurement-class}}
 }
 \author{
 Christoffer Moesgaard Albertsen

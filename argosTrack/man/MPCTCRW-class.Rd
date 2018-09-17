@@ -17,7 +17,7 @@ This movement model extends \code{\link{CTCRW}} by having two velocity processes
 
 \examples{
 d <- subadult_ringed_seal
-mov <- argosTrack:::MPCTCRW(unique(as.POSIXct(d$date,tz="GMT")))
+#mov <- argosTrack:::MPCTCRW(unique(as.POSIXct(d$date,tz="GMT")))
 
 
 }
@@ -26,8 +26,8 @@ mov <- argosTrack:::MPCTCRW(unique(as.POSIXct(d$date,tz="GMT")))
 
 Other "Movement models": \code{\link{CSB-class}},
   \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW}}, \code{\link{GDCRW-class}},
+  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
+  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }

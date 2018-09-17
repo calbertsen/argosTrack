@@ -353,7 +353,7 @@ setRefClass("Measurement",
 ##' @param nauticalObs Transform observations from longitude/latitude to nautical miles?
 ##' @param ... Not currently used
 ##' @return a Measurement object
-##' @seealso \code{\link{Measurement-class}} \code{\link{Movement}} \code{\link{Observation}} \code{\link{Animal}}
+##' @seealso \code{\link{Measurement-class}} \code{\link{Movement-class}} \code{\link{Observation}} \code{\link{Animal}}
 ##' @examples
 #' d <- subadult_ringed_seal
 #' obs <- Observation(lon = d$lon,

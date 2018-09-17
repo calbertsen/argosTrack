@@ -4,7 +4,7 @@
 \alias{OUL}
 \title{Create an OUL movement model object}
 \usage{
-OUL(dates, pars = numeric(6), varPars = numeric(2),
+OUL(dates, pars = c(1, 0, 0, 1, 0, 0), varPars = numeric(2),
   nauticalStates = FALSE, timeunit = "hours")
 }
 \arguments{

@@ -2,7 +2,7 @@
 #'
 #' The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process
 #' \deqn{X_t - \gamma = e^{B\Delta_t}[X_{t-\Delta_t} - \gamma] + \eta_{t}}
-#' where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrx{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
+#' where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrix{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
 #'
 #' 
 #' @seealso \code{\link{Movement-class}}, \code{\link{OUL}}.
@@ -80,7 +80,7 @@ setRefClass("OUL",
                           }
                           
                           state <- function(Xm,dt){
-                              meb <- as.matrix(Matrix::expm(B*dt))
+                              meb <- as.matrix(Matrix::expm(-B*dt))
                               mupar + as.vector(meb %*% (Xm - mupar))
                           }
                           

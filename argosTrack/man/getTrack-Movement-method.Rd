@@ -8,7 +8,7 @@
 \S4method{getTrack}{Movement}(object, ...)
 }
 \arguments{
-\item{object}{\link{Movement} reference class object}
+\item{object}{\link{Movement-class} reference class object}
 
 \item{...}{Additional arguments passed to the appropriate method}
 }

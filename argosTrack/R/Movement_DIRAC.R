@@ -12,10 +12,9 @@
 #' mov <- DIRAC(unique(as.POSIXct(d$date,tz="GMT")))
 #'
 #' @author Christoffer Moesgaard Albertsen
-#' 
 #' @importFrom methods setRefClass new 
 #' @exportClass DIRAC
-DIRAC <- setRefClass("DIRAC",
+setRefClass("DIRAC",
                   contains = "Movement",
                   methods = list(
                       copy = function (shallow = FALSE) 
@@ -91,7 +90,6 @@ DIRAC <- setRefClass("DIRAC",
                   
                   )
                   )
-
 
 
 ##' Create a DIRAC movement model object
