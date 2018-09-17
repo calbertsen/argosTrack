@@ -7,10 +7,12 @@ library(argosTrack)
 
 nObs <- 500
 dates <- Sys.time() + (0:(nObs-1)) * 60 * 60 * 24
-m0 <- argosTrack:::OUL(dates,timeunit="day")
+m0 <- OUL(dates,
+          pars = c(0.1,0,0,0.1,10,10),
+          timeunit="days")
 
 set.seed(1)
-X <- m0$simulate()
+X <- m0$simulate(x0 = c(0,0))
 Y <- X + rnorm(nObs*2,0,0.5)
 
 plot(t(Y)); lines(t(X))
@@ -19,7 +21,7 @@ an <- Animal(Observation(lon = Y[1,],
                          lat = Y[2,],
                          dates = dates,
                          locationclass = rep("GPS",nObs)),
-             argosTrack:::OUL(dates,timeunit="day"),
+             argosTrack:::OUL(dates,timeunit="days"),
              Measurement(model="n"))
 
 plot(an)
