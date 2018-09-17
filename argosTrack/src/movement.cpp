@@ -1,7 +1,5 @@
 #include <TMB.hpp>
-#include "convenience/convenience.hpp"
-#include "densities/all.hpp"
-#include "movement/models.hpp"
+#include "../inst/include/argosTrack.hpp"
 
 using namespace density;
 
