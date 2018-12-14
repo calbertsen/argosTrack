@@ -6,7 +6,8 @@
 \title{Roseplot for Movement reference class object}
 \usage{
 \S4method{roseplot}{Movement}(object, nclass = 35, prob = TRUE,
-  type = c("both", "step", "angle"), bearings = FALSE, show = TRUE, ...)
+  type = c("both", "step", "angle"), bearings = FALSE, show = TRUE,
+  ...)
 }
 \arguments{
 \item{object}{Movement reference class object}

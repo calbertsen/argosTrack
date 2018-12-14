@@ -37,4 +37,5 @@ Other "Movement models": \code{\link{CTCRW-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }
+\concept{"Movement models"}
 \keyword{internal}

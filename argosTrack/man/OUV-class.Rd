@@ -39,4 +39,5 @@ Other "Movement models": \code{\link{CSB-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{RW-class}}
 }
+\concept{"Movement models"}
 \keyword{internal}

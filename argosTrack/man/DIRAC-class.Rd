@@ -34,3 +34,4 @@ Other "Movement models": \code{\link{CSB-class}},
 \author{
 Christoffer Moesgaard Albertsen
 }
+\concept{"Movement models"}

@@ -4,11 +4,11 @@
 \alias{Measurement}
 \title{Construct a Measurement object}
 \usage{
-Measurement(model = c("n", "t", "sh"), logSdObs = c(0, 0), corObs = 0,
-  logCorrection = matrix(c(0.6507, 0.8231, 2.3432, 2.0532, 3.8514, 2.9602,
-  3.828, 3.0463, 4.4417, 3.6951, 5.5714, 5.5149, 8, 8), 2, 7),
-  splineXlogSd = 0, knotPars = numeric(5), df = numeric(8), minDf = 3,
-  nauticalObs = FALSE, ...)
+Measurement(model = c("n", "t", "sh"), logSdObs = c(0, 0),
+  corObs = 0, logCorrection = matrix(c(0.6507, 0.8231, 2.3432, 2.0532,
+  3.8514, 2.9602, 3.828, 3.0463, 4.4417, 3.6951, 5.5714, 5.5149, 8, 8), 2,
+  7), splineXlogSd = 0, knotPars = numeric(5), df = numeric(8),
+  minDf = 3, nauticalObs = FALSE, ...)
 }
 \arguments{
 \item{model}{Measurement model distribution}

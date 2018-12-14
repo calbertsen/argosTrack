@@ -370,7 +370,7 @@ Type objective_function<Type>::operator() ()
   
   vector<Type> splineSd(366);
   for(int i = 0; i < splineSd.size(); ++i)
-    splineSd(i) = exp(logSplLat(i+1));
+    splineSd(i) = exp(logSplLat(Type(i+1)));
 
   ////////////
   // REPORT //

@@ -5,8 +5,8 @@
 \alias{plotLat,Observation-method}
 \title{Latitude plot for an Observation reference class object}
 \usage{
-\S4method{plotLat}{Observation}(object, plotArgs = list(), args = list(),
-  add = FALSE, ...)
+\S4method{plotLat}{Observation}(object, plotArgs = list(),
+  args = list(), add = FALSE, ...)
 }
 \arguments{
 \item{object}{Observation reference class object}

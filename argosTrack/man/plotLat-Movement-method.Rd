@@ -6,7 +6,8 @@
 \title{Latitude plot for a Movement reference class object}
 \usage{
 \S4method{plotLat}{Movement}(object, plotArgs = list(), args = list(),
-  add = FALSE, sdArgs = list(col = "grey", border = NA), sd = FALSE, ...)
+  add = FALSE, sdArgs = list(col = "grey", border = NA), sd = FALSE,
+  ...)
 }
 \arguments{
 \item{object}{Movement reference class object}

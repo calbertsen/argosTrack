@@ -5,9 +5,9 @@
 \alias{plotMap,Animal-method}
 \title{Map plot for an Animal reference class object}
 \usage{
-\S4method{plotMap}{Animal}(object, plotArgs = list(), args = list(lwd = 3,
-  col = "red"), add = FALSE, obsArgs = list(pch = 16), sdArgs = list(col =
-  "grey", border = NA), ...)
+\S4method{plotMap}{Animal}(object, plotArgs = list(), args = list(lwd =
+  3, col = "red"), add = FALSE, obsArgs = list(pch = 16),
+  sdArgs = list(col = "grey", border = NA), ...)
 }
 \arguments{
 \item{object}{Animal reference class object}

@@ -5,9 +5,9 @@
 \alias{plotMap,Observation-method}
 \title{Map plot for an Observation reference class object}
 \usage{
-\S4method{plotMap}{Observation}(object, plotArgs = list(), args = list(pch =
-  16, lwd = 3, col = "red"), add = FALSE, sdArgs = list(col = "grey", border
-  = NA), ...)
+\S4method{plotMap}{Observation}(object, plotArgs = list(),
+  args = list(pch = 16, lwd = 3, col = "red"), add = FALSE,
+  sdArgs = list(col = "grey", border = NA), ...)
 }
 \arguments{
 \item{object}{Observation reference class object}

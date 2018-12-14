@@ -33,3 +33,4 @@ Other "Movement models": \code{\link{CSB-class}},
   \code{\link{Movement-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}
 }
+\concept{"Movement models"}

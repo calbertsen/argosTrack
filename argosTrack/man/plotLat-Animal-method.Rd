@@ -5,9 +5,9 @@
 \alias{plotLat,Animal-method}
 \title{Latitude plot for an Animal reference class object}
 \usage{
-\S4method{plotLat}{Animal}(object, plotArgs = list(), args = list(lwd = 3,
-  col = "red"), add = FALSE, obsArgs = list(pch = 16), sdArgs = list(col =
-  "grey", border = NA), sd = FALSE, ...)
+\S4method{plotLat}{Animal}(object, plotArgs = list(), args = list(lwd =
+  3, col = "red"), add = FALSE, obsArgs = list(pch = 16),
+  sdArgs = list(col = "grey", border = NA), sd = FALSE, ...)
 }
 \arguments{
 \item{object}{Animal reference class object}

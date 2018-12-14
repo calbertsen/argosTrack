@@ -4,8 +4,8 @@
 \alias{RW}
 \title{Create a RW movement model object}
 \usage{
-RW(dates, pars = numeric(0), varPars = numeric(2), nauticalStates = FALSE,
-  timeunit = "hours")
+RW(dates, pars = numeric(0), varPars = numeric(2),
+  nauticalStates = FALSE, timeunit = "hours")
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

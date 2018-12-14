@@ -5,8 +5,8 @@
 \alias{plotLon,Observation-method}
 \title{Longitude plot for an Observation reference class object}
 \usage{
-\S4method{plotLon}{Observation}(object, plotArgs = list(), args = list(),
-  add = FALSE, ...)
+\S4method{plotLon}{Observation}(object, plotArgs = list(),
+  args = list(), add = FALSE, ...)
 }
 \arguments{
 \item{object}{Observation reference class object}

@@ -44,3 +44,4 @@ Other "Movement models": \code{\link{CSB-class}},
   \code{\link{MPCTCRW-class}}, \code{\link{OUL-class}},
   \code{\link{OUV-class}}, \code{\link{RW-class}}
 }
+\concept{"Movement models"}
