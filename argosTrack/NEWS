@@ -1,4 +1,7 @@
 # Version x.y.z
+- Added movement model: Ornstein-Uhlenbeck Location (OUL)
+
+# Version 1.2.2
 - Added movement model: Generalized first Difference Correlated Random Walk (GDCRW)
 - Removed dependency on testthat; added dependency on utils
 - Extra input checks for rmvsh, Measurement and Observation

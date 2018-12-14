@@ -1,8 +1,7 @@
 #' A Reference Class for fitting an Ornstein-Uhlenbeck Location model.
 #'
-#' The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process
-#' \deqn{X_t - \gamma = e^{B\Delta_t}[X_{t-\Delta_t} - \gamma] + \eta_{t}}
-#' where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrix{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
+#' The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process defined by the SDE
+#' \deqn{dX_t = -B(X_t-\mu) dt + S W_{t}}.
 #'
 #' 
 #' @seealso \code{\link{Movement-class}}, \code{\link{OUL}}.
@@ -14,7 +13,6 @@
 #'
 #' @importFrom methods setRefClass new
 #' @exportClass OUL
-# nocov start
 setRefClass("OUL",
                   contains = "Movement",
                   methods = list(
@@ -76,7 +74,11 @@ setRefClass("OUL",
                           mupar <- .self$parameters[5:6]
                           var <- function(dt){
                               meb <- as.matrix(Matrix::expm(-B*dt))
-                              diag(sigma2) - meb %*% diag(sigma2) %*% t(meb)
+                              Bks <- .Call("kroneckersum",B,B,PACKAGE="argosTrack")
+                              Sigm <- diag(sigma2)
+                              varVec <- solve(Bks) %*% as.vector(Sigm)
+                              varMat <- matrix(varVec,2,2)
+                              varMat - meb %*% varMat %*% t(meb)
                           }
                           
                           state <- function(Xm,dt){
@@ -170,7 +172,3 @@ OUL <- function(dates,
         nauticalStates = nauticalStates,
         timeunit = timeunit)
 }
-
-
-
-                                        # nocov end

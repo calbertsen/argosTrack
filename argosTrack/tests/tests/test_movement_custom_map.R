@@ -109,3 +109,33 @@ is_true(is.null(mod$getTMBmap(fixmovecor=FALSE)$movePars))
 mod <- DCRW(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60)
 is_equal(mod$getTMBmap(fixrotation=TRUE,fixmovecor=TRUE)$movePars,
          factor(c(1,NA,NA)))
+
+
+
+#########
+## OUL ##
+#########
+
+mod <- OUL(as.POSIXct("2017-01-01 00:00:00") + (1:100) * 60 * 60)
+is_equal(mod$getTMBmap()$movePars,factor(c(1,2,3,4,5,6)))
+## OUL symdecay
+is_equal(mod$getTMBmap(symdecay=TRUE)$movePars,factor(c(1,2,2,4,5,6)))
+
+## OUL diagdecay
+is_equal(mod$getTMBmap(diagdecay=TRUE)$movePars,factor(c(1,NA,NA,4,5,6)))
+
+## OUL equaldecay
+is_equal(mod$getTMBmap(equaldecay=TRUE)$movePars,factor(c(1,2,3,1,5,6)))
+
+## OUL sym equal  decay
+is_equal(mod$getTMBmap(symdecay = TRUE,equaldecay=TRUE)$movePars,factor(c(1,2,2,1,5,6)))
+
+## OUL diag equal  decay
+is_equal(mod$getTMBmap(diagdecay = TRUE,equaldecay=TRUE)$movePars,factor(c(1,NA,NA,1,5,6)))
+
+
+## OUL equaldrift
+is_equal(mod$getTMBmap(equaldrift=TRUE)$movePars,factor(c(1,2,3,4,5,5)))
+
+## OUL fixdrift
+is_equal(mod$getTMBmap(fixdrift=TRUE)$movePars,factor(c(1,2,3,4,NA,NA)))

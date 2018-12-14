@@ -24,6 +24,7 @@ extern "C" {
   SEXP idtcrwVarMat(SEXP dt , SEXP gamma, SEXP phi, SEXP rho, SEXP varState);
   SEXP stepLength(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical);
   SEXP bearing(SEXP x0, SEXP y0, SEXP x1, SEXP y1, SEXP nautical);
+  SEXP kroneckersum(SEXP x, SEXP y);
 
 #define CALLDEF(name,n) {#name, (DL_FUNC) &name, n}
   
@@ -58,7 +59,7 @@ extern "C" {
     CALLDEF(idtcrwVarMat,5),
     CALLDEF(stepLength,5),
     CALLDEF(bearing,5),
-
+    CALLDEF(kroneckersum,2),
     {NULL,NULL,0}
   };
 

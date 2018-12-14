@@ -11,7 +11,7 @@ obs <- Observation(lon = d$lon,
 
 anim <- Animal(name = as.character(d$id[1]),
                observation = obs,
-               movement =  argosTrack:::IDCRW(unique(obs$dates),
+               movement =  RW(unique(obs$dates),
                                  timeunit = "hours"),
                measurement = Measurement(model="n"))
 
@@ -92,7 +92,7 @@ addAlpha <- Vectorize(function(x,alpha=1){
 
 data("countriesHigh", package = "rworldxtra")
 rng <- anim$getRange()
-plotMap(anim, args=list(type="n"), obsArgs = list(type="n"))
+plotMap(anim$movement, args=list(type="n"), obsArgs = list(type="n"))
 plot(countriesHigh, add = TRUE, col="grey",border=NA)
 ##plotMap(anim,add=TRUE, obsArgs=list(pch=16,cex=0.5,col=rgb(0,0,1,0.3)))
 invisible(lapply(cl,function(xx)polygon(xx$x,xx$y,col=addAlpha(cols[which(xx$level==levels)],0.2),border=NA)))

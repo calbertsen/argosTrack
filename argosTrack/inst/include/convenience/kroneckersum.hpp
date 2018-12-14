@@ -13,4 +13,16 @@ matrix<Type> kroneckersum(matrix<Type> x, matrix<Type> y){
 }
 
 
+
+//Export to R
+extern "C" {
+
+  
+  SEXP kroneckersum(SEXP x, SEXP y){
+    return(asSEXP(kroneckersum(asMatrix<double>(x),asMatrix<double>(y))));   
+  }
+
+}
+
+
 #endif

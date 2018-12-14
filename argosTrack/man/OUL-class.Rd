@@ -5,9 +5,8 @@
 \alias{OUL-class}
 \title{A Reference Class for fitting an Ornstein-Uhlenbeck Location model.}
 \description{
-The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process
-\deqn{X_t - \gamma = e^{B\Delta_t}[X_{t-\Delta_t} - \gamma] + \eta_{t}}
-where \eqn{\eta_t} is a bivariate normal with zero mean and covariance \eqn{\pmatrix{\sigma_1^2 & 0 \cr 0 & \sigma_2^2}}.
+The reference class implements an Ornstein-Uhlenbeck Location (Blackwell 2016). The locations follow an Ornstein-Uhlenbeck process defined by the SDE
+\deqn{dX_t = -B(X_t-\mu) dt + S W_{t}}.
 }
 \section{Methods}{
 
