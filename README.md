@@ -6,10 +6,9 @@ Installing
 
 The `argosTrack` package requires [`TMB`](https://github.com/kaskr/adcomp) to be installed.
 
-<!-- covafillr version can be installed from CRAN with -->
 The development version of argosTrack can be installed with
 
 ``` r
-devtools::install_github("calbertsen/argosTrack")
+devtools::install_github("calbertsen/argosTrack/argosTrack", ref = "master")
 ```
 
