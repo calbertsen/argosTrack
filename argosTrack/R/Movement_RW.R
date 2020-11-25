@@ -86,6 +86,19 @@ setRefClass("RW",
                                                sigma = dt[i]*diag(exp(2*.self$varianceParameters)))
                           }
                           return(X)
+                      },
+                         getTMBmap = function(...){
+                          "Function to return a map list for TMB::MakeADFun. If equaldecay=TRUE, \\eqn{\\beta_1} and \\eqn{\\beta_2} are estimated as equal. If equaldrift=TRUE, \\eqn{\\gamma_1} and \\eqn{\\gamma_2} are estimated as equal. If fixdrift=TRUE, \\eqn{\\gamma_1} and \\eqn{\\gamma_2} are fixed at the current value."
+                          map <- callSuper(...)
+                          args <- list(...)
+                           
+                          if("equalvar" %in% names(args)) ## var
+                              if(args$equalvar){
+                                  map$logSdState <- factor(c(1,1))
+                              }
+
+                          return(map)
+                          
                       }
 
                   
