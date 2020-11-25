@@ -225,7 +225,7 @@ setRefClass("Measurement",
 
                     vcovTmp <- solve(hessian)
                     indx <- which(rownames(vcovTmp) %in% c("logSdObs","logCorrection","splineXlogSd","knotPars","df"))
-                    vcov <<- vcovTmp[indx,indx]
+                    vcov <<- vcovTmp[indx,indx,drop = FALSE]
 
                     reportSpline <<- reportSpline
 
