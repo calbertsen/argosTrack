@@ -93,7 +93,7 @@ setRefClass("Movement",
                                 indx <- which(rownames(vcovTmp) %in% c("movePars",
                                                                        "logSdState")
                                               )
-                                vcov <<- vcovTmp[indx,indx]
+                                vcov <<- vcovTmp[indx,indx,drop=FALSE]
                             },
                             show = function(){
                                 cat("\n\nMovement model:\n")
