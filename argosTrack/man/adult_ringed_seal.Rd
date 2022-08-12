@@ -4,7 +4,8 @@
 \name{adult_ringed_seal}
 \alias{adult_ringed_seal}
 \title{Track data from the adult ringed seal with tag id 106373.}
-\format{A data frame with 2698 rows and 5 variables:
+\format{
+A data frame with 2698 rows and 5 variables:
 \describe{
   \item{id}{Tag id}
   \item{date}{Date and time of the observation}
@@ -12,7 +13,8 @@
   \item{lat}{Observed latitude (degrees north) from the Argos system}
   \item{lon}{Observed longitude (degrees east) from the Argos system}
   
-}}
+}
+}
 \source{
 Fisheries and Oceans Canada
 }

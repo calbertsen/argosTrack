@@ -28,11 +28,18 @@ Albertsen, C.M. (2016) Personal communication.
 \seealso{
 \code{\link{Movement-class}}, \code{\link{GDCRW}}. A generalization of \code{\link{DCRW}}, \code{\link{RW}}, and \code{\link{CTCRW}} (except only the location is modelled here and it is assumed to be known given the velocities)
 
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}, \code{\link{RW-class}}
+Other "Movement models": 
+\code{\link{CSB-class}},
+\code{\link{CTCRW-class}},
+\code{\link{DCRW-class}},
+\code{\link{DIRAC-class}},
+\code{\link{DSBHN-class}},
+\code{\link{DSBW-class}},
+\code{\link{MPCTCRW-class}},
+\code{\link{Movement-class}},
+\code{\link{OUF-class}},
+\code{\link{OUL-class}},
+\code{\link{OUV-class}},
+\code{\link{RW-class}}
 }
 \concept{"Movement models"}

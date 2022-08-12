@@ -12,6 +12,7 @@ namespace argosTrack {
 #include "dsb_weibull.hpp"
 #include "dsb_halfnorm.hpp"
 #include "oul.hpp"
+#include "ouf.hpp"
 //#include "ouv.hpp"
 
   }

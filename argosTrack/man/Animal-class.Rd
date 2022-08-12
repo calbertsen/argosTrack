@@ -24,14 +24,24 @@ A Reference Class for combining animal movement model parts.
 \section{Methods}{
 
 \describe{
-\item{\code{addToLatPlot(obsarglist = list(pch = 16, col = "grey"), movarglist = list(),
-  sdarglist = list(col = "grey", border = NA, lwd = 3, lty = 2), sd = TRUE)}}{Function to add estimated movement and observation latitudes to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
+\item{\code{addToLatPlot(
+  obsarglist = list(pch = 16, col = "grey"),
+  movarglist = list(),
+  sdarglist = list(col = "grey", border = NA, lwd = 3, lty = 2),
+  sd = TRUE
+)}}{Function to add estimated movement and observation latitudes to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
 
-\item{\code{addToLonPlot(obsarglist = list(pch = 16, col = "grey"), movarglist = list(),
-  sdarglist = list(col = "grey", border = NA, lwd = 3, lty = 2), sd = TRUE)}}{Function to add estimated movement and observation longitudes to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
+\item{\code{addToLonPlot(
+  obsarglist = list(pch = 16, col = "grey"),
+  movarglist = list(),
+  sdarglist = list(col = "grey", border = NA, lwd = 3, lty = 2),
+  sd = TRUE
+)}}{Function to add estimated movement and observation longitudes to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
 
-\item{\code{addToMapPlot(obsarglist = list(type = "b", pch = 16, col = "grey"),
-  movarglist = list())}}{Function to add estimated movement and observation coordinates to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
+\item{\code{addToMapPlot(
+  obsarglist = list(type = "b", pch = 16, col = "grey"),
+  movarglist = list()
+)}}{Function to add estimated movement and observation coordinates to a plot. obsarglist is a list of base graphics arguments to be used for observation data, movarglist is a list of base graphics arguments to be used for movement estimates, and sdarglist is a list of base graphics arguments to be used for movement standard errors (if sd = TRUE).}
 
 \item{\code{getRange(sd = FALSE, zoomToState = FALSE)}}{Returns the range of animal coordinates. If zoomToState = TRUE, only movement data is used. If sd = TRUE, the range includes standard errors of the movement estimates.}
 

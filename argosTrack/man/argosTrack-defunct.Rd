@@ -4,7 +4,6 @@
 \name{argosTrack-defunct}
 \alias{argosTrack-defunct}
 \alias{argosTrack}
-\alias{argosTrack-defunct-package}
 \title{Defunct functions in the argosTrack package}
 \usage{
 argosTrack(...)

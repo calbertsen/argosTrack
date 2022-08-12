@@ -4,8 +4,13 @@
 \alias{DIRAC}
 \title{Create a DIRAC movement model object}
 \usage{
-DIRAC(dates, pars = numeric(0), varPars = numeric(0),
-  nauticalStates = FALSE, timeunit = "hours")
+DIRAC(
+  dates,
+  pars = numeric(0),
+  varPars = numeric(0),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

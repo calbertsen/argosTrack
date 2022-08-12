@@ -4,8 +4,13 @@
 \alias{DSBHN}
 \title{Create a DSBHN movement model object}
 \usage{
-DSBHN(dates, pars = numeric(1), varPars = numeric(1),
-  nauticalStates = FALSE, timeunit = "hours")
+DSBHN(
+  dates,
+  pars = numeric(1),
+  varPars = numeric(1),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

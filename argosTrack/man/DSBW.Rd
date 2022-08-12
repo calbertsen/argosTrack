@@ -4,8 +4,13 @@
 \alias{DSBW}
 \title{Create a DSBW movement model object}
 \usage{
-DSBW(dates, pars = numeric(3), varPars = numeric(0),
-  nauticalStates = FALSE, timeunit = "hours")
+DSBW(
+  dates,
+  pars = numeric(3),
+  varPars = numeric(0),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

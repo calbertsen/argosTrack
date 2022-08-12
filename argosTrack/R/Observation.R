@@ -21,10 +21,9 @@
 #'
 #' @author Christoffer Moesgaard Albertsen
 #' 
-#' @export Observation
 #' @importFrom methods setRefClass new initRefFields
 #' @exportClass Observation
-Observation <- setRefClass("Observation",
+setRefClass("Observation",
                            field = c(lat = "numeric",
                                      lon = "numeric",
                                      dates = "POSIXct",
@@ -231,3 +230,31 @@ Observation <- setRefClass("Observation",
                       }
                   )
                   )
+
+
+##' Create an Observation object
+##'
+##' @param lon Observed longitude (x-coordinate)
+##' @param lat Observed latitude (y-coordinate)
+##' @param dates Dates of observations
+##' @param locationclass Location class of observations
+##' @param include Vector indicating if each observation should be included.
+##' @param ... 
+##' @return Observation reference class object
+##' @author Christoffer Moesgaard Albertsen
+#' @export Observation
+Observation <- function(lon,
+                        lat,
+                        dates,
+                        locationclass,
+                        include = rep(TRUE,length(dates)),
+                        ...
+                        ){
+    new("Observation",
+        lon = lon,
+        lat = lat,
+        dates = dates,
+        locationclass = locationclass,
+        include = include,
+        ...)
+}

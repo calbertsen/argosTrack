@@ -3,7 +3,6 @@
 \docType{class}
 \name{Observation-class}
 \alias{Observation-class}
-\alias{Observation}
 \title{A Reference Class for argosTrack observations.}
 \description{
 A Reference Class for argosTrack observations.
@@ -43,8 +42,14 @@ A Reference Class for argosTrack observations.
 
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun}
 
-\item{\code{initialize(lon, lat, dates, locationclass, include = rep(TRUE, length(dates)),
-  ...)}}{Method to initialize the class. 'lon' is a vector of longitudes, 'lat' is a vector of latitudes, 'dates' is a vector of POSIXct dates, 'locationclass' is a factor of Argos locatin classes, and Observation reference class object, 'movement' is a Movement reference class object, 'measurement' is a Measuremenbt reference class object, and 'include' is a logical vector of whether observations should be included in likelihood.}
+\item{\code{initialize(
+  lon,
+  lat,
+  dates,
+  locationclass,
+  include = rep(TRUE, length(dates)),
+  ...
+)}}{Method to initialize the class. 'lon' is a vector of longitudes, 'lat' is a vector of latitudes, 'dates' is a vector of POSIXct dates, 'locationclass' is a factor of Argos locatin classes, and Observation reference class object, 'movement' is a Movement reference class object, 'measurement' is a Measuremenbt reference class object, and 'include' is a logical vector of whether observations should be included in likelihood.}
 }}
 
 \examples{

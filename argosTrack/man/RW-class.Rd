@@ -25,12 +25,18 @@ Nielsen, A., Bigelow, K. A., Musyl, M. K. and Sibert, J. R. (2006) Improving lig
 \seealso{
 \link{Movement-class} \link{RW}
 
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{DSBW-class}}, \code{\link{GDCRW-class}},
-  \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}
+Other "Movement models": 
+\code{\link{CSB-class}},
+\code{\link{CTCRW-class}},
+\code{\link{DCRW-class}},
+\code{\link{DIRAC-class}},
+\code{\link{DSBHN-class}},
+\code{\link{DSBW-class}},
+\code{\link{GDCRW-class}},
+\code{\link{MPCTCRW-class}},
+\code{\link{Movement-class}},
+\code{\link{OUF-class}},
+\code{\link{OUL-class}},
+\code{\link{OUV-class}}
 }
 \concept{"Movement models"}

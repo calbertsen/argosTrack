@@ -48,17 +48,30 @@ where \eqn{x} is a vector of observations, \eqn{\theta} is a scalar parameter, \
 \describe{
 \item{\code{getTMBdata(dayOfYearSpline = c())}}{Function to return a data list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 
-\item{\code{getTMBmap(correlated = FALSE, useSpline = FALSE, fixcorrection = FALSE,
+\item{\code{getTMBmap(
+  correlated = FALSE,
+  useSpline = FALSE,
+  fixcorrection = FALSE,
   usedLevels = c("GPS", "3", "2", "1", "0", "A", "B", "Z"),
-  numPerLevel = c(), needExtraVarPar = FALSE)}}{Function to return a map list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
+  numPerLevel = c(),
+  needExtraVarPar = FALSE
+)}}{Function to return a map list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 
 \item{\code{getTMBparameters()}}{Function to return a parameter list for TMB::MakeADFun. Intended to be called from an Animal reference class object.}
 
-\item{\code{initialize(model = c("n", "t", "sh"), logSdObs = c(0, 0), corObs = 0,
-  logCorrection = matrix(c(0.6507, 0.8231, 2.3432, 2.0532, 3.8514, 2.9602,
-  3.828, 3.0463, 4.4417, 3.6951, 5.5714, 5.5149, 8, 8), 2, 7),
-  splineXlogSd = 0, knotPars = numeric(5), df = numeric(8), minDf = 3,
-  nauticalObs = FALSE, ...)}}{Method to initialize the class. Input corresponds to the reference class fields.}
+\item{\code{initialize(
+  model = c("n", "t", "sh"),
+  logSdObs = c(0, 0),
+  corObs = 0,
+  logCorrection = matrix(c(0.6507, 0.8231, 2.3432, 2.0532, 3.8514, 2.9602, 3.828, 3.0463,
+    4.4417, 3.6951, 5.5714, 5.5149, 8, 8), 2, 7),
+  splineXlogSd = 0,
+  knotPars = numeric(5),
+  df = numeric(8),
+  minDf = 3,
+  nauticalObs = FALSE,
+  ...
+)}}{Method to initialize the class. Input corresponds to the reference class fields.}
 
 \item{\code{simulate(observation)}}{Function to simulate measurement data. 'observation' is an Observation reference class object, containing the time points and Argos location classes for the simulation. A matrix containing the measurement data is returned.}
 

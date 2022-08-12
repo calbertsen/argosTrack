@@ -32,11 +32,18 @@ McClintock, B. T., London, J. M., Cameron, M. F. and Boveng, P. L. (2015) Modell
 \seealso{
 \code{\link{Movement-class}}, \code{\link{DSBW}}, \code{\link{DSBHN}}.
 
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBHN-class}},
-  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}, \code{\link{RW-class}}
+Other "Movement models": 
+\code{\link{CSB-class}},
+\code{\link{CTCRW-class}},
+\code{\link{DCRW-class}},
+\code{\link{DIRAC-class}},
+\code{\link{DSBHN-class}},
+\code{\link{GDCRW-class}},
+\code{\link{MPCTCRW-class}},
+\code{\link{Movement-class}},
+\code{\link{OUF-class}},
+\code{\link{OUL-class}},
+\code{\link{OUV-class}},
+\code{\link{RW-class}}
 }
 \concept{"Movement models"}

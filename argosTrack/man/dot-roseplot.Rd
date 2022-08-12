@@ -4,8 +4,15 @@
 \alias{.roseplot}
 \title{Roseplot / radar histogram}
 \usage{
-.roseplot(x, breaks = "Sturges", prob = TRUE, main = NULL,
-  xlab = "", showAllPi = TRUE, ...)
+.roseplot(
+  x,
+  breaks = "Sturges",
+  prob = TRUE,
+  main = NULL,
+  xlab = "",
+  showAllPi = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{Vector of values}

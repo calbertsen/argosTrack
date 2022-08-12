@@ -17,4 +17,4 @@ Imports:
 LinkingTo: TMB (>= 1.7.6), RcppEigen
 Suggests: knitr, rmarkdown, inline
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.1

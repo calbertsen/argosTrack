@@ -4,8 +4,13 @@
 \alias{DCRW}
 \title{Create a DCRW movement model object}
 \usage{
-DCRW(dates, pars = numeric(3), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")
+DCRW(
+  dates,
+  pars = numeric(3),
+  varPars = numeric(2),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct, equidistant, and increasing POSIXct dates}

@@ -4,8 +4,13 @@
 \alias{CSB}
 \title{Create a CSB movement model object}
 \usage{
-CSB(dates, pars = numeric(2), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")
+CSB(
+  dates,
+  pars = numeric(2),
+  varPars = numeric(2),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

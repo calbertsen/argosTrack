@@ -29,11 +29,18 @@ Step-length/Bearings models can be difficult for the Laplace approximation. Esti
 \seealso{
 \code{\link{Movement-class}}, \code{link{DSBHN}}, \code{link{DSBW}}.
 
-Other "Movement models": \code{\link{CSB-class}},
-  \code{\link{CTCRW-class}}, \code{\link{DCRW-class}},
-  \code{\link{DIRAC-class}}, \code{\link{DSBW-class}},
-  \code{\link{GDCRW-class}}, \code{\link{MPCTCRW-class}},
-  \code{\link{Movement-class}}, \code{\link{OUL-class}},
-  \code{\link{OUV-class}}, \code{\link{RW-class}}
+Other "Movement models": 
+\code{\link{CSB-class}},
+\code{\link{CTCRW-class}},
+\code{\link{DCRW-class}},
+\code{\link{DIRAC-class}},
+\code{\link{DSBW-class}},
+\code{\link{GDCRW-class}},
+\code{\link{MPCTCRW-class}},
+\code{\link{Movement-class}},
+\code{\link{OUF-class}},
+\code{\link{OUL-class}},
+\code{\link{OUV-class}},
+\code{\link{RW-class}}
 }
 \concept{"Movement models"}

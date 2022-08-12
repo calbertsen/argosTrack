@@ -4,8 +4,13 @@
 \alias{OUL}
 \title{Create an OUL movement model object}
 \usage{
-OUL(dates, pars = c(1, 0, 0, 1, 0, 0), varPars = numeric(2),
-  nauticalStates = FALSE, timeunit = "hours")
+OUL(
+  dates,
+  pars = c(1, 0, 0, 1, 0, 0),
+  varPars = numeric(2),
+  nauticalStates = FALSE,
+  timeunit = "hours"
+)
 }
 \arguments{
 \item{dates}{Vector of distinct and increasing POSIXct dates}

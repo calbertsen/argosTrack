@@ -308,6 +308,16 @@ Type objective_function<Type>::operator() ()
     case 10:
       
       break;
+    case 11: // Ornstein-Uhlenbeck with foraging
+      nll += nll_ouf((vector<Type>)mu.col(i),
+		     (vector<Type>)mu.col(i-1),
+		     (vector<Type>)vel.col(i),
+		     (vector<Type>)vel.col(i-1),
+		     dtStates(i),
+		     exp((vector<Type>)movePars.segment(0,4)),
+		     (vector<Type>)movePars.segment(4,2),
+		     varState);
+      break;
     default:
       error("Movement model not implemented");
       break;
